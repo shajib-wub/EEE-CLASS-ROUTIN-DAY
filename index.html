@@ -1,95 +1,95 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>WUB EEE | GitHub API Sync | Cross-Device Real-time</title>
+    <title>WUB EEE | Complete Routine | Real-time Sync</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: #eef2ff; padding: 12px; min-height: 100vh; }
-        .container { max-width: 750px; margin: 0 auto; }
-        .header { background: linear-gradient(135deg, #0f2b3d, #1b4a6e); color: white; padding: 18px; border-radius: 24px; margin-bottom: 18px; text-align: center; }
-        .header h1 { font-size: 1.3rem; }
-        .header p { font-size: 0.7rem; opacity: 0.9; }
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+        body{background:#eef2ff;padding:12px;}
+        .container{max-width:750px;margin:0 auto;}
+        .header{background:linear-gradient(135deg,#0f2b3d,#1b4a6e);color:white;padding:18px;border-radius:24px;margin-bottom:18px;text-align:center;}
+        .header h1{font-size:1.3rem;}
+        .header p{font-size:0.7rem;opacity:0.9;}
         
-        .mode-selector { display: flex; gap: 10px; margin-bottom: 18px; }
-        .mode-btn { flex: 1; background: white; color: #1f6392; border: 2px solid #1f6392; padding: 12px; border-radius: 50px; font-weight: 600; cursor: pointer; text-align: center; }
-        .mode-btn.active { background: #1f6392; color: white; }
-        .mode-btn.teacher.active { background: #10b981; border-color: #10b981; }
-        .mode-btn.admin.active { background: #dc2626; border-color: #dc2626; }
+        .mode-selector{display:flex;gap:10px;margin-bottom:18px;}
+        .mode-btn{flex:1;background:white;color:#1f6392;border:2px solid #1f6392;padding:12px;border-radius:50px;font-weight:600;cursor:pointer;text-align:center;}
+        .mode-btn.active{background:#1f6392;color:white;}
+        .mode-btn.teacher.active{background:#10b981;border-color:#10b981;}
+        .mode-btn.admin.active{background:#dc2626;border-color:#dc2626;}
         
-        .panel { display: none; }
-        .panel.active { display: block; }
+        .panel{display:none;}
+        .panel.active{display:block;}
         
-        .card { background: white; border-radius: 24px; padding: 20px; margin-bottom: 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
-        .login-card { text-align: center; }
+        .card{background:white;border-radius:24px;padding:20px;margin-bottom:18px;box-shadow:0 2px 10px rgba(0,0,0,0.08);}
+        .login-card{text-align:center;}
         
-        input, select { padding: 12px 16px; margin: 8px 0; border-radius: 40px; border: 1px solid #cbd5e1; width: 100%; max-width: 280px; outline: none; }
-        button { background: #1f6392; color: white; border: none; padding: 12px 24px; border-radius: 40px; font-weight: 600; cursor: pointer; margin: 5px; }
-        .btn-danger { background: #dc2626; }
-        .btn-success { background: #10b981; }
-        .btn-warning { background: #f59e0b; }
+        input,select{padding:12px 16px;margin:8px 0;border-radius:40px;border:1px solid #cbd5e1;width:100%;max-width:280px;outline:none;}
+        button{background:#1f6392;color:white;border:none;padding:12px 24px;border-radius:40px;font-weight:600;cursor:pointer;margin:5px;}
+        .btn-danger{background:#dc2626;}
+        .btn-success{background:#10b981;}
+        .btn-warning{background:#f59e0b;}
         
-        .batch-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid #e2e8f0; }
-        .batch-name { font-size: 1.3rem; font-weight: 700; color: #1f6392; }
+        .batch-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #e2e8f0;}
+        .batch-name{font-size:1.3rem;font-weight:700;color:#1f6392;}
         
-        .day-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0; }
-        .day-tab { background: #f1f5f9; padding: 8px 20px; border-radius: 40px; font-weight: 600; cursor: pointer; font-size: 0.8rem; }
-        .day-tab.active { background: #1f6392; color: white; }
+        .day-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0;}
+        .day-tab{background:#f1f5f9;padding:8px 20px;border-radius:40px;font-weight:600;cursor:pointer;font-size:0.8rem;}
+        .day-tab.active{background:#1f6392;color:white;}
         
-        .class-item { background: #f8fafc; border-left: 4px solid #1f6392; padding: 12px 15px; border-radius: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; cursor: pointer; }
-        .class-item.lab { border-left-color: #f59e0b; background: #fffbeb; }
-        .time-badge { font-weight: 700; font-size: 0.7rem; background: #e2e8f0; padding: 4px 10px; border-radius: 30px; }
-        .course-code { font-weight: 800; font-size: 0.8rem; }
-        .title { font-size: 0.75rem; color: #334155; }
-        .teacher { font-size: 0.7rem; color: #5588b1; }
-        .room { background: #e6f7ec; padding: 4px 12px; border-radius: 30px; font-size: 0.7rem; }
+        .class-item{background:#f8fafc;border-left:4px solid #1f6392;padding:12px 15px;border-radius:16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;cursor:pointer;}
+        .class-item.lab{border-left-color:#f59e0b;background:#fffbeb;}
+        .time-badge{font-weight:700;font-size:0.7rem;background:#e2e8f0;padding:4px 10px;border-radius:30px;}
+        .course-code{font-weight:800;font-size:0.8rem;}
+        .title{font-size:0.75rem;color:#334155;}
+        .teacher{font-size:0.7rem;color:#5588b1;}
+        .room{background:#e6f7ec;padding:4px 12px;border-radius:30px;font-size:0.7rem;}
         
-        .credit-card { background: linear-gradient(135deg, #e6f7ec, #d1fae5); padding: 12px; border-radius: 16px; margin-bottom: 15px; }
-        .credit-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-        .credit-item { background: white; border-radius: 20px; padding: 4px 12px; font-size: 0.7rem; display: inline-flex; align-items: center; gap: 5px; }
+        .credit-card{background:linear-gradient(135deg,#e6f7ec,#d1fae5);padding:12px;border-radius:16px;margin-bottom:15px;}
+        .credit-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+        .credit-item{background:white;border-radius:20px;padding:4px 12px;font-size:0.7rem;display:inline-flex;align-items:center;gap:5px;}
         
-        .data-table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
-        .data-table th, .data-table td { padding: 8px 6px; text-align: left; border-bottom: 1px solid #e2e8f0; }
-        .data-table th { background: #1f6392; color: white; }
-        .edit-btn, .delete-btn { padding: 4px 10px; border-radius: 20px; font-size: 0.65rem; margin: 2px; border: none; cursor: pointer; }
-        .edit-btn { background: #f59e0b; color: white; }
-        .delete-btn { background: #dc2626; color: white; }
+        .data-table{width:100%;border-collapse:collapse;font-size:0.7rem;}
+        .data-table th,.data-table td{padding:8px 6px;text-align:left;border-bottom:1px solid #e2e8f0;}
+        .data-table th{background:#1f6392;color:white;}
+        .edit-btn,.delete-btn{padding:4px 10px;border-radius:20px;font-size:0.65rem;margin:2px;border:none;cursor:pointer;}
+        .edit-btn{background:#f59e0b;color:white;}
+        .delete-btn{background:#dc2626;color:white;}
         
-        .admin-form { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 15px; }
-        .admin-form input, .admin-form select { width: auto; margin: 0; padding: 8px 12px; font-size: 0.75rem; max-width: none; }
+        .admin-form{display:flex;flex-wrap:wrap;gap:6px;margin-top:15px;}
+        .admin-form input,.admin-form select{width:auto;margin:0;padding:8px 12px;font-size:0.75rem;max-width:none;}
         
-        .toast { position: fixed; bottom: 20px; left: 20px; right: 20px; background: #1e293b; color: white; padding: 12px; border-radius: 50px; text-align: center; z-index: 2000; animation: slideIn 0.3s ease; font-size: 0.8rem; }
-        @keyframes slideIn { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .toast{position:fixed;bottom:20px;left:20px;right:20px;background:#1e293b;color:white;padding:12px;border-radius:50px;text-align:center;z-index:2000;animation:slideIn 0.3s ease;font-size:0.8rem;}
+        @keyframes slideIn{from{transform:translateY(100%);opacity:0;}to{transform:translateY(0);opacity:1;}}
         
-        .sync-status { position: fixed; bottom: 10px; right: 10px; padding: 4px 12px; border-radius: 20px; font-size: 0.6rem; z-index: 1000; cursor: pointer; }
-        .sync-status.cloud { background: #10b981; color: white; }
-        .sync-status.syncing { background: #f59e0b; animation: pulse 1s infinite; }
-        .sync-status.error { background: #dc2626; color: white; }
-        .sync-status.local { background: #64748b; color: white; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        .sync-status{position:fixed;bottom:10px;right:10px;padding:4px 12px;border-radius:20px;font-size:0.6rem;z-index:1000;cursor:pointer;}
+        .sync-status.cloud{background:#10b981;color:white;}
+        .sync-status.syncing{background:#f59e0b;animation:pulse 1s infinite;}
+        .sync-status.error{background:#dc2626;color:white;}
+        @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.6;}}
         
-        .setup-box { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 12px; margin-bottom: 15px; font-size: 0.7rem; }
-        .setup-box code { background: white; padding: 2px 6px; border-radius: 6px; font-family: monospace; }
-        .setup-box input { width: 100%; padding: 8px; margin: 10px 0; border-radius: 8px; border: 1px solid #f59e0b; max-width: 100%; }
+        .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10001;display:flex;align-items:center;justify-content:center;}
+        .edit-modal{background:white;border-radius:24px;padding:20px;width:90%;max-width:500px;max-height:80vh;overflow-y:auto;}
+        .edit-modal input,.edit-modal select{width:100%;max-width:100%;margin:5px 0;}
         
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 10001; display: flex; align-items: center; justify-content: center; }
-        .edit-modal { background: white; border-radius: 24px; padding: 20px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto; }
-        .edit-modal input, .edit-modal select { width: 100%; max-width: 100%; margin: 5px 0; }
-        
-        @media (max-width: 600px) {
-            .admin-form input, .admin-form select { width: calc(50% - 4px); }
-            .class-item { flex-direction: column; align-items: flex-start; }
+        @media (max-width:600px){
+            .admin-form input,.admin-form select{width:calc(50% - 4px);}
+            .class-item{flex-direction:column;align-items:flex-start;}
         }
+        
+        .stats{display:flex;gap:10px;margin-bottom:15px;}
+        .stat-card{flex:1;background:#10b98120;padding:10px;border-radius:16px;text-align:center;}
+        .filter-bar{display:flex;gap:8px;margin-bottom:15px;}
+        .filter-bar input,.filter-bar select{flex:1;margin:0;padding:8px 12px;}
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header">
         <h1><i class="fas fa-microchip"></i> WUB - EEE</h1>
-        <p>📡 GitHub API Sync | Admin পরিবর্তন সাথে সাথে সব ডিভাইসে</p>
+        <p>Real-time Sync | Admin changes instantly reflect on all devices</p>
     </div>
     
     <div class="mode-selector">
@@ -98,41 +98,24 @@
         <div class="mode-btn admin" data-mode="admin">👑 Admin</div>
     </div>
 
-    <!-- Setup Box - Token Input -->
-    <div id="setupBox" class="setup-box" style="display:none;">
-        <h4><i class="fab fa-github"></i> 🔧 GitHub Token প্রয়োজন</h4>
-        <p>ক্রস-ডিভাইস সিঙ্কের জন্য টোকেন দিন:</p>
-        <ol style="margin-left: 20px; margin-bottom: 10px;">
-            <li><a href="https://github.com/settings/tokens/new" target="_blank">এখানে ক্লিক করুন</a> টোকেন তৈরি করতে</li>
-            <li>নাম: <code>wub-routine</code></li>
-            <li>এক্সপায়ারি: <code>No expiration</code></li>
-            <li>রিপো অ্যাক্সেস: <code>Only select repositories</code> → <strong>EEE-CLASS-ROUTIN-DAY</strong></li>
-            <li>পারমিশন: <code>Contents → Read and write</code></li>
-            <li>টোকেন জেনারেট করে কপি করুন</li>
-        </ol>
-        <input type="text" id="tokenInput" placeholder="পেস্ট করুন: github_pat_xxxx..." style="width:100%;">
-        <button id="saveTokenBtn" class="btn-success" style="width:100%;"><i class="fab fa-github"></i> সংরক্ষণ করুন</button>
-        <p style="margin-top:8px; font-size:0.6rem;">টোকেন শুধুমাত্র আপনার ব্রাউজারে সেভ হবে</p>
-    </div>
-
     <!-- Student Panel -->
     <div id="studentPanel" class="panel active">
         <div class="card login-card">
             <i class="fas fa-user-graduate" style="font-size: 2rem; color: #1f6392;"></i>
-            <h3>📚 আপনার ব্যাচ সিলেক্ট করুন</h3>
-            <input type="text" id="studentBatchInput" placeholder="85A থেকে 96A" value="96A">
-            <button id="studentLoginBtn">রুটিন দেখুন</button>
+            <h3>📚 Select Your Batch</h3>
+            <input type="text" id="studentBatchInput" placeholder="85A to 96A" value="96A">
+            <button id="studentLoginBtn">Show Routine</button>
         </div>
         <div id="studentDashboard" style="display:none;">
             <div class="card">
                 <div class="batch-header">
-                    <span class="batch-name"><i class="fas fa-id-card"></i> ব্যাচ: <span id="studentBatchShow"></span></span>
-                    <button id="studentLogoutBtn" class="btn-danger" style="padding:8px 20px;">পরিবর্তন</button>
+                    <span class="batch-name"><i class="fas fa-id-card"></i> Batch: <span id="studentBatchShow"></span></span>
+                    <button id="studentLogoutBtn" class="btn-danger" style="padding:8px 20px;">Change</button>
                 </div>
-                <div class="credit-card" id="studentCreditCard"></div>
-                <div class="day-tabs" id="studentDayTabs"></div>
+                <div id="studentCreditCard" class="credit-card"></div>
+                <div id="studentDayTabs" class="day-tabs"></div>
                 <div id="studentClassList"></div>
-                <button id="studentCalendarBtn" style="background:#34a853; width:100%; margin-top:15px;"><i class="fab fa-google"></i> 📅 গুগল ক্যালেন্ডারে যোগ করুন</button>
+                <button id="studentCalendarBtn" style="background:#34a853; width:100%; margin-top:15px;"><i class="fab fa-google"></i> Add to Google Calendar</button>
             </div>
         </div>
     </div>
@@ -141,27 +124,31 @@
     <div id="teacherPanel" class="panel">
         <div class="card login-card">
             <i class="fas fa-chalkboard-user" style="font-size: 2rem; color: #10b981;"></i>
-            <h3>👨‍🏫 আপনার নাম সিলেক্ট করুন</h3>
-            <select id="teacherSelect"></select>
-            <button id="teacherLoginBtn" class="btn-success">প্রবেশ</button>
+            <h3>👨‍🏫 Select Your Name</h3>
+            <select id="teacherSelect">
+                <option value="">-- Select Teacher --</option>
+            </select>
+            <button id="teacherLoginBtn" class="btn-success">Enter</button>
         </div>
         <div id="teacherDashboard" style="display:none;">
             <div class="card">
                 <div class="batch-header">
                     <span class="batch-name"><i class="fas fa-chalkboard-user"></i> <span id="teacherNameShow"></span></span>
-                    <button id="teacherLogoutBtn" class="btn-danger">বের হন</button>
+                    <button id="teacherLogoutBtn" class="btn-danger">Exit</button>
                 </div>
-                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                    <div style="flex:1; background:#10b98120; padding:10px; border-radius:16px; text-align:center;"><span id="teacherClassCount">0</span><br><small>মোট ক্লাস</small></div>
-                    <div style="flex:1; background:#10b98120; padding:10px; border-radius:16px; text-align:center;"><span id="teacherBatchCount">0</span><br><small>ব্যাচ</small></div>
+                <div class="stats">
+                    <div class="stat-card"><span id="teacherClassCount">0</span><br><small>Total Classes</small></div>
+                    <div class="stat-card"><span id="teacherBatchCount">0</span><br><small>Batches</small></div>
                 </div>
-                <div style="display: flex; gap: 8px; margin-bottom: 15px;">
-                    <input type="text" id="teacherBatchFilter" placeholder="ব্যাচ ফিল্টার" style="flex:1; margin:0;">
-                    <select id="teacherDayFilter" style="width:100px; margin:0;">
-                        <option value="">সব</option>
-                        <option value="MON">সোম</option><option value="TUE">মঙ্গল</option>
-                        <option value="WED">বুধ</option><option value="THU">বৃহস্পতি</option>
-                        <option value="SAT">শনি</option>
+                <div class="filter-bar">
+                    <input type="text" id="teacherBatchFilter" placeholder="Filter by Batch">
+                    <select id="teacherDayFilter">
+                        <option value="">All Days</option>
+                        <option value="MON">Monday</option>
+                        <option value="TUE">Tuesday</option>
+                        <option value="WED">Wednesday</option>
+                        <option value="THU">Thursday</option>
+                        <option value="SAT">Saturday</option>
                     </select>
                     <button id="teacherRefreshBtn" class="btn-success" style="margin:0; padding:8px 16px;">🔄</button>
                 </div>
@@ -174,78 +161,86 @@
     <div id="adminPanel" class="panel">
         <div class="card login-card">
             <i class="fas fa-user-shield" style="font-size: 2rem; color:#dc2626;"></i>
-            <h3>🔐 এডমিন লগইন</h3>
+            <h3>🔐 Admin Login</h3>
             <input type="email" id="adminEmail" placeholder="Email">
             <input type="password" id="adminPass" placeholder="Password">
-            <button id="adminLoginBtn">লগইন</button>
+            <button id="adminLoginBtn">Login</button>
         </div>
         <div id="adminDashboard" style="display:none;">
             <div class="card">
                 <div class="batch-header">
-                    <h3><i class="fas fa-user-shield"></i> এডমিন প্যানেল</h3>
-                    <button id="adminLogoutBtn" class="btn-danger">লগআউট</button>
+                    <h3><i class="fas fa-user-shield"></i> Admin Control Panel</h3>
+                    <button id="adminLogoutBtn" class="btn-danger">Logout</button>
                 </div>
                 
                 <div style="background:#e6f7ec; padding:12px; border-radius:16px; margin-bottom:20px;">
-                    <p style="font-size:0.7rem;"><i class="fab fa-github"></i> <strong>GitHub Real-time Sync সক্রিয়!</strong> আপনি যা পরিবর্তন করবেন সাথে সাথে সব ডিভাইসে আপডেট হবে।</p>
+                    <p style="font-size:0.7rem;"><i class="fab fa-github"></i> <strong>GitHub Real-time Sync Active!</strong> Changes appear instantly on all devices.</p>
                 </div>
                 
-                <h4>➕ নতুন ক্লাস যোগ করুন</h4>
+                <h4>➕ Add New Class</h4>
                 <div class="admin-form">
-                    <input type="text" id="newBatch" placeholder="ব্যাচ" style="width:75px;">
+                    <input type="text" id="newBatch" placeholder="Batch" style="width:75px;">
                     <select id="newDay"><option>MON</option><option>TUE</option><option>WED</option><option>THU</option><option>SAT</option></select>
-                    <input type="text" id="newTime" placeholder="সময়" style="width:120px;">
-                    <input type="text" id="newCode" placeholder="কোড" style="width:90px;">
-                    <input type="text" id="newTitle" placeholder="টাইটেল" style="width:130px;">
-                    <input type="text" id="newTeacher" placeholder="শিক্ষক" style="width:110px;">
-                    <input type="text" id="newRoom" placeholder="রুম" style="width:60px;">
+                    <input type="text" id="newTime" placeholder="Time" style="width:120px;">
+                    <input type="text" id="newCode" placeholder="Code" style="width:90px;">
+                    <input type="text" id="newTitle" placeholder="Course Title" style="width:130px;">
+                    <input type="text" id="newTeacher" placeholder="Teacher" style="width:110px;">
+                    <input type="text" id="newRoom" placeholder="Room" style="width:60px;">
                     <select id="newType"><option>Theory</option><option>Lab</option></select>
-                    <input type="number" id="newCredit" placeholder="ক্রেডিট" value="3" style="width:55px;">
-                    <button id="addClassBtn" class="btn-success">➕ যোগ</button>
+                    <input type="number" id="newCredit" placeholder="Credit" value="3" style="width:55px;">
+                    <button id="addClassBtn" class="btn-success">➕ Add</button>
                 </div>
                 
-                <h4 style="margin-top:20px;">📋 সব ক্লাস</h4>
+                <h4 style="margin-top:20px;">📋 All Classes</h4>
                 <div style="overflow-x:auto;">
                     <table class="data-table">
-                        <thead><tr><th>ব্যাচ</th><th>দিন</th><th>সময়</th><th>কোড</th><th>কোর্স</th><th>শিক্ষক</th><th>রুম</th><th>ধরন</th><th>ক্রেডিট</th><th>অ্যাকশন</th><td></thead>
-                        <tbody id="adminTable"></tbody>
+                        <thead>
+                            <tr><th>Batch</th><th>Day</th><th>Time</th><th>Code</th><th>Course</th><th>Teacher</th><th>Room</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody id="adminTableBody"></tbody>
                     </table>
                 </div>
-                <button id="resetDataBtn" class="btn-warning" style="width:100%; margin-top:15px;">⟳ ডিফল্ট ডাটা রিসেট</button>
-                <button id="refreshDataBtn" class="btn-success" style="width:100%; margin-top:10px;"><i class="fas fa-sync-alt"></i> গিটহাব থেকে রিফ্রেশ</button>
+                <button id="resetDataBtn" class="btn-warning" style="width:100%; margin-top:15px;">⟳ Reset to Default</button>
+                <button id="syncGitHubBtn" class="btn-success" style="width:100%; margin-top:10px;"><i class="fab fa-github"></i> Sync with GitHub</button>
             </div>
         </div>
     </div>
 </div>
-<div class="sync-status" id="syncStatus"><i class="fas fa-spinner fa-pulse"></i> চেক করা হচ্ছে...</div>
+<div class="sync-status" id="syncStatus"><i class="fas fa-spinner fa-pulse"></i> Loading...</div>
 
 <script>
-    // ==================== গিটহাব কনফিগারেশন ====================
-    const REPO_OWNER = "sharifuddin";
-    const REPO_NAME = "EEE-CLASS-ROUTIN-DAY";
-    const FILE_PATH = "wub-routine-data.json";
-    const BRANCH = "main";
+    // ==================== GITHUB CONFIGURATION ====================
+    // IMPORTANT: Replace with your GitHub details
+const GITHUB_TOKEN = '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';
+const GITHUB_OWNER = 'sharifuddin';
+const GITHUB_REPO = 'EEE-CLASS-ROUTIN-DAY';
+    const GITHUB_FILE = 'routine-data.json';
     
-    let githubToken = "";
+    // Admin credentials (hidden - not shown anywhere)
+    const ADMIN_EMAIL = 'sharif.uddin@eee.wub.edu.bd';
+    const ADMIN_PASS = 'Sr@123580Sr@';
+    
+    // ==================== COMPLETE MASTER DATA (All Batches 85A-96A) ====================
     let classData = [];
     let currentStudentBatch = null;
     let currentTeacher = null;
     let adminLoggedIn = false;
     
-    // এডমিন ক্রেডেনশিয়াল
-    const ADMIN_EMAIL = "sharif.uddin@eee.wub.edu.bd";
-    const ADMIN_PASS = "Sr@123580Sr@";
-    
-    // ==================== অরিজিনাল মাস্টার ডাটা ====================
+    // Complete original data with all teachers
     const originalMasterData = [
+        // 85A Batch
         {batch:"85A", day:"MON", time:"12:00pm-12:50pm", code:"EEE07144263", title:"Microwave Engineering", teacher:"Debprosad Das", room:"504", type:"Theory", credit:3},
         {batch:"85A", day:"MON", time:"12:50pm-03:10pm", code:"EEE07144264", title:"Microwave Lab", teacher:"Debprosad Das", room:"B15", type:"Lab", credit:1},
         {batch:"85A", day:"THU", time:"02:20pm-04:00pm", code:"EEE07144263", title:"Microwave Engineering", teacher:"Debprosad Das", room:"507", type:"Theory", credit:3},
+        
+        // 86A Batch
         {batch:"86A", day:"SAT", time:"09:30am-11:10am", code:"EEE07134253", title:"Power Plants Engineering", teacher:"Dr. Md. Riyad Tanshen", room:"507", type:"Theory", credit:3},
         {batch:"86A", day:"SAT", time:"11:10am-12:00pm", code:"EEE07144271", title:"Optical Fibre Communication", teacher:"Dr. M. Quamruzzaman", room:"507", type:"Theory", credit:3},
         {batch:"86A", day:"MON", time:"10:20am-12:00pm", code:"EEE07144271", title:"Optical Fibre Communication", teacher:"Dr. M. Quamruzzaman", room:"504", type:"Theory", credit:3},
         {batch:"86A", day:"MON", time:"12:50pm-03:10pm", code:"EEE07144264", title:"Microwave Lab", teacher:"Debprosad Das", room:"B15", type:"Lab", credit:1},
         {batch:"86A", day:"THU", time:"12:00pm-12:50pm", code:"EEE07134253", title:"Power Plants Engineering", teacher:"Dr. Md. Riyad Tanshen", room:"507", type:"Theory", credit:3},
+        
+        // 87A Batch
         {batch:"87A", day:"SAT", time:"09:30am-11:10am", code:"EEE07134141", title:"Power System Operation & Control", teacher:"Md. Istianatur Rahman", room:"B14", type:"Theory", credit:3},
         {batch:"87A", day:"SAT", time:"11:10am-12:00pm", code:"EEE07144271", title:"Optical Fibre Communication", teacher:"Dr. M. Quamruzzaman", room:"507", type:"Theory", credit:3},
         {batch:"87A", day:"SAT", time:"02:20pm-04:00pm", code:"EEE07134142", title:"Power System Operation & Control Lab", teacher:"Md. Istianatur Rahman", room:"B14/B15", type:"Lab", credit:1},
@@ -254,6 +249,8 @@
         {batch:"87A", day:"MON", time:"12:50pm-03:10pm", code:"EEE07144264", title:"Microwave Lab", teacher:"Debprosad Das", room:"B15", type:"Lab", credit:1},
         {batch:"87A", day:"MON", time:"03:10pm-04:00pm", code:"EEE07134141", title:"Power System Operation & Control", teacher:"Md. Istianatur Rahman", room:"504", type:"Theory", credit:3},
         {batch:"87A", day:"THU", time:"02:20pm-04:00pm", code:"EEE07144263", title:"Microwave Engineering", teacher:"Debprosad Das", room:"507", type:"Theory", credit:3},
+        
+        // 88A Batch
         {batch:"88A", day:"SAT", time:"09:30am-11:10am", code:"EEE07134141", title:"Power System Operation & Control", teacher:"Md. Istianatur Rahman", room:"B14", type:"Theory", credit:3},
         {batch:"88A", day:"SAT", time:"11:10am-12:00pm", code:"EEE07144271", title:"Optical Fibre Communication", teacher:"Dr. M. Quamruzzaman", room:"507", type:"Theory", credit:3},
         {batch:"88A", day:"SAT", time:"12:00pm-01:40pm", code:"EEE07143229", title:"Control System", teacher:"Md. Istianatur Rahman", room:"B14", type:"Theory", credit:3},
@@ -262,6 +259,8 @@
         {batch:"88A", day:"MON", time:"02:20pm-03:10pm", code:"EEE07143229", title:"Control System", teacher:"Md. Istianatur Rahman", room:"504", type:"Theory", credit:3},
         {batch:"88A", day:"MON", time:"03:10pm-04:00pm", code:"EEE07134141", title:"Power System Operation & Control", teacher:"Md. Istianatur Rahman", room:"504", type:"Theory", credit:3},
         {batch:"88A", day:"TUE", time:"12:00pm-01:40pm", code:"EEE07143230", title:"Control System Lab", teacher:"Md. Istianatur Rahman", room:"B14", type:"Lab", credit:1},
+        
+        // 89A Batch
         {batch:"89A", day:"SAT", time:"08:40am-09:30am", code:"EEE07183119", title:"Instrumentation & Measurement", teacher:"Md. Abdu Rabbir Rasul", room:"507", type:"Theory", credit:3},
         {batch:"89A", day:"SAT", time:"11:10am-12:50pm", code:"EEE07183120", title:"Instrumentation & Measurement Lab", teacher:"Md. Abdu Rabbir Rasul", room:"B16", type:"Lab", credit:1},
         {batch:"89A", day:"SAT", time:"12:00pm-01:40pm", code:"EEE07143229", title:"Control System", teacher:"Md. Istianatur Rahman", room:"B14", type:"Theory", credit:3},
@@ -274,6 +273,8 @@
         {batch:"89A", day:"THU", time:"12:50pm-01:40pm", code:"EEE07183119", title:"Instrumentation & Measurement", teacher:"Md. Abdu Rabbir Rasul", room:"B14", type:"Theory", credit:3},
         {batch:"89A", day:"THU", time:"02:20pm-03:10pm", code:"EEE07183119", title:"Instrumentation & Measurement", teacher:"Md. Abdu Rabbir Rasul", room:"B14", type:"Theory", credit:3},
         {batch:"89A", day:"THU", time:"03:10pm-05:00pm", code:"MGT", title:"Engineering Management", teacher:"Dr. Sharif Hosen", room:"B14", type:"Theory", credit:3},
+        
+        // 90A Batch
         {batch:"90A", day:"SAT", time:"08:40am-09:30am", code:"EEE07183119", title:"Instrumentation & Measurement", teacher:"Md. Abdu Rabbir Rasul", room:"507", type:"Theory", credit:3},
         {batch:"90A", day:"SAT", time:"10:20am-12:50pm", code:"EEE07183120", title:"Instrumentation & Measurement Lab", teacher:"Md. Abdu Rabbir Rasul", room:"B16", type:"Lab", credit:1},
         {batch:"90A", day:"SAT", time:"12:00pm-01:40pm", code:"EEE07143229", title:"Control System", teacher:"Md. Istianatur Rahman", room:"B14", type:"Theory", credit:3},
@@ -288,6 +289,8 @@
         {batch:"90A", day:"THU", time:"12:50pm-01:40pm", code:"EEE07183119", title:"Instrumentation & Measurement", teacher:"Md. Abdu Rabbir Rasul", room:"B14", type:"Theory", credit:3},
         {batch:"90A", day:"THU", time:"02:20pm-03:10pm", code:"EEE07183119", title:"Instrumentation & Measurement", teacher:"Md. Abdu Rabbir Rasul", room:"B14", type:"Theory", credit:3},
         {batch:"90A", day:"THU", time:"03:10pm-05:00pm", code:"MGT", title:"Engineering Management", teacher:"Dr. Sharif Hosen", room:"B14", type:"Theory", credit:3},
+        
+        // 91A Batch
         {batch:"91A", day:"MON", time:"08:40am-10:20am", code:"EEE07142217", title:"Digital Electronics", teacher:"Nayeem Hasan Mallick", room:"504", type:"Theory", credit:3},
         {batch:"91A", day:"MON", time:"10:20am-12:00pm", code:"EEE07142218", title:"Digital Electronics Lab", teacher:"Nayeem Hasan Mallick", room:"B17", type:"Lab", credit:1},
         {batch:"91A", day:"MON", time:"12:50pm-01:40pm", code:"EEE07133124", title:"Power System I", teacher:"Dr. Md. Mohsin", room:"507", type:"Theory", credit:3},
@@ -298,6 +301,8 @@
         {batch:"91A", day:"WED", time:"11:10am-12:50pm", code:"EEE07133124", title:"Power System I", teacher:"Dr. Md. Mohsin", room:"B14", type:"Theory", credit:3},
         {batch:"91A", day:"WED", time:"02:20pm-03:10pm", code:"MGT", title:"Engineering Management", teacher:"Dr. Sharif Hosen", room:"B14", type:"Theory", credit:3},
         {batch:"91A", day:"THU", time:"03:10pm-05:00pm", code:"MGT", title:"Engineering Management", teacher:"Dr. Sharif Hosen", room:"B14", type:"Theory", credit:3},
+        
+        // 92A Batch
         {batch:"92A", day:"MON", time:"08:40am-10:20am", code:"EEE07142217", title:"Digital Electronics", teacher:"Nayeem Hasan Mallick", room:"504", type:"Theory", credit:3},
         {batch:"92A", day:"MON", time:"10:20am-12:00pm", code:"EEE07142218", title:"Digital Electronics Lab", teacher:"Nayeem Hasan Mallick", room:"B17", type:"Lab", credit:1},
         {batch:"92A", day:"MON", time:"12:50pm-01:40pm", code:"EEE07133124", title:"Power System I", teacher:"Dr. Md. Mohsin", room:"504", type:"Theory", credit:3},
@@ -309,6 +314,8 @@
         {batch:"92A", day:"WED", time:"09:30am-10:20am", code:"MAT-MVA", title:"Matrix & Vector Analysis", teacher:"Suman Kar", room:"507", type:"Theory", credit:3},
         {batch:"92A", day:"WED", time:"11:10am-12:50pm", code:"EEE07133124", title:"Power System I", teacher:"Dr. Md. Mohsin", room:"B14", type:"Theory", credit:3},
         {batch:"92A", day:"THU", time:"02:20pm-04:00pm", code:"CSE-INTRO-LAB", title:"Intro to Programming Lab", teacher:"Nazmus Sakib", room:"Computer Lab", type:"Lab", credit:1},
+        
+        // 93A Batch
         {batch:"93A", day:"MON", time:"08:40am-09:30am", code:"EEE07132109", title:"Electrical Machine I", teacher:"Farhana Latif", room:"B14", type:"Theory", credit:3},
         {batch:"93A", day:"MON", time:"12:00pm-01:40pm", code:"EEE07132110", title:"Electrical Machine I Lab", teacher:"Md. Sharif Uddin Shajib", room:"B16", type:"Lab", credit:1},
         {batch:"93A", day:"MON", time:"03:10pm-04:00pm", code:"CSE-INTRO", title:"Intro to Programming", teacher:"Nazmus Sakib", room:"B14", type:"Theory", credit:3},
@@ -319,6 +326,8 @@
         {batch:"93A", day:"THU", time:"08:40am-10:20am", code:"EEE07142107", title:"Electronics II", teacher:"Abdullah Ibna Karim", room:"B14", type:"Theory", credit:3},
         {batch:"93A", day:"THU", time:"10:20am-12:00pm", code:"EEE07142108", title:"Electronics II Lab", teacher:"Abdullah Ibna Karim", room:"B17", type:"Lab", credit:1},
         {batch:"93A", day:"THU", time:"02:20pm-04:00pm", code:"CSE-INTRO-LAB", title:"Intro to Programming Lab", teacher:"Nazmus Sakib", room:"Computer Lab", type:"Lab", credit:1},
+        
+        // 94A Batch
         {batch:"94A", day:"MON", time:"08:40am-09:30am", code:"EEE07132109", title:"Electrical Machine I", teacher:"Farhana Latif", room:"B14", type:"Theory", credit:3},
         {batch:"94A", day:"MON", time:"12:00pm-01:40pm", code:"EEE07132110", title:"Electrical Machine I Lab", teacher:"Md. Sharif Uddin Shajib", room:"B16", type:"Lab", credit:1},
         {batch:"94A", day:"TUE", time:"10:20am-12:00pm", code:"MAT-MVA", title:"Matrix & Vector Analysis", teacher:"Suman Kar", room:"507", type:"Theory", credit:3},
@@ -329,6 +338,8 @@
         {batch:"94A", day:"WED", time:"09:30am-11:10am", code:"CSE-FC-LAB", title:"Fundamentals of Computing Lab", teacher:"Nusrat Jahan", room:"Computer Lab", type:"Lab", credit:1},
         {batch:"94A", day:"WED", time:"12:00pm-01:40pm", code:"EEE07132109", title:"Electrical Machine I", teacher:"Farhana Latif", room:"507", type:"Theory", credit:3},
         {batch:"94A", day:"WED", time:"02:20pm-04:00pm", code:"PHY-II", title:"Physics II", teacher:"Mithun Khan", room:"507", type:"Theory", credit:2},
+        
+        // 95A Batch
         {batch:"95A", day:"MON", time:"08:40am-09:30am", code:"ENG02311101", title:"English Language", teacher:"Sumona Sharmin", room:"314", type:"Theory", credit:3},
         {batch:"95A", day:"MON", time:"10:20am-12:00pm", code:"EEE07131204", title:"Electrical Circuit II Lab", teacher:"Farhana Latif", room:"B19", type:"Lab", credit:1},
         {batch:"95A", day:"MON", time:"12:00pm-01:40pm", code:"EEE07131203", title:"Electrical Circuit II", teacher:"Farhana Latif", room:"B14", type:"Theory", credit:3},
@@ -341,6 +352,8 @@
         {batch:"95A", day:"WED", time:"02:20pm-04:00pm", code:"PHY-II", title:"Physics II", teacher:"Mithun Khan", room:"507", type:"Theory", credit:2},
         {batch:"95A", day:"THU", time:"09:30am-10:20am", code:"CHM05311101", title:"Chemistry", teacher:"Ibrahim Khalil", room:"507", type:"Theory", credit:3},
         {batch:"95A", day:"THU", time:"12:00pm-01:40pm", code:"BAN", title:"Bengali Language", teacher:"Sadia Sultana", room:"507", type:"Theory", credit:2},
+        
+        // 96A Batch
         {batch:"96A", day:"MON", time:"09:30am-10:20am", code:"ENG02311101", title:"Functional English", teacher:"Sumona Sharmin", room:"B14", type:"Theory", credit:3},
         {batch:"96A", day:"MON", time:"10:20am-12:00pm", code:"EEE07131101", title:"Electrical Circuit I", teacher:"Dr. Md. Mohsin", room:"B14", type:"Theory", credit:3},
         {batch:"96A", day:"SAT", time:"02:20pm-04:00pm", code:"ACC", title:"Accounting", teacher:"Helaluddin Ahmed", room:"507", type:"Theory", credit:2},
@@ -352,7 +365,18 @@
         {batch:"96A", day:"THU", time:"12:00pm-01:40pm", code:"BAN", title:"Bengali Language", teacher:"Sadia Sultana", room:"507", type:"Theory", credit:2}
     ];
     
-    // হেল্পার ফাংশন
+    // All unique teachers list (auto-populated from data)
+    function getAllTeachers() {
+        const teachers = new Set();
+        originalMasterData.forEach(c => {
+            if (c.teacher && c.teacher.trim()) {
+                teachers.add(c.teacher.trim());
+            }
+        });
+        return Array.from(teachers).sort();
+    }
+    
+    // Helper functions
     function showToast(msg, isError = false) {
         let t = document.createElement('div');
         t.className = 'toast';
@@ -370,148 +394,120 @@
         } else if (status === 'syncing') {
             el.className = 'sync-status syncing';
             el.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> ' + msg;
-        } else if (status === 'local') {
-            el.className = 'sync-status local';
-            el.innerHTML = '<i class="fas fa-database"></i> ' + msg;
         } else {
             el.className = 'sync-status error';
             el.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ' + msg;
         }
     }
     
-    // টোকেন ম্যানেজমেন্ট
-    function loadToken() {
-        const saved = localStorage.getItem('wub_github_token_final');
-        if (saved && saved.length > 20) {
-            githubToken = saved;
-            document.getElementById('setupBox').style.display = 'none';
-            return true;
-        }
-        document.getElementById('setupBox').style.display = 'block';
-        updateSyncStatus('local', 'টোকেন দিন');
-        return false;
-    }
-    
-    function saveToken(token) {
-        githubToken = token;
-        localStorage.setItem('wub_github_token_final', token);
-        document.getElementById('setupBox').style.display = 'none';
-        showToast('✅ টোকেন সংরক্ষিত!');
-        loadFromGitHub();
-    }
-    
-    // গিটহাব API ফাংশন
+    // GitHub API functions
     async function loadFromGitHub() {
-        if (!githubToken) {
+        if (!GITHUB_TOKEN || GITHUB_TOKEN === 'github_pat_YOUR_TOKEN_HERE') {
+            updateSyncStatus('error', 'Configure GitHub token first');
             classData = JSON.parse(JSON.stringify(originalMasterData));
-            updateAllViews();
-            updateSyncStatus('local', 'লোকাল ডাটা');
-            return false;
+            refreshAllViews();
+            return;
         }
         
-        updateSyncStatus('syncing', 'গিটহাব থেকে লোড হচ্ছে...');
+        updateSyncStatus('syncing', 'Loading from GitHub...');
         
         try {
-            const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
+            const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_FILE}`;
             const res = await fetch(url, {
-                headers: { 'Authorization': `Bearer ${githubToken}` }
+                headers: { 'Authorization': `Bearer ${GITHUB_TOKEN}` }
             });
             
             if (res.status === 404) {
-                // ফাইল নেই, নতুন তৈরি করুন
                 await saveToGitHub(originalMasterData);
                 classData = JSON.parse(JSON.stringify(originalMasterData));
-                updateSyncStatus('cloud', '✅ নতুন ফাইল তৈরি হয়েছে');
-                updateAllViews();
-                return true;
+                updateSyncStatus('cloud', '✅ Created new file');
+            } else if (res.ok) {
+                const data = await res.json();
+                const decoded = atob(data.content);
+                classData = JSON.parse(decoded);
+                updateSyncStatus('cloud', '✅ Loaded from GitHub');
+            } else {
+                throw new Error('API error');
             }
-            
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            
-            const data = await res.json();
-            const decoded = atob(data.content);
-            const loadedData = JSON.parse(decoded);
-            classData = loadedData;
-            updateSyncStatus('cloud', '✅ গিটহাব থেকে লোড হয়েছে');
-            updateAllViews();
-            return true;
-            
         } catch(e) {
-            console.error('GitHub load error:', e);
-            updateSyncStatus('error', 'গিটহাব লোড ব্যর্থ');
-            classData = JSON.parse(JSON.stringify(originalMasterData));
-            updateAllViews();
-            return false;
+            console.error(e);
+            updateSyncStatus('error', 'Using local cache');
+            const saved = localStorage.getItem('wub_data');
+            if (saved) {
+                classData = JSON.parse(saved);
+            } else {
+                classData = JSON.parse(JSON.stringify(originalMasterData));
+            }
         }
+        
+        refreshAllViews();
     }
     
     async function saveToGitHub(data) {
-        if (!githubToken) {
-            showToast('টোকেন নেই! প্রথমে টোকেন দিন', true);
+        if (!GITHUB_TOKEN || GITHUB_TOKEN === 'github_pat_YOUR_TOKEN_HERE') {
+            localStorage.setItem('wub_data', JSON.stringify(data));
+            showToast('⚠️ Saved locally only (GitHub token not configured)');
             return false;
         }
         
-        updateSyncStatus('syncing', 'গিটহাবে সেভ হচ্ছে...');
+        updateSyncStatus('syncing', 'Saving to GitHub...');
         
         try {
-            const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
+            const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_FILE}`;
             let sha = null;
             
-            // প্রথমে SHA পেতে চেষ্টা
-            try {
-                const getRes = await fetch(url, {
-                    headers: { 'Authorization': `Bearer ${githubToken}` }
-                });
-                if (getRes.ok) {
-                    const fileData = await getRes.json();
-                    sha = fileData.sha;
-                }
-            } catch(e) {}
+            const getRes = await fetch(url, {
+                headers: { 'Authorization': `Bearer ${GITHUB_TOKEN}` }
+            });
+            if (getRes.ok) {
+                const fileData = await getRes.json();
+                sha = fileData.sha;
+            }
             
             const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
             const res = await fetch(url, {
                 method: 'PUT',
                 headers: {
-                    'Authorization': `Bearer ${githubToken}`,
+                    'Authorization': `Bearer ${GITHUB_TOKEN}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    message: `রুটিন আপডেট - ${new Date().toLocaleString('bn-BD')}`,
+                    message: `Routine updated - ${new Date().toLocaleString()}`,
                     content: content,
                     sha: sha,
-                    branch: BRANCH
+                    branch: 'main'
                 })
             });
             
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            
-            updateSyncStatus('cloud', '✅ গিটহাবে সেভ হয়েছে');
-            showToast('✅ ডাটা গিটহাবে সেভ হয়েছে! সব ডিভাইসে আপডেট হবে।');
-            return true;
-            
+            if (res.ok) {
+                updateSyncStatus('cloud', '✅ Saved to GitHub');
+                showToast('✅ Data synced to all devices!');
+                localStorage.setItem('wub_data', JSON.stringify(data));
+                return true;
+            }
         } catch(e) {
-            console.error('GitHub save error:', e);
-            updateSyncStatus('error', 'সেভ ব্যর্থ');
-            showToast('❌ গিটহাবে সেভ করতে পারেনি', true);
-            return false;
+            console.error(e);
+            localStorage.setItem('wub_data', JSON.stringify(data));
+            updateSyncStatus('error', 'Saved locally only');
+            showToast('⚠️ Could not save to GitHub, saved locally');
         }
+        return false;
     }
     
-    // UI আপডেট ফাংশন
-    function updateAllViews() {
-        if (adminLoggedIn) updateAdminTable();
-        if (currentStudentBatch) updateStudentView(currentStudentBatch);
-        if (currentTeacher) updateTeacherView();
-        updateTeacherDropdown();
+    function refreshAllViews() {
+        if (adminLoggedIn) renderAdminTable();
+        if (currentStudentBatch) renderStudentView(currentStudentBatch);
+        if (currentTeacher) loadTeacherClasses();
+        updateTeacherSelect();
     }
     
-    // স্টুডেন্ট ফাংশন
-    function getClasses(batch, day) {
+    // ============= Student Functions =============
+    function getClassesByBatchAndDay(batch, day) {
         return classData.filter(c => c.batch === batch && c.day === day);
     }
     
     function getTotalCredits(batch) {
-        let unique = new Map();
+        const unique = new Map();
         classData.filter(c => c.batch === batch).forEach(c => {
             if (!unique.has(c.code)) unique.set(c.code, c.credit);
         });
@@ -520,15 +516,15 @@
         return total;
     }
     
-    function updateStudentView(batch) {
+    function renderStudentView(batch) {
         const days = ['MON', 'TUE', 'WED', 'THU', 'SAT'];
-        const activeDays = days.filter(d => getClasses(batch, d).length > 0);
+        const activeDays = days.filter(d => getClassesByBatchAndDay(batch, d).length > 0);
         
         const totalCr = getTotalCredits(batch);
         const uniqueCourses = [...new Map(classData.filter(c => c.batch === batch).map(c => [c.code, {title: c.title, credit: c.credit}]))];
         
         document.getElementById('studentCreditCard').innerHTML = `
-            <strong><i class="fas fa-star"></i> মোট ক্রেডিট: ${totalCr}</strong>
+            <strong><i class="fas fa-star"></i> Total Credits: ${totalCr}</strong>
             <div class="credit-grid">
                 ${uniqueCourses.map(([code, info]) => `<div class="credit-item"><span>${info.title.substring(0,25)}</span><span class="credit-badge">${info.credit} Cr</span></div>`).join('')}
             </div>
@@ -544,25 +540,25 @@
             tab.onclick = () => {
                 document.querySelectorAll('#studentDayTabs .day-tab').forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
-                renderStudentClasses(batch, day);
+                renderClassesList(batch, day);
             };
             tabsDiv.appendChild(tab);
         });
         
-        if (activeDays.length) renderStudentClasses(batch, activeDays[0]);
+        if (activeDays.length) renderClassesList(batch, activeDays[0]);
         document.getElementById('studentBatchShow').innerHTML = batch;
     }
     
-    function renderStudentClasses(batch, day) {
-        const classes = getClasses(batch, day);
+    function renderClassesList(batch, day) {
+        const classes = getClassesByBatchAndDay(batch, day);
         const container = document.getElementById('studentClassList');
         if (classes.length === 0) {
-            container.innerHTML = '<div class="no-class">📭 এই দিনে কোন ক্লাস নেই</div>';
+            container.innerHTML = '<div class="class-item">📭 No classes on this day</div>';
             return;
         }
         classes.sort((a,b) => a.time.localeCompare(b.time));
         container.innerHTML = classes.map(c => `
-            <div class="class-item ${c.type === 'Lab' ? 'lab' : ''}" onclick="addToGoogleCalendar('${c.title}', '${c.time}', '${c.teacher}', '${c.room}')">
+            <div class="class-item ${c.type === 'Lab' ? 'lab' : ''}" onclick="addToCalendar('${c.title}', '${c.time}', '${c.teacher}', '${c.room}')">
                 <div class="time-badge">${c.time}</div>
                 <div style="flex:2">
                     <div class="course-code">${c.code}</div>
@@ -574,7 +570,7 @@
         `).join('');
     }
     
-    window.addToGoogleCalendar = function(title, time, teacher, room) {
+    window.addToCalendar = function(title, time, teacher, room) {
         const startTime = time.split('-')[0].trim();
         const endTime = time.split('-')[1].trim();
         const today = new Date();
@@ -585,22 +581,44 @@
         const endUrl = `${year}${month}${date}T${endTime.replace(/[^0-9]/g, '')}`;
         const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${startUrl}/${endUrl}&details=${encodeURIComponent('Teacher: '+teacher)}&location=${encodeURIComponent(room)}`;
         window.open(url, '_blank');
-        showToast('📅 গুগল ক্যালেন্ডারে যোগ হচ্ছে');
+        showToast('📅 Adding to Google Calendar');
     };
     
-    function initStudent(batch) {
+    function addAllToCalendar() {
+        const activeDay = document.querySelector('#studentDayTabs .day-tab.active');
+        if (!activeDay) return;
+        const day = activeDay.innerText;
+        const classes = getClassesByBatchAndDay(currentStudentBatch, day);
+        classes.forEach(c => {
+            addToCalendar(c.title, c.time, c.teacher, c.room);
+        });
+        showToast(`Adding ${classes.length} classes to calendar`);
+    }
+    
+    function studentLogin() {
+        const batch = document.getElementById('studentBatchInput').value.trim().toUpperCase();
+        if (!batch.match(/^[8-9][0-9]A$/)) {
+            showToast('Enter valid batch (85A-96A)', true);
+            return;
+        }
         currentStudentBatch = batch;
         document.getElementById('studentDashboard').style.display = 'block';
         document.getElementById('studentLoginCard').style.display = 'none';
-        updateStudentView(batch);
-        showToast(`✅ ${batch} লোড হয়েছে`);
+        renderStudentView(batch);
+        showToast(`✅ ${batch} loaded`);
     }
     
-    // টিচার ফাংশন
-    function updateTeacherDropdown() {
-        const teachers = [...new Set(classData.map(c => c.teacher))].sort();
+    function studentLogout() {
+        currentStudentBatch = null;
+        document.getElementById('studentDashboard').style.display = 'none';
+        document.getElementById('studentLoginCard').style.display = 'block';
+    }
+    
+    // ============= Teacher Functions =============
+    function updateTeacherSelect() {
+        const teachers = getAllTeachers();
         const select = document.getElementById('teacherSelect');
-        select.innerHTML = '<option value="">-- সিলেক্ট করুন --</option>';
+        select.innerHTML = '<option value="">-- Select Teacher --</option>';
         teachers.forEach(t => {
             const option = document.createElement('option');
             option.value = t;
@@ -613,42 +631,60 @@
         return classData.filter(c => c.teacher === teacher);
     }
     
-    function updateTeacherView() {
+    function loadTeacherClasses() {
         if (!currentTeacher) return;
-        const classes = getTeacherClasses(currentTeacher);
+        let classes = getTeacherClasses(currentTeacher);
         const batchFilter = document.getElementById('teacherBatchFilter').value;
         const dayFilter = document.getElementById('teacherDayFilter').value;
         
-        let filtered = classes;
-        if (batchFilter) filtered = filtered.filter(c => c.batch === batchFilter);
-        if (dayFilter) filtered = filtered.filter(c => c.day === dayFilter);
+        if (batchFilter) classes = classes.filter(c => c.batch === batchFilter);
+        if (dayFilter) classes = classes.filter(c => c.day === dayFilter);
         
         document.getElementById('teacherClassCount').innerHTML = classes.length;
         document.getElementById('teacherBatchCount').innerHTML = [...new Set(classes.map(c => c.batch))].length;
         document.getElementById('teacherNameShow').innerHTML = currentTeacher;
         
         const container = document.getElementById('teacherClassList');
-        if (filtered.length === 0) {
-            container.innerHTML = '<div class="no-class">📭 কোন ক্লাস খুঁজে পাওয়া যায়নি</div>';
+        if (classes.length === 0) {
+            container.innerHTML = '<div class="class-item">📭 No classes found</div>';
             return;
         }
-        filtered.sort((a,b) => a.day.localeCompare(b.day) || a.time.localeCompare(b.time));
-        container.innerHTML = filtered.map(c => `
+        classes.sort((a,b) => a.day.localeCompare(b.day) || a.time.localeCompare(b.time));
+        container.innerHTML = classes.map(c => `
             <div class="class-item ${c.type === 'Lab' ? 'lab' : ''}">
                 <div class="time-badge">${c.time}</div>
                 <div style="flex:2">
                     <div class="course-code">${c.code}</div>
                     <div class="title">${c.title} (${c.credit} Cr)</div>
-                    <div><strong>ব্যাচ:</strong> ${c.batch} | <strong>রুম:</strong> ${c.room}</div>
+                    <div><strong>Batch:</strong> ${c.batch} | <strong>Room:</strong> ${c.room}</div>
                 </div>
                 <div class="room">${c.day}</div>
             </div>
         `).join('');
     }
     
-    // এডমিন ফাংশন
-    function updateAdminTable() {
-        const tbody = document.getElementById('adminTable');
+    function teacherLogin() {
+        const teacher = document.getElementById('teacherSelect').value;
+        if (!teacher) {
+            showToast('Please select a teacher', true);
+            return;
+        }
+        currentTeacher = teacher;
+        document.getElementById('teacherDashboard').style.display = 'block';
+        document.getElementById('teacherLoginCard').style.display = 'none';
+        loadTeacherClasses();
+        showToast(`👨‍🏫 Welcome ${teacher}`);
+    }
+    
+    function teacherLogout() {
+        currentTeacher = null;
+        document.getElementById('teacherDashboard').style.display = 'none';
+        document.getElementById('teacherLoginCard').style.display = 'block';
+    }
+    
+    // ============= Admin Functions =============
+    function renderAdminTable() {
+        const tbody = document.getElementById('adminTableBody');
         tbody.innerHTML = '';
         classData.forEach((c, idx) => {
             const row = tbody.insertRow();
@@ -659,39 +695,22 @@
             row.insertCell(4).innerHTML = c.title.substring(0,20);
             row.insertCell(5).innerHTML = c.teacher.substring(0,15);
             row.insertCell(6).innerHTML = c.room;
-            row.insertCell(7).innerHTML = c.type;
-            row.insertCell(8).innerHTML = c.credit;
-            const actionCell = row.insertCell(9);
-            const editBtn = document.createElement('button');
-            editBtn.innerHTML = '<i class="fas fa-edit"></i>';
-            editBtn.className = 'edit-btn';
-            editBtn.onclick = () => openEditModal(idx);
-            const delBtn = document.createElement('button');
-            delBtn.innerHTML = '<i class="fas fa-trash"></i>';
-            delBtn.className = 'delete-btn';
-            delBtn.onclick = async () => {
-                if (confirm('ডিলিট করবেন?')) {
-                    classData.splice(idx, 1);
-                    await saveToGitHub(classData);
-                    updateAdminTable();
-                    if (currentStudentBatch) updateStudentView(currentStudentBatch);
-                    if (currentTeacher) updateTeacherView();
-                    showToast('✅ ডিলিট হয়েছে');
-                }
-            };
-            actionCell.appendChild(editBtn);
-            actionCell.appendChild(delBtn);
+            const actionCell = row.insertCell(7);
+            actionCell.innerHTML = `
+                <button class="edit-btn" onclick="editClass(${idx})">✏️ Edit</button>
+                <button class="delete-btn" onclick="deleteClass(${idx})">🗑️ Delete</button>
+            `;
         });
     }
     
-    function openEditModal(index) {
-        const c = classData[index];
+    window.editClass = async function(idx) {
+        const c = classData[idx];
         const modal = document.createElement('div');
         modal.className = 'modal-overlay';
         modal.innerHTML = `
             <div class="edit-modal">
-                <h3>✏️ ক্লাস এডিট করুন</h3>
-                <input type="text" id="editBatch" value="${c.batch}" placeholder="ব্যাচ">
+                <h3>✏️ Edit Class</h3>
+                <input type="text" id="editBatch" value="${c.batch}" placeholder="Batch">
                 <select id="editDay">
                     <option ${c.day==='MON'?'selected':''}>MON</option>
                     <option ${c.day==='TUE'?'selected':''}>TUE</option>
@@ -699,27 +718,27 @@
                     <option ${c.day==='THU'?'selected':''}>THU</option>
                     <option ${c.day==='SAT'?'selected':''}>SAT</option>
                 </select>
-                <input type="text" id="editTime" value="${c.time}" placeholder="সময়">
-                <input type="text" id="editCode" value="${c.code}" placeholder="কোড">
-                <input type="text" id="editTitle" value="${c.title}" placeholder="টাইটেল">
-                <input type="text" id="editTeacher" value="${c.teacher}" placeholder="শিক্ষক">
-                <input type="text" id="editRoom" value="${c.room}" placeholder="রুম">
+                <input type="text" id="editTime" value="${c.time}" placeholder="Time">
+                <input type="text" id="editCode" value="${c.code}" placeholder="Code">
+                <input type="text" id="editTitle" value="${c.title}" placeholder="Title">
+                <input type="text" id="editTeacher" value="${c.teacher}" placeholder="Teacher">
+                <input type="text" id="editRoom" value="${c.room}" placeholder="Room">
                 <select id="editType">
                     <option ${c.type==='Theory'?'selected':''}>Theory</option>
                     <option ${c.type==='Lab'?'selected':''}>Lab</option>
                 </select>
-                <input type="number" id="editCredit" value="${c.credit}" placeholder="ক্রেডিট">
+                <input type="number" id="editCredit" value="${c.credit}" placeholder="Credit">
                 <div style="text-align:center; margin-top:15px;">
-                    <button class="btn-success" id="saveEditBtn">সংরক্ষণ</button>
-                    <button class="btn-danger" id="cancelEditBtn">বাতিল</button>
+                    <button class="btn-success" id="saveEditBtn">Save</button>
+                    <button class="btn-danger" id="cancelEditBtn">Cancel</button>
                 </div>
             </div>
         `;
         document.body.appendChild(modal);
         
         document.getElementById('saveEditBtn').onclick = async () => {
-            classData[index] = {
-                batch: document.getElementById('editBatch').value,
+            classData[idx] = {
+                batch: document.getElementById('editBatch').value.toUpperCase(),
                 day: document.getElementById('editDay').value,
                 time: document.getElementById('editTime').value,
                 code: document.getElementById('editCode').value,
@@ -730,18 +749,29 @@
                 credit: parseInt(document.getElementById('editCredit').value) || 3
             };
             await saveToGitHub(classData);
-            updateAdminTable();
-            if (currentStudentBatch) updateStudentView(currentStudentBatch);
-            if (currentTeacher) updateTeacherView();
-            showToast('✅ আপডেট হয়েছে');
+            renderAdminTable();
+            if (currentStudentBatch) renderStudentView(currentStudentBatch);
+            if (currentTeacher) loadTeacherClasses();
+            showToast('✅ Class updated');
             modal.remove();
         };
         document.getElementById('cancelEditBtn').onclick = () => modal.remove();
-    }
+    };
+    
+    window.deleteClass = async function(idx) {
+        if (confirm('Delete this class?')) {
+            classData.splice(idx, 1);
+            await saveToGitHub(classData);
+            renderAdminTable();
+            if (currentStudentBatch) renderStudentView(currentStudentBatch);
+            if (currentTeacher) loadTeacherClasses();
+            showToast('✅ Class deleted');
+        }
+    };
     
     async function addNewClass() {
         const newClass = {
-            batch: document.getElementById('newBatch').value,
+            batch: document.getElementById('newBatch').value.trim().toUpperCase(),
             day: document.getElementById('newDay').value,
             time: document.getElementById('newTime').value,
             code: document.getElementById('newCode').value,
@@ -752,15 +782,15 @@
             credit: parseInt(document.getElementById('newCredit').value) || 3
         };
         if (!newClass.batch || !newClass.code) {
-            showToast('ব্যাচ এবং কোড দিতে হবে', true);
+            showToast('Batch and Code are required', true);
             return;
         }
         classData.push(newClass);
         await saveToGitHub(classData);
-        updateAdminTable();
-        if (currentStudentBatch) updateStudentView(currentStudentBatch);
-        if (currentTeacher) updateTeacherView();
-        showToast('✅ নতুন ক্লাস যোগ হয়েছে');
+        renderAdminTable();
+        if (currentStudentBatch) renderStudentView(currentStudentBatch);
+        if (currentTeacher) loadTeacherClasses();
+        showToast('✅ New class added');
         
         document.getElementById('newBatch').value = '';
         document.getElementById('newCode').value = '';
@@ -769,123 +799,74 @@
         document.getElementById('newRoom').value = '';
     }
     
-    async function resetData() {
-        if (confirm('সব ডাটা ডিফল্টে রিসেট করবেন? সব ডিভাইসে পরিবর্তন যাবে।')) {
+    async function resetToDefault() {
+        if (confirm('Reset all data to original? This will sync to all devices.')) {
             classData = JSON.parse(JSON.stringify(originalMasterData));
             await saveToGitHub(classData);
-            updateAdminTable();
-            if (currentStudentBatch) updateStudentView(currentStudentBatch);
-            if (currentTeacher) updateTeacherView();
-            showToast('✅ ডিফল্ট ডাটা রিস্টোর হয়েছে');
+            renderAdminTable();
+            if (currentStudentBatch) renderStudentView(currentStudentBatch);
+            if (currentTeacher) loadTeacherClasses();
+            showToast('✅ Reset to default complete');
         }
     }
     
-    async function refreshData() {
+    async function syncWithGitHub() {
         await loadFromGitHub();
-        updateAdminTable();
-        if (currentStudentBatch) updateStudentView(currentStudentBatch);
-        if (currentTeacher) updateTeacherView();
-        showToast('✅ গিটহাব থেকে রিফ্রেশ করা হয়েছে');
+        showToast('✅ Synced with GitHub');
     }
     
-    // ইভেন্ট লিসেনার
-    document.getElementById('studentLoginBtn').onclick = () => {
-        const batch = document.getElementById('studentBatchInput').value.trim().toUpperCase();
-        if (!/^[8-9][0-9]A$/.test(batch)) {
-            showToast('সঠিক ব্যাচ দিন (85A-96A)', true);
-            return;
-        }
-        initStudent(batch);
-    };
-    
-    document.getElementById('studentLogoutBtn').onclick = () => {
-        document.getElementById('studentDashboard').style.display = 'none';
-        document.getElementById('studentLoginCard').style.display = 'block';
-        currentStudentBatch = null;
-    };
-    
-    document.getElementById('studentCalendarBtn').onclick = () => {
-        const batch = currentStudentBatch;
-        const activeDay = document.querySelector('#studentDayTabs .day-tab.active');
-        if (!activeDay) return;
-        const day = activeDay.innerText;
-        const classes = getClasses(batch, day);
-        classes.forEach(c => {
-            window.addToGoogleCalendar(c.title, c.time, c.teacher, c.room);
-        });
-        showToast(`${classes.length} টি ক্লাস ক্যালেন্ডারে যোগ হচ্ছে`);
-    };
-    
-    document.getElementById('teacherLoginBtn').onclick = () => {
-        const teacher = document.getElementById('teacherSelect').value;
-        if (!teacher) {
-            showToast('শিক্ষক সিলেক্ট করুন', true);
-            return;
-        }
-        currentTeacher = teacher;
-        document.getElementById('teacherDashboard').style.display = 'block';
-        document.getElementById('teacherLoginCard').style.display = 'none';
-        updateTeacherView();
-        showToast(`👨‍🏫 স্বাগতম ${teacher}`);
-    };
-    
-    document.getElementById('teacherLogoutBtn').onclick = () => {
-        document.getElementById('teacherDashboard').style.display = 'none';
-        document.getElementById('teacherLoginCard').style.display = 'block';
-        currentTeacher = null;
-    };
-    
-    document.getElementById('teacherRefreshBtn').onclick = () => updateTeacherView();
-    document.getElementById('teacherBatchFilter').oninput = () => updateTeacherView();
-    document.getElementById('teacherDayFilter').onchange = () => updateTeacherView();
-    
-    document.getElementById('adminLoginBtn').onclick = () => {
+    function adminLogin() {
         const email = document.getElementById('adminEmail').value;
         const pass = document.getElementById('adminPass').value;
         if (email === ADMIN_EMAIL && pass === ADMIN_PASS) {
             adminLoggedIn = true;
             document.getElementById('adminDashboard').style.display = 'block';
             document.getElementById('adminLoginCard').style.display = 'none';
-            updateAdminTable();
-            showToast('👑 এডমিন লগইন সফল');
+            renderAdminTable();
+            showToast('👑 Admin login successful');
         } else {
-            showToast('ভুল ইমেইল বা পাসওয়ার্ড', true);
+            showToast('Invalid email or password', true);
         }
-    };
+    }
     
-    document.getElementById('adminLogoutBtn').onclick = () => {
+    function adminLogout() {
         adminLoggedIn = false;
         document.getElementById('adminDashboard').style.display = 'none';
         document.getElementById('adminLoginCard').style.display = 'block';
-    };
+    }
     
-    document.getElementById('addClassBtn').onclick = addNewClass;
-    document.getElementById('resetDataBtn').onclick = resetData;
-    document.getElementById('refreshDataBtn').onclick = refreshData;
+    // Initialize event listeners
+    function init() {
+        document.getElementById('studentLoginBtn').onclick = studentLogin;
+        document.getElementById('studentLogoutBtn').onclick = studentLogout;
+        document.getElementById('studentCalendarBtn').onclick = addAllToCalendar;
+        
+        document.getElementById('teacherLoginBtn').onclick = teacherLogin;
+        document.getElementById('teacherLogoutBtn').onclick = teacherLogout;
+        document.getElementById('teacherRefreshBtn').onclick = loadTeacherClasses;
+        document.getElementById('teacherBatchFilter').oninput = loadTeacherClasses;
+        document.getElementById('teacherDayFilter').onchange = loadTeacherClasses;
+        
+        document.getElementById('adminLoginBtn').onclick = adminLogin;
+        document.getElementById('adminLogoutBtn').onclick = adminLogout;
+        document.getElementById('addClassBtn').onclick = addNewClass;
+        document.getElementById('resetDataBtn').onclick = resetToDefault;
+        document.getElementById('syncGitHubBtn').onclick = syncWithGitHub;
+        
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById('studentPanel').classList.toggle('active', btn.dataset.mode === 'student');
+                document.getElementById('teacherPanel').classList.toggle('active', btn.dataset.mode === 'teacher');
+                document.getElementById('adminPanel').classList.toggle('active', btn.dataset.mode === 'admin');
+            };
+        });
+        
+        loadFromGitHub();
+    }
     
-    document.getElementById('saveTokenBtn').onclick = () => {
-        const token = document.getElementById('tokenInput').value.trim();
-        if (token && token.length > 20) {
-            saveToken(token);
-        } else {
-            showToast('সঠিক টোকেন দিন', true);
-        }
-    };
-    
-    // মোড স্যুইচ
-    document.querySelectorAll('.mode-btn').forEach(btn => {
-        btn.onclick = () => {
-            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            document.getElementById('studentPanel').classList.toggle('active', btn.dataset.mode === 'student');
-            document.getElementById('teacherPanel').classList.toggle('active', btn.dataset.mode === 'teacher');
-            document.getElementById('adminPanel').classList.toggle('active', btn.dataset.mode === 'admin');
-        };
-    });
-    
-    // শুরু করা
-    loadToken();
-    loadFromGitHub();
+    init();
 </script>
 </body>
 </html>
