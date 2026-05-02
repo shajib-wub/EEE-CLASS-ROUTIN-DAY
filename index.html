@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>WUB EEE | Google Sheets Auto-Sync | Cross-Browser Working</title>
+    <title>WUB EEE | GitHub Sync | Real-time Across All Devices</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -14,19 +14,28 @@
         .header h1 { font-size: 1.4rem; margin-bottom: 6px; }
         .header p { font-size: 0.7rem; opacity: 0.9; }
         .mode-selector { display: flex; justify-content: center; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
-        .mode-btn { background: white; color: #1f6392; border: 2px solid #1f6392; padding: 8px 18px; border-radius: 50px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 0.85rem; }
+        .mode-btn { background: white; color: #1f6392; border: 2px solid #1f6392; padding: 10px 20px; border-radius: 50px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 0.85rem; }
         .mode-btn.active { background: #1f6392; color: white; }
+        .mode-btn.teacher { border-color: #10b981; color: #10b981; }
+        .mode-btn.teacher.active { background: #10b981; color: white; border-color: #10b981; }
         .panel { display: none; animation: fadeIn 0.3s ease; }
         .panel.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
-        .login-card, .dashboard, .teacher-dashboard { background: white; border-radius: 24px; padding: 20px 16px; margin-bottom: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .login-card, .dashboard { background: white; border-radius: 24px; padding: 20px 16px; margin-bottom: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
         .login-card { text-align: center; }
-        .login-card input, .teacher-login select { padding: 12px 16px; margin: 8px 0; border-radius: 40px; border: 1px solid #cbd5e1; font-size: 1rem; width: 100%; max-width: 280px; outline: none; }
-        .login-card button, .btn { background: #1f6392; color: white; border: none; padding: 10px 22px; border-radius: 40px; font-weight: 600; cursor: pointer; margin: 8px; transition: 0.2s; font-size: 0.9rem; }
+        .login-card input, .login-card select { padding: 12px 16px; margin: 8px 0; border-radius: 40px; border: 1px solid #cbd5e1; font-size: 1rem; width: 100%; max-width: 280px; outline: none; background: white; }
+        .login-card button, .btn { background: #1f6392; color: white; border: none; padding: 12px 24px; border-radius: 40px; font-weight: 600; cursor: pointer; margin: 8px; transition: 0.2s; font-size: 0.9rem; }
         .dashboard { display: none; }
-        .teacher-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid #e2e8f0; }
-        .teacher-name { font-size: 1.2rem; font-weight: 700; color: #b45309; background: #fffbeb; padding: 6px 14px; border-radius: 40px; }
+        .batch-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid #e2e8f0; }
+        .batch-info { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .batch-name { font-size: 1.2rem; font-weight: 700; color: #1f6392; }
+        .total-credit { background: #e6f7ec; padding: 4px 12px; border-radius: 30px; color: #2b6e3c; font-weight: 600; font-size: 0.8rem; }
+        .credit-summary-card { background: #f0f9ff; border-radius: 20px; padding: 14px; margin-bottom: 18px; border: 1px solid #b9d9f0; max-height: 200px; overflow-y: auto; }
+        .credit-summary-card h3 { color: #1f6392; margin-bottom: 10px; font-size: 1rem; display: flex; align-items: center; gap: 6px; }
+        .credit-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+        .credit-item { background: white; border-radius: 30px; padding: 4px 12px; display: inline-flex; align-items: center; gap: 6px; font-size: 0.7rem; font-weight: 500; }
+        .credit-badge { background: #1f6392; color: white; border-radius: 20px; padding: 2px 8px; font-size: 0.65rem; }
         .day-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 14px; }
         .day-tab { background: #f1f5f9; padding: 6px 18px; border-radius: 40px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 0.8rem; }
         .day-tab.active { background: #1f6392; color: white; }
@@ -40,119 +49,188 @@
         .title { font-weight: 600; color: #334155; margin: 3px 0; font-size: 0.75rem; }
         .teacher { font-size: 0.7rem; color: #5588b1; }
         .room { background: #e6f7ec; padding: 3px 10px; border-radius: 30px; font-size: 0.7rem; font-weight: 600; color: #2b6e3c; }
-        .batch-badge { background: #e0f2fe; padding: 3px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; color: #0369a1; }
         .no-class { text-align: center; padding: 30px; color: #94a3b8; font-style: italic; font-size: 0.85rem; }
         .toast { position: fixed; bottom: 16px; left: 16px; right: 16px; background: #1e293b; color: white; padding: 12px 20px; border-radius: 50px; z-index: 2000; font-size: 0.8rem; text-align: center; animation: slideIn 0.3s ease; }
+        .toast.error { background: #dc2626; }
+        .toast.success { background: #10b981; }
         @keyframes slideIn { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         
-        .admin-login, .admin-dashboard { background: white; border-radius: 24px; padding: 20px 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-        .admin-login { text-align: center; }
-        .admin-login input { padding: 12px 16px; margin: 8px 0; border-radius: 40px; border: 1px solid #cbd5e1; width: 100%; max-width: 280px; outline: none; }
-        .admin-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+        .admin-login, .teacher-login, .admin-dashboard, .teacher-dashboard { background: white; border-radius: 24px; padding: 20px 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .admin-login, .teacher-login { text-align: center; }
+        .admin-login input, .teacher-login select { padding: 12px 16px; margin: 8px 0; border-radius: 40px; border: 1px solid #cbd5e1; width: 100%; max-width: 280px; outline: none; background: white; }
+        .teacher-login select { cursor: pointer; }
+        .admin-header, .teacher-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+        .admin-header h2, .teacher-header h2 { font-size: 1.1rem; }
         .stats { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
         .stat-card { background: linear-gradient(135deg, #1f6392, #0e4a6e); color: white; padding: 14px; border-radius: 18px; flex: 1; min-width: 120px; text-align: center; }
+        .stat-card.teacher-stat { background: linear-gradient(135deg, #10b981, #059669); }
         .stat-card h3 { font-size: 1.6rem; }
+        .stat-card p { font-size: 0.7rem; }
         .form-card { background: #f8fafc; padding: 16px; border-radius: 18px; margin-bottom: 18px; overflow-x: auto; }
         .data-table { width: 100%; border-collapse: collapse; background: white; border-radius: 16px; overflow: hidden; font-size: 0.7rem; }
         .data-table th, .data-table td { padding: 8px 6px; text-align: left; border-bottom: 1px solid #e2e8f0; }
         .data-table th { background: #1f6392; color: white; font-size: 0.7rem; }
+        .data-table.teacher-table th { background: #10b981; }
         .action-buttons { display: flex; gap: 10px; justify-content: center; margin-top: 12px; flex-wrap: wrap; }
-        .admin-form { background: #fff; padding: 16px; border-radius: 18px; margin-top: 16px; border: 1px solid #cbd5e1; }
+        .admin-form, .teacher-form { background: #fff; padding: 16px; border-radius: 18px; margin-top: 16px; border: 1px solid #cbd5e1; }
+        .admin-form h4, .teacher-form h4 { margin-bottom: 12px; color: #1f6392; font-size: 0.9rem; }
+        .teacher-form h4 { color: #10b981; }
+        .admin-form input, .admin-form select, .teacher-form input, .teacher-form select { padding: 8px 12px; border-radius: 30px; border: 1px solid #cbd5e1; font-size: 0.8rem; margin: 4px; }
         .edit-btn, .delete-btn { padding: 4px 10px; border-radius: 20px; font-size: 0.65rem; cursor: pointer; margin: 0 2px; border: none; }
         .edit-btn { background: #f59e0b; color: white; }
         .delete-btn { background: #dc2626; color: white; }
+        footer { text-align: center; margin-top: 20px; font-size: 0.6rem; color: #5a6e8a; }
+        .notification-bell { display: inline-flex; align-items: center; gap: 5px; background: #f1f5f9; padding: 4px 10px; border-radius: 30px; cursor: pointer; font-size: 0.7rem; }
+        .popup-alert { position: fixed; top: 12px; left: 12px; right: 12px; background: linear-gradient(135deg, #1f6392, #0e4a6e); color: white; padding: 12px 16px; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); z-index: 10000; animation: slideDown 0.3s ease; font-size: 0.8rem; border-left: 4px solid #f59e0b; }
+        .popup-alert i { margin-right: 8px; }
+        @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .scrollable-table { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 10001; display: flex; align-items: center; justify-content: center; }
-        .edit-modal { background: white; border-radius: 24px; padding: 20px; width: 90%; max-width: 500px; max-height: 85vh; overflow-y: auto; }
-        .credit-summary-card { background: #f0f9ff; border-radius: 20px; padding: 14px; margin-bottom: 18px; }
-        .credit-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
-        .credit-item { background: white; border-radius: 30px; padding: 4px 12px; display: inline-flex; align-items: center; gap: 6px; font-size: 0.7rem; font-weight: 500; }
-        .credit-badge { background: #1f6392; color: white; border-radius: 20px; padding: 2px 8px; font-size: 0.65rem; }
         @media (max-width: 550px) {
             .class-item { flex-direction: column; align-items: flex-start; }
             .time-badge { width: 100%; text-align: left; }
+            .admin-form input, .admin-form select, .teacher-form input, .teacher-form select { width: calc(50% - 10px); }
         }
-        .notification-bell { display: inline-flex; align-items: center; gap: 5px; background: #f1f5f9; padding: 4px 10px; border-radius: 30px; cursor: pointer; font-size: 0.7rem; }
-        .popup-alert { position: fixed; top: 12px; left: 12px; right: 12px; background: linear-gradient(135deg, #1f6392, #0e4a6e); color: white; padding: 12px 16px; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); z-index: 10000; animation: slideDown 0.3s ease; font-size: 0.8rem; border-left: 4px solid #f59e0b; }
-        @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .online-badge { background: #10b981; color: white; padding: 3px 10px; border-radius: 20px; font-size: 0.65rem; margin-left: 8px; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
-        .sync-status { background: #10b98120; color: #10b981; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; }
-        .sync-error { background: #ef444420; color: #dc2626; }
-        .setup-card { background: #fef3c7; border: 1px solid #f59e0b; border-radius: 16px; padding: 12px; margin-bottom: 16px; }
-        .sheet-url-input { width: 100%; padding: 8px; border-radius: 20px; border: 1px solid #cbd5e1; margin: 5px 0; font-size: 0.7rem; }
+        .teacher-welcome { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 15px; border-radius: 16px; margin-bottom: 18px; }
+        .teacher-welcome h3 { margin-bottom: 5px; }
+        .teacher-filter { margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        .teacher-filter select, .teacher-filter input { padding: 8px 12px; border-radius: 30px; border: 1px solid #cbd5e1; }
+        
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 10001; display: flex; align-items: center; justify-content: center; }
+        .edit-modal { background: white; border-radius: 24px; padding: 20px; width: 90%; max-width: 500px; max-height: 85vh; overflow-y: auto; }
+        .edit-modal h3 { color: #1f6392; margin-bottom: 15px; }
+        .edit-modal input, .edit-modal select { width: 100%; padding: 10px 14px; margin: 8px 0; border-radius: 30px; border: 1px solid #cbd5e1; font-size: 0.9rem; }
+        .edit-modal button { padding: 10px 20px; margin: 8px 5px; border-radius: 30px; border: none; cursor: pointer; }
+        .modal-save { background: #10b981; color: white; }
+        .modal-cancel { background: #64748b; color: white; }
+        
+        .github-status { position: fixed; bottom: 10px; right: 10px; background: #24292e; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.6rem; z-index: 1000; cursor: pointer; }
+        .github-status.syncing { background: #f59e0b; animation: pulse 1s infinite; }
+        .github-status.success { background: #10b981; }
+        .github-status.error { background: #dc2626; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        
+        .setup-guide { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 15px 0; border-radius: 12px; font-size: 0.75rem; }
+        .setup-guide h4 { color: #92400e; margin-bottom: 8px; }
+        .setup-guide code { background: #fff; padding: 2px 6px; border-radius: 6px; font-family: monospace; }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header">
         <h1><i class="fas fa-microchip"></i> WUB - EEE</h1>
-        <p><i class="fas fa-cloud-upload-alt"></i> Google Sheets Auto-Sync | All Browsers Share Same Data</p>
+        <p>Complete Routine | GitHub Cloud Sync | All Devices Share Same Data</p>
     </div>
     <div class="mode-selector">
         <button class="mode-btn active" data-mode="student"><i class="fas fa-user-graduate"></i> Student</button>
-        <button class="mode-btn" data-mode="teacher"><i class="fas fa-chalkboard-user"></i> Teacher</button>
+        <button class="mode-btn teacher" data-mode="teacher"><i class="fas fa-chalkboard-user"></i> Teacher</button>
         <button class="mode-btn" data-mode="admin"><i class="fas fa-user-shield"></i> Admin</button>
+    </div>
+
+    <!-- Setup Guide (shows only when GitHub not configured) -->
+    <div id="setupGuide" class="setup-guide" style="display:none;">
+        <h4><i class="fab fa-github"></i> 🔧 GitHub Setup Required for Cross-Device Sync</h4>
+        <p>To make all users see the same data, please configure GitHub:</p>
+        <ol style="margin-left: 20px; margin-top: 8px;">
+            <li>Go to <strong>https://github.com/settings/tokens</strong></li>
+            <li>Click <strong>"Generate new token (classic)"</strong></li>
+            <li>Select <strong>"repo"</strong> scope</li>
+            <li>Copy the generated token</li>
+            <li>Open browser console (F12) and run: <code>configureGitHub("your_username", "repo_name", "token")</code></li>
+        </ol>
+        <p style="margin-top: 8px;"><i class="fas fa-info-circle"></i> After setup, all changes will sync to ALL devices automatically!</p>
     </div>
 
     <!-- Student Panel -->
     <div id="studentPanel" class="panel active">
         <div id="studentLoginCard" class="login-card">
             <i class="fas fa-user-graduate" style="font-size: 1.8rem; color: #1f6392;"></i>
-            <h3>📚 Select Your Batch</h3>
+            <h3 style="margin: 8px 0;">📚 Select Your Batch</h3>
             <input type="text" id="studentBatch" placeholder="Batch Code (85A - 96A)" value="96A">
             <button id="studentLoginBtn"><i class="fas fa-calendar-alt"></i> Show Routine</button>
-            <p style="margin-top:12px; font-size:0.7rem;">✅ Auto-notifications | <span id="studentSyncStatus"><i class="fas fa-cloud-upload-alt"></i> Google Sheets Sync</span></p>
-            <div class="notification-bell" onclick="requestNotificationPermission()" style="margin-top:8px; display:inline-flex;"><i class="fas fa-bell"></i> Enable Notifications</div>
+            <p style="margin-top:12px; font-size:0.7rem;">✅ Batches: 85A to 96A | Popup notifications 15 min before class</p>
+            <p style="margin-top:8px; font-size:0.65rem; color:#10b981;"><i class="fab fa-github"></i> <strong>GitHub Cloud Sync:</strong> All users see same data!</p>
         </div>
         <div id="studentDashboard" class="dashboard">
             <div class="batch-header">
                 <div class="batch-info">
                     <span class="batch-name"><i class="fas fa-id-card"></i> <span id="studentBatchDisplay"></span></span>
                     <span class="total-credit" id="studentCreditDisplay">⭐ -- Cr</span>
-                    <span class="online-badge"><i class="fas fa-cloud-upload-alt"></i> Cloud Sync</span>
+                    <div class="notification-bell" onclick="requestNotificationPermission()">
+                        <i class="fas fa-bell"></i> <span>Alert</span>
+                    </div>
                 </div>
-                <button id="studentLogoutBtn" class="btn" style="background:#64748b;">Change Batch</button>
+                <button id="studentLogoutBtn" class="btn" style="background:#64748b; padding:8px 16px; font-size:0.75rem;">Change Batch</button>
             </div>
             <div class="credit-summary-card">
-                <h3><i class="fas fa-list-check"></i> Course Credit Summary</h3>
+                <h3><i class="fas fa-list-check"></i> Course Credit Summary <span style="font-size:0.6rem; background:#10b98120; padding:2px 8px; border-radius:20px;"><i class="fab fa-github"></i> Cloud Sync</span></h3>
                 <div id="creditSummaryList" class="credit-grid">Loading...</div>
             </div>
             <div class="day-tabs" id="studentDayTabs"></div>
             <div id="studentClassList" class="class-list"></div>
-            <button id="addToCalendarBtn" class="btn" style="background:#34a853;"><i class="fab fa-google"></i> 📅 Add Today's Classes</button>
-            <footer>📌 Admin changes appear on ALL browsers automatically via Google Sheets</footer>
+            <div class="action-buttons">
+                <button id="addToCalendarBtn" class="btn calendar-btn" style="background:#34a853;"><i class="fab fa-google"></i> 📅 Add Today's Classes</button>
+            </div>
+            <footer>📌 ক্লাসে ক্লিক করে Google Calendar-এ যোগ করুন</footer>
         </div>
     </div>
 
     <!-- Teacher Panel -->
     <div id="teacherPanel" class="panel">
-        <div id="teacherLoginCard" class="login-card">
-            <i class="fas fa-chalkboard-user" style="font-size: 1.8rem; color:#b45309;"></i>
-            <h3>👩‍🏫 Teacher Login</h3>
-            <select id="teacherNameSelect" style="width:100%; max-width:280px; padding:12px 16px; border-radius:40px;">
-                <option value="">-- Select Teacher Name --</option>
+        <div id="teacherLoginCard" class="teacher-login">
+            <i class="fas fa-chalkboard-user" style="font-size: 1.8rem; color: #10b981;"></i>
+            <h3 style="margin: 8px 0;">👨‍🏫 Select Your Name</h3>
+            <select id="teacherNameSelect">
+                <option value="">-- Select Teacher --</option>
             </select>
-            <button id="teacherLoginBtn"><i class="fas fa-sign-in-alt"></i> View My Classes</button>
-            <p style="font-size:0.7rem; margin-top:8px;"><span id="teacherSyncStatus"><i class="fas fa-cloud-upload-alt"></i> Google Sheets Sync</span></p>
+            <button id="teacherLoginBtn" style="background:#10b981;"><i class="fas fa-sign-in-alt"></i> Enter Dashboard</button>
         </div>
-        <div id="teacherDashboard" class="dashboard" style="display:none;">
-            <div class="teacher-header">
-                <div class="teacher-info">
-                    <span class="teacher-name"><i class="fas fa-user-graduate"></i> <span id="teacherNameDisplay"></span></span>
-                    <span class="total-credit" id="teacherClassesCount">📖 0 classes</span>
-                    <span class="online-badge"><i class="fas fa-cloud-upload-alt"></i> Cloud Sync</span>
+        <div id="teacherDashboard" style="display:none;">
+            <div class="teacher-dashboard">
+                <div class="teacher-header">
+                    <h2><i class="fas fa-chalkboard-user"></i> Teacher Panel - <span id="teacherName">Teacher</span></h2>
+                    <button id="teacherLogoutBtn" class="btn" style="background:#64748b; padding:8px 16px;">Logout</button>
                 </div>
-                <button id="teacherLogoutBtn" class="btn" style="background:#64748b;">Logout</button>
+                
+                <div class="teacher-welcome">
+                    <h3><i class="fas fa-greeting"></i> Welcome, <span id="welcomeTeacherName">Teacher</span>!</h3>
+                    <p>Here are all your assigned classes. Changes made by Admin appear instantly.</p>
+                </div>
+                
+                <div class="stats">
+                    <div class="stat-card teacher-stat"><i class="fas fa-chalkboard"></i><h3 id="teacherClassCount">0</h3><p>My Classes</p></div>
+                    <div class="stat-card teacher-stat"><i class="fas fa-users"></i><h3 id="teacherBatchCount">0</h3><p>Batches</p></div>
+                    <div class="stat-card teacher-stat"><i class="fas fa-clock"></i><h3 id="teacherWeeklyHours">0</h3><p>Weekly Hours</p></div>
+                </div>
+                
+                <div class="teacher-filter">
+                    <input type="text" id="teacherBatchFilter" placeholder="Filter by Batch (85A-96A)" style="flex:1;">
+                    <select id="teacherDayFilter">
+                        <option value="">All Days</option>
+                        <option value="MON">Monday</option>
+                        <option value="TUE">Tuesday</option>
+                        <option value="WED">Wednesday</option>
+                        <option value="THU">Thursday</option>
+                        <option value="SAT">Saturday</option>
+                    </select>
+                    <button id="teacherRefreshBtn" style="background:#10b981;"><i class="fas fa-sync-alt"></i> Refresh</button>
+                </div>
+                
+                <div class="form-card">
+                    <h3 style="font-size:0.9rem;">📋 My Assigned Classes <span style="font-size:0.7rem; background:#10b98120; padding:2px 8px; border-radius:20px; margin-left:8px;"><i class="fab fa-github"></i> Live Cloud Sync</span></h3>
+                    <div class="scrollable-table">
+                        <table class="data-table teacher-table">
+                            <thead>
+                                <tr><th>Batch</th><th>Day</th><th>Time</th><th>Code</th><th>Course</th><th>Room</th><th>Type</th><th>Cr</th><th>Actions</th></tr>
+                            </thead>
+                            <tbody id="teacherTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="action-buttons">
+                        <button id="teacherReportBtn" style="background:#10b981;"><i class="fas fa-download"></i> My Schedule Report</button>
+                        <button id="teacherRequestBtn" style="background:#f59e0b;"><i class="fas fa-envelope"></i> Request Change to Admin</button>
+                    </div>
+                </div>
             </div>
-            <div class="credit-summary-card" style="background:#fff7ed; border:1px solid #fed7aa;">
-                <h3><i class="fas fa-chalkboard"></i> Your Classes (All Batches)</h3>
-                <div id="teacherSummaryInfo" style="font-size:0.75rem; margin-bottom:8px;">📌 Click any class to add to Google Calendar</div>
-            </div>
-            <div class="day-tabs" id="teacherDayTabs"></div>
-            <div id="teacherClassList" class="class-list"></div>
-            <button id="teacherAddTodayBtn" class="btn" style="background:#34a853;"><i class="fab fa-google"></i> 📅 Add Today's Classes to Calendar</button>
-            <footer>✅ Admin changes sync automatically via Google Sheets</footer>
         </div>
     </div>
 
@@ -160,67 +238,87 @@
     <div id="adminPanel" class="panel">
         <div id="adminLoginCard" class="admin-login">
             <i class="fas fa-user-shield" style="font-size: 1.8rem;"></i>
-            <h3>🔐 Admin Login</h3>
-            <input type="email" id="adminEmail" placeholder="Admin Email" value="">
-            <input type="password" id="adminPassword" placeholder="Password" value="">
+            <h3 style="margin: 8px 0;">🔐 Admin Access</h3>
+            <input type="email" id="adminEmail" placeholder="Email" autocomplete="off">
+            <input type="password" id="adminPassword" placeholder="Password" autocomplete="off">
             <button id="adminLoginBtn"><i class="fas fa-sign-in-alt"></i> Login</button>
         </div>
         <div id="adminDashboard" style="display:none;">
             <div class="admin-dashboard">
-                <div class="admin-header"><h2><i class="fas fa-user-shield"></i> Admin Panel <span class="online-badge"><i class="fas fa-cloud-upload-alt"></i> Google Sheets Sync</span></h2><button id="adminLogoutBtn" class="btn">Logout</button></div>
-                
-                <!-- Google Sheets Setup Card -->
-                <div id="sheetsSetupCard" class="setup-card">
-                    <i class="fab fa-google"></i> <strong>🔧 Google Sheets Setup (Free & No Token Needed!)</strong><br>
-                    <ol style="margin-left: 20px; margin-top: 5px; margin-bottom: 8px; font-size:0.7rem;">
-                        <li>Go to <a href="https://sheets.new" target="_blank">sheets.new</a> (Create new Google Sheet)</li>
-                        <li>Click <strong>File → Share → Publish to web</strong></li>
-                        <li>Select <strong>"Entire Document"</strong> and <strong>"CSV"</strong> format</li>
-                        <li>Click <strong>"Publish"</strong> → Copy the link</li>
-                        <li>Paste the link below and click "Enable Cloud Sync"</li>
-                    </ol>
-                    <input type="text" id="sheetUrl" class="sheet-url-input" placeholder="Paste Google Sheets CSV export URL here">
-                    <button id="saveSheetsConfigBtn" style="background:#10b981; padding:8px 16px; border-radius:20px;"><i class="fab fa-google"></i> Enable Cloud Sync</button>
-                    <button id="useLocalOnlyBtn" style="background:#6b7280; padding:8px 16px; border-radius:20px;">Local Only</button>
-                    <div id="syncStatusDisplay" style="margin-top:8px;"></div>
-                </div>
-                
+                <div class="admin-header"><h2><i class="fas fa-user-shield"></i> Admin Panel - Full Control <span style="font-size:0.7rem; background:#10b98120; padding:2px 8px; border-radius:20px; margin-left:8px;"><i class="fab fa-github"></i> Changes sync to all devices</span></h2><button id="adminLogoutBtn" class="btn" style="padding:8px 16px;">Logout</button></div>
                 <div class="stats"><div class="stat-card"><i class="fas fa-chalkboard"></i><h3 id="totalClasses">0</h3><p>Total Classes</p></div></div>
                 
                 <div class="admin-form">
-                    <h4><i class="fas fa-plus-circle"></i> Add New Class (Syncs to ALL browsers)</h4>
+                    <h4><i class="fas fa-plus-circle"></i> Add New Class (Syncs to GitHub → All Devices)</h4>
                     <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-                        <input type="text" id="newBatch" placeholder="Batch" style="width:75px;">
+                        <input type="text" id="newBatch" placeholder="Batch (85A-96A)" style="width:85px;">
                         <select id="newDay"><option>MON</option><option>TUE</option><option>WED</option><option>THU</option><option>SAT</option></select>
-                        <input type="text" id="newTime" placeholder="09:30am-11:10am" style="width:120px;">
-                        <input type="text" id="newCode" placeholder="Code" style="width:90px;">
-                        <input type="text" id="newTitle" placeholder="Title" style="width:120px;">
-                        <input type="text" id="newTeacher" placeholder="Teacher" style="width:110px;">
-                        <input type="text" id="newRoom" placeholder="Room" style="width:60px;">
+                        <input type="text" id="newTime" placeholder="09:30am-11:10am" style="width:130px;">
+                        <input type="text" id="newCode" placeholder="Code" style="width:100px;">
+                        <input type="text" id="newTitle" placeholder="Title" style="width:130px;">
+                        <input type="text" id="newTeacher" placeholder="Teacher" style="width:120px;">
+                        <input type="text" id="newRoom" placeholder="Room" style="width:65px;">
                         <select id="newType"><option>Theory</option><option>Lab</option></select>
-                        <input type="number" id="newCredit" placeholder="Cr" style="width:50px;">
-                        <button id="addClassBtn" style="background:#10b981;">➕ Add</button>
+                        <input type="number" id="newCredit" placeholder="Cr" step="1" style="width:55px;">
+                        <input type="text" id="newDuration" placeholder="Dur" value="100 min" style="width:80px;">
+                        <button id="addClassBtn" style="background:#10b981; padding:8px 16px;">➕ Add</button>
                     </div>
                 </div>
 
                 <div class="form-card">
-                    <h3>📋 All Classes (Edit/Delete → Syncs to ALL browsers)</h3>
+                    <h3 style="font-size:0.9rem;">📋 All Classes</h3>
                     <div class="scrollable-table">
-                        <table class="data-table"><thead><tr><th>Batch</th><th>Day</th><th>Time</th><th>Code</th><th>Course</th><th>Teacher</th><th>Room</th><th>Type</th><th>Cr</th><th>Dur</th><th>Actions</th></td></thead><tbody id="adminTableBody"></tbody></table>
+                        <table class="data-table">
+                            <thead><tr><th>Batch</th><th>Day</th><th>Time</th><th>Code</th><th>Course</th><th>Teacher</th><th>Room</th><th>Type</th><th>Cr</th><th>Dur</th><th>Actions</th></tr></thead>
+                            <tbody id="adminTableBody"></tbody>
+                        </table>
                     </div>
-                    <div style="margin-top:10px;">
-                        <button id="forceSyncBtn" style="background:#3b82f6;"><i class="fab fa-google"></i> Force Sync Now</button>
-                        <button id="exportBackupBtn" style="background:#6b7280;"><i class="fas fa-download"></i> Export Backup</button>
-                        <button id="resetDefaultBtn" style="background:#f97316;"><i class="fas fa-undo-alt"></i> Reset to Original</button>
-                    </div>
+                    <div class="action-buttons"><button id="exportFullBtn"><i class="fas fa-download"></i> Export JSON</button> <button id="resetDefaultBtn" style="background:#f97316;"><i class="fas fa-undo-alt"></i> Reset to Original</button> <button id="forceSyncBtn" style="background:#24292e;"><i class="fab fa-github"></i> Force Sync</button></div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<div class="github-status" id="githubStatus"><i class="fab fa-github"></i> Checking setup...</div>
 
 <script>
-    // ===================== COMPLETE MASTER DATA ==================
+    // ==================== ADMIN CREDENTIALS (HIDDEN) ====================
+    const ADMIN_EMAIL = "sharif.uddin@eee.wub.edu.bd";
+    const ADMIN_PASS = "Sr@123580Sr@";
+    
+    // ==================== GITHUB CONFIGURATION ====================
+    // সেটআপ করার জন্য নিচের ফাঁকা জায়গায় আপনার তথ্য দিন
+    let GITHUB_CONFIG = {
+        owner: "",      // ← আপনার GitHub username দিন
+        repo: "",       // ← আপনার repository name দিন  
+        path: "wub-routine-data.json",
+        branch: "main",
+        token: ""       // ← আপনার GitHub token দিন
+    };
+    
+    // এই ফাংশনটি কনসোল থেকে কল করবেন সেটআপ করার জন্য
+    window.configureGitHub = function(owner, repo, token) {
+        GITHUB_CONFIG = { owner, repo, path: "wub-routine-data.json", branch: "main", token };
+        localStorage.setItem('wub_github_config', JSON.stringify(GITHUB_CONFIG));
+        showToast('✅ GitHub configured! Page will reload...', 'success');
+        setTimeout(() => location.reload(), 1500);
+    };
+    
+    // Load saved GitHub config from localStorage
+    function loadGitHubConfig() {
+        const saved = localStorage.getItem('wub_github_config');
+        if (saved) {
+            try {
+                const config = JSON.parse(saved);
+                if (config.owner && config.token) {
+                    GITHUB_CONFIG = config;
+                }
+            } catch(e) {}
+        }
+    }
+    loadGitHubConfig();
+    
+    // ==================== MASTER DATA ====================
     const originalMasterData = [
         {batch:"85A", day:"MON", time:"12:00pm-12:50pm", code:"EEE07144263", title:"Microwave Engineering", teacher:"Debprosad Das", room:"504", type:"Theory", credit:3, duration:"50 min"},
         {batch:"85A", day:"MON", time:"12:50pm-03:10pm", code:"EEE07144264", title:"Microwave Lab", teacher:"Debprosad Das", room:"B15", type:"Lab", credit:1, duration:"100 min"},
@@ -335,272 +433,164 @@
         {batch:"96A", day:"THU", time:"10:20am-12:00pm", code:"MAT-DIC", title:"Calculus", teacher:"Md Toriqul Islam", room:"507", type:"Theory", credit:3, duration:"100 min"},
         {batch:"96A", day:"THU", time:"12:00pm-01:40pm", code:"BAN", title:"Bengali Language", teacher:"Sadia Sultana", room:"507", type:"Theory", credit:2, duration:"100 min"}
     ];
-
-    // Global variables
+    
+    // Global state
     let classData = [];
     let currentStudentBatch = null;
-    let currentTeacherName = null;
+    let adminLoggedIn = false;
+    let teacherLoggedIn = false;
+    let currentTeacher = null;
     let activeTimers = [];
-    let syncInterval = null;
-    let isSheetsConfigured = false;
-    let sheetCsvUrl = "";
-    let currentVersion = 0;
-
-    // Admin credentials
-    const VALID_EMAIL = "sharif.uddin@eee.wub.edu.bd";
-    const VALID_PASS = "Sr@123580Sr@";
-
-    // Load saved config
-    function loadSheetsConfig() {
-        const savedUrl = localStorage.getItem('sheets_csv_url');
-        if (savedUrl && savedUrl !== "") {
-            sheetCsvUrl = savedUrl;
-            isSheetsConfigured = true;
-            document.getElementById('sheetUrl').value = savedUrl;
-            document.getElementById('sheetsSetupCard').style.display = 'none';
-            startCloudSync();
-            return true;
-        }
-        return false;
+    let isSyncing = false;
+    
+    // Helper Functions
+    function showToast(msg, type = 'success') {
+        let t = document.createElement('div');
+        t.className = 'toast ' + type;
+        t.innerHTML = msg;
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 3000);
     }
-
-    function saveSheetsConfig() {
-        let url = document.getElementById('sheetUrl').value.trim();
-        if (url && url.includes('docs.google.com')) {
-            // Convert to CSV export URL if needed
-            if (!url.includes('/export?format=csv')) {
-                // Extract file ID and construct CSV URL
-                const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-                if (match) {
-                    url = `https://docs.google.com/spreadsheets/d/${match[1]}/export?format=csv`;
-                }
-            }
-            sheetCsvUrl = url;
-            isSheetsConfigured = true;
-            localStorage.setItem('sheets_csv_url', url);
-            document.getElementById('sheetsSetupCard').style.display = 'none';
-            showToast('✅ Google Sheets Sync Enabled!');
-            syncToSheets();
-            startCloudSync();
-            return true;
-        } else if (url) {
-            showToast('❌ Please enter a valid Google Sheets URL');
+    
+    function updateGitHubStatus(status, message) {
+        const statusDiv = document.getElementById('githubStatus');
+        if (statusDiv) {
+            statusDiv.className = 'github-status ' + status;
+            statusDiv.innerHTML = `<i class="fab fa-github"></i> ${message}`;
+        }
+        
+        const setupGuide = document.getElementById('setupGuide');
+        if (setupGuide) {
+            const isConfigured = GITHUB_CONFIG.token && GITHUB_CONFIG.owner;
+            setupGuide.style.display = isConfigured ? 'none' : 'block';
+        }
+    }
+    
+    // GitHub API Functions
+    async function loadFromGitHub() {
+        if (!GITHUB_CONFIG.token || !GITHUB_CONFIG.owner) {
+            updateGitHubStatus('error', '⚠️ GitHub not configured');
+            loadFromLocalStorage();
             return false;
         }
-        return false;
-    }
-
-    function useLocalOnly() {
-        isSheetsConfigured = false;
-        localStorage.removeItem('sheets_csv_url');
-        document.getElementById('sheetsSetupCard').style.display = 'none';
-        loadLocalData();
-        showToast('Using local storage only');
-        updateSyncStatus('local', 'Local Only Mode');
-    }
-
-    // Sync to Google Sheets (WRITE) - Store as JSON in localStorage, then upload to Google Sheets via a service
-    // Since Google Sheets doesn't allow direct write from browser, we'll use a simple approach:
-    // We'll store data in localStorage AND provide export/import for admin
-    async function syncToSheets() {
-        if (!isSheetsConfigured || !sheetCsvUrl) return false;
         
-        updateSyncStatus('syncing', 'Syncing to cloud...');
-        
-        // For Google Sheets, we need to use a free service like SheetDB or just rely on reading
-        // Since Google Sheets CSV is read-only, we'll implement a simple cloud storage using a free JSON hosting
-        // Let's use a free JSONBin.io as backup for writes (limited free tier)
-        // But for now, we'll just do reads from Sheets
-        
-        updateSyncStatus('connected', '✅ Read-only mode - changes saved locally');
-        return true;
-    }
-
-    // Fetch from Google Sheets CSV (READ)
-    async function fetchFromSheets() {
-        if (!isSheetsConfigured || !sheetCsvUrl) return false;
-        
-        updateSyncStatus('syncing', 'Checking cloud for updates...');
+        updateGitHubStatus('syncing', '🔄 Loading from GitHub...');
         
         try {
-            // Add cache buster
-            const url = `${sheetCsvUrl}?nocache=${Date.now()}`;
+            const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}`;
             const response = await fetch(url, {
-                cache: 'no-store',
-                headers: { 'Accept': 'text/csv' }
+                headers: { 'Authorization': `token ${GITHUB_CONFIG.token}` }
             });
             
-            if (response.ok) {
-                const csvText = await response.text();
-                // Parse CSV to JSON
-                const lines = csvText.split('\n');
-                const headers = lines[0].split(',');
-                
-                // Check if this is our routine data format
-                if (headers[0] === 'batch' || csvText.includes('"batch"')) {
-                    const parsedData = [];
-                    for (let i = 1; i < lines.length; i++) {
-                        if (lines[i].trim()) {
-                            const values = lines[i].split(',');
-                            if (values.length >= 10) {
-                                parsedData.push({
-                                    batch: values[0].replace(/"/g, '').trim(),
-                                    day: values[1].replace(/"/g, '').trim(),
-                                    time: values[2].replace(/"/g, '').trim(),
-                                    code: values[3].replace(/"/g, '').trim(),
-                                    title: values[4].replace(/"/g, '').trim(),
-                                    teacher: values[5].replace(/"/g, '').trim(),
-                                    room: values[6].replace(/"/g, '').trim(),
-                                    type: values[7].replace(/"/g, '').trim(),
-                                    credit: parseInt(values[8]) || 3,
-                                    duration: values[9].replace(/"/g, '').trim() || "100 min"
-                                });
-                            }
-                        }
-                    }
-                    
-                    if (parsedData.length > 0) {
-                        const remoteVersion = parseInt(localStorage.getItem('sheetsVersion') || '0');
-                        const newVersion = Date.now();
-                        
-                        if (JSON.stringify(parsedData) !== JSON.stringify(classData)) {
-                            classData = parsedData;
-                            localStorage.setItem('wub_eee_crud_fixed', JSON.stringify(classData));
-                            localStorage.setItem('sheetsVersion', newVersion);
-                            refreshAllPanels();
-                            updateSyncStatus('connected', '✅ Synced from Google Sheets');
-                            showToast('🔄 Cloud sync: New data from Google Sheets!');
-                            return true;
-                        }
-                    }
-                }
+            if (response.status === 404) {
+                await saveToGitHub(originalMasterData, false);
+                classData = JSON.parse(JSON.stringify(originalMasterData));
+                updateGitHubStatus('success', '✅ Created new data file');
+                return true;
             }
-            updateSyncStatus('connected', '✅ Up to date');
+            
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            
+            const data = await response.json();
+            const content = atob(data.content);
+            const loadedData = JSON.parse(content);
+            classData = loadedData;
+            updateGitHubStatus('success', '✅ Loaded from GitHub');
             return true;
         } catch (error) {
-            console.error('Fetch error:', error);
-            updateSyncStatus('error', 'Connection issue');
+            console.error('GitHub load error:', error);
+            updateGitHubStatus('error', '⚠️ Using local cache');
+            loadFromLocalStorage();
             return false;
         }
     }
-
-    function startCloudSync() {
-        if (syncInterval) clearInterval(syncInterval);
-        syncInterval = setInterval(() => {
-            if (isSheetsConfigured) {
-                fetchFromSheets();
-            }
-        }, 10000);
-    }
-
-    function updateSyncStatus(status, message) {
-        const statusDiv = document.getElementById('syncStatusDisplay');
-        const studentSync = document.getElementById('studentSyncStatus');
-        const teacherSync = document.getElementById('teacherSyncStatus');
-        
-        let color = '';
-        if (status === 'connected') color = '#10b981';
-        else if (status === 'error') color = '#ef4444';
-        else if (status === 'syncing') color = '#f59e0b';
-        
-        const statusHtml = `<span style="background:${color}20; color:${color}; padding:4px 10px; border-radius:20px; font-size:0.7rem;">${message}</span>`;
-        
-        if (statusDiv) statusDiv.innerHTML = statusHtml;
-        if (studentSync) studentSync.innerHTML = statusHtml;
-        if (teacherSync) teacherSync.innerHTML = statusHtml;
-    }
-
-    function saveDataAndSync() {
-        const newVersion = Date.now();
-        localStorage.setItem('wub_eee_crud_fixed', JSON.stringify(classData));
-        localStorage.setItem('dataVersion', newVersion);
-        currentVersion = newVersion;
-        refreshAllPanels();
-        
-        // Also save to localStorage for sheets version
-        localStorage.setItem('sheetsVersion', newVersion);
-        
-        showToast('✅ Data saved locally');
-        
-        // Show export reminder
-        if (isSheetsConfigured) {
-            showToast('📤 Remember to export CSV and upload to Google Sheets for cloud sync!');
+    
+    async function saveToGitHub(data, showStatusMsg = true) {
+        if (!GITHUB_CONFIG.token || !GITHUB_CONFIG.owner) {
+            saveToLocalStorage(data);
+            if (showStatusMsg) showToast('⚠️ Saved locally only (GitHub not configured)', 'error');
+            return false;
         }
-    }
-
-    function loadLocalData() {
-        let stored = localStorage.getItem('wub_eee_crud_fixed');
-        if (stored && stored !== 'undefined' && stored !== 'null') {
+        
+        if (showStatusMsg) updateGitHubStatus('syncing', '💾 Saving to GitHub...');
+        
+        try {
+            const getUrl = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}`;
+            let sha = null;
+            
             try {
-                let parsed = JSON.parse(stored);
-                if (parsed && parsed.length > 0) classData = parsed;
-                else classData = JSON.parse(JSON.stringify(originalMasterData));
+                const getResponse = await fetch(getUrl, {
+                    headers: { 'Authorization': `token ${GITHUB_CONFIG.token}` }
+                });
+                if (getResponse.ok) {
+                    const fileData = await getResponse.json();
+                    sha = fileData.sha;
+                }
+            } catch (e) {}
+            
+            const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+            const putResponse = await fetch(getUrl, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${GITHUB_CONFIG.token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: `Update routine data - ${new Date().toLocaleString('bn-BD')}`,
+                    content: content,
+                    sha: sha,
+                    branch: GITHUB_CONFIG.branch
+                })
+            });
+            
+            if (!putResponse.ok) throw new Error(`HTTP ${putResponse.status}`);
+            
+            updateGitHubStatus('success', '✅ Saved to GitHub');
+            if (showStatusMsg) showToast('✅ Changes saved to GitHub - all users will see updates!', 'success');
+            return true;
+        } catch (error) {
+            console.error('GitHub save error:', error);
+            updateGitHubStatus('error', '⚠️ Saved locally only');
+            saveToLocalStorage(data);
+            if (showStatusMsg) showToast('⚠️ Could not save to GitHub. Changes saved locally only.', 'error');
+            return false;
+        }
+    }
+    
+    function loadFromLocalStorage() {
+        let stored = localStorage.getItem('wub_eee_github_data');
+        if (stored && stored !== 'undefined') {
+            try {
+                classData = JSON.parse(stored);
+                if (!classData || classData.length === 0) classData = JSON.parse(JSON.stringify(originalMasterData));
             } catch(e) { classData = JSON.parse(JSON.stringify(originalMasterData)); }
-        } else { classData = JSON.parse(JSON.stringify(originalMasterData)); }
-        
-        let storedVersion = localStorage.getItem('dataVersion');
-        if (storedVersion) currentVersion = parseInt(storedVersion);
-        
-        refreshAllPanels();
+        } else {
+            classData = JSON.parse(JSON.stringify(originalMasterData));
+        }
+        updateUI();
     }
-
-    function exportToCSV() {
-        // Create CSV from classData
-        const headers = ['batch', 'day', 'time', 'code', 'title', 'teacher', 'room', 'type', 'credit', 'duration'];
-        const csvRows = [headers.join(',')];
-        
-        for (const row of classData) {
-            const values = headers.map(header => `"${(row[header] || '').replace(/"/g, '""')}"`);
-            csvRows.push(values.join(','));
-        }
-        
-        const csvContent = csvRows.join('\n');
-        const blob = new Blob([csvContent], { type: 'text/csv' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `wub_eee_routine_${new Date().toISOString().slice(0,19)}.csv`;
-        a.click();
-        URL.revokeObjectURL(url);
-        showToast('📁 CSV exported - Upload this to Google Sheets!');
+    
+    function saveToLocalStorage(data) {
+        localStorage.setItem('wub_eee_github_data', JSON.stringify(data));
+        updateUI();
     }
-
-    function refreshAllPanels() {
-        if (currentStudentBatch && document.getElementById('studentDashboard').style.display === 'block') {
-            updateStudentView(currentStudentBatch);
-        }
-        if (currentTeacherName && document.getElementById('teacherDashboard').style.display === 'block') {
-            renderTeacherClasses(currentTeacherName);
-        }
-        if (document.getElementById('adminDashboard') && document.getElementById('adminDashboard').style.display === 'block') {
-            updateAdminTable();
-        }
+    
+    function updateUI() {
+        if (adminLoggedIn) updateAdminTable();
+        if (teacherLoggedIn && currentTeacher) updateTeacherView();
+        if (currentStudentBatch) updateStudentView(currentStudentBatch);
         populateTeacherDropdown();
     }
-
-    function showToast(msg) { 
-        let t=document.createElement('div'); 
-        t.className='toast'; 
-        t.innerHTML=msg; 
-        document.body.appendChild(t); 
-        setTimeout(()=>t.remove(),3000); 
-    }
-
-    // Event listeners
-    document.getElementById('saveSheetsConfigBtn')?.addEventListener('click', saveSheetsConfig);
-    document.getElementById('useLocalOnlyBtn')?.addEventListener('click', useLocalOnly);
-    document.getElementById('forceSyncBtn')?.addEventListener('click', () => { if(isSheetsConfigured) fetchFromSheets(); else showToast('Configure Google Sheets first'); });
-    document.getElementById('exportBackupBtn')?.addEventListener('click', exportToCSV);
-
-    // ========== NOTIFICATION SYSTEM ==========
+    
+    // Notification System
     function clearAllTimers() { activeTimers.forEach(t => clearTimeout(t)); activeTimers = []; }
     function showPopupAlert(classItem) {
         const popup = document.createElement('div');
         popup.className = 'popup-alert';
-        popup.innerHTML = `<i class="fas fa-bell"></i> <strong>📚 Class in 15 min!</strong><br>${classItem.title}<br>⏰ ${classItem.time} | 🏫 ${classItem.room}`;
+        popup.innerHTML = `<i class="fas fa-bell"></i> <strong>📚 Class Reminder!</strong><br>${classItem.title} (${classItem.code})<br>⏰ ${classItem.time} | 🏫 ${classItem.room}<br>👨‍🏫 ${classItem.teacher}`;
         document.body.appendChild(popup);
         setTimeout(() => popup.remove(), 10000);
-        if (Notification.permission === "granted") new Notification(`🔔 ${classItem.title} starts in 15 min`);
+        if (Notification.permission === "granted") new Notification(`🔔 ${classItem.title} starts in 15 min`, { body: `${classItem.time} | Room: ${classItem.room}` });
     }
     function scheduleClassNotification(classItem) {
         try {
@@ -608,71 +598,89 @@
             let hour = parseInt(timeStr.match(/\d+/)[0]);
             let minute = parseInt(timeStr.match(/:(\d+)/)?.[1] || 0);
             let isPM = timeStr.toLowerCase().includes('pm') && hour !== 12;
-            if(isPM) hour += 12;
-            if(timeStr.toLowerCase().includes('am') && hour === 12) hour = 0;
-            const dayMap = { 'MON':1, 'TUE':2, 'WED':3, 'THU':4, 'SAT':6 };
+            if (isPM) hour += 12;
+            if (timeStr.toLowerCase().includes('am') && hour === 12) hour = 0;
+            const dayMap = { 'MON': 1, 'TUE': 2, 'WED': 3, 'THU': 4, 'SAT': 6 };
             let now = new Date();
             let targetDay = dayMap[classItem.day];
             let classDate = new Date(now);
             classDate.setHours(hour, minute, 0, 0);
             let daysUntil = (targetDay - now.getDay() + 7) % 7;
-            if(daysUntil === 0 && classDate <= now) daysUntil = 7;
+            if (daysUntil === 0 && classDate <= now) daysUntil = 7;
             classDate.setDate(now.getDate() + daysUntil);
             let timeUntil = classDate.getTime() - now.getTime();
-            if(timeUntil > 0 && timeUntil < 14*24*60*60*1000) {
+            if (timeUntil > 0 && timeUntil < 14*24*60*60*1000) {
                 let tid = setTimeout(() => showPopupAlert(classItem), timeUntil - 15*60*1000);
                 activeTimers.push(tid);
             }
         } catch(e) {}
     }
-    function scheduleAllNotificationsForBatch(batch) { 
-        clearAllTimers(); 
-        classData.filter(c=>c.batch===batch).forEach(c=>scheduleClassNotification(c)); 
-    }
+    function scheduleAllNotifications(batch) { clearAllTimers(); classData.filter(c=>c.batch===batch).forEach(c=>scheduleClassNotification(c)); }
     function requestNotificationPermission() {
-        if (Notification.permission === "granted") showToast("✅ Notifications enabled!");
-        else if (Notification.permission !== "denied") Notification.requestPermission();
-        else showToast("⚠️ Allow notifications in browser settings.");
+        if (Notification.permission === "granted") showToast("✅ Notifications active!");
+        else if (Notification.permission !== "denied") Notification.requestPermission().then(perm => { if(perm==="granted") showToast("🔔 Enabled!"); });
+        else showToast("⚠️ Allow in browser settings.");
     }
-
-    function addToGCalForClass(c) {
-        let s = c.time.split('-')[0].trim(), e = c.time.split('-')[1].trim();
-        let today = new Date(); let dayMap={'MON':1,'TUE':2,'WED':3,'THU':4,'SAT':6};
-        let d = new Date(today); d.setDate(today.getDate()+((dayMap[c.day]-today.getDay()+7)%7));
-        let f = t => { let h=parseInt(t.match(/\d+/)[0]), m=parseInt(t.match(/:(\d+)/)?.[1]||0), pm=t.toLowerCase().includes('pm')&&h!==12; if(pm) h+=12; if(t.toLowerCase().includes('am')&&h===12) h=0; return `${h.toString().padStart(2,'0')}${m.toString().padStart(2,'0')}00`; };
-        let url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(c.code+' - '+c.title)}&dates=${d.getFullYear()}${(d.getMonth()+1).toString().padStart(2,'0')}${d.getDate().toString().padStart(2,'0')}T${f(s)}/${d.getFullYear()}${(d.getMonth()+1).toString().padStart(2,'0')}${d.getDate().toString().padStart(2,'0')}T${f(e)}&details=${encodeURIComponent('Room: '+c.room)}&location=${encodeURIComponent(c.room)}`;
-        window.open(url,'_blank'); showToast(`📅 ${c.title} added`);
-    }
-
-    // ========== STUDENT SECTION ==========
-    function getClasses(batch,day){ return classData.filter(c=>c.batch===batch && c.day===day); }
+    
+    // Student Functions
+    function getClasses(batch, day){ return classData.filter(c=>c.batch===batch && c.day===day); }
     function getAll(batch){ return classData.filter(c=>c.batch===batch); }
-    function uniqueCourses(batch){ let m=new Map(); getAll(batch).forEach(c=>{ if(!m.has(c.code)) m.set(c.code,{title:c.title,credit:c.credit}); }); return Array.from(m.values()); }
+    function uniqueCourses(batch){ let m=new Map(); getAll(batch).forEach(c=>{ if(!m.has(c.code)) m.set(c.code,{title:c.title,credit:c.credit,type:c.type}); }); return Array.from(m.values()); }
     function totalCred(batch){ return uniqueCourses(batch).reduce((s,c)=>s+c.credit,0); }
+    
     function renderSum(batch){ 
-        let summaryDiv = document.getElementById('creditSummaryList');
-        if(summaryDiv) summaryDiv.innerHTML = uniqueCourses(batch).map(c=>`<div class="credit-item"><span>${c.title}</span><span class="credit-badge">${c.credit} Cr</span></div>`).join(''); 
+        const container = document.getElementById('creditSummaryList');
+        if (container) container.innerHTML = uniqueCourses(batch).map(c=>`<div class="credit-item"><span>${c.title}</span><span class="credit-badge">${c.credit} Cr</span></div>`).join('') || '<div>No courses</div>';
     }
-    function renderView(batch,day){
-        let container=document.getElementById('studentClassList');
-        let classes=getClasses(batch,day);
+    
+    function renderView(batch, day){
+        let container = document.getElementById('studentClassList');
+        let classes = getClasses(batch, day);
         if(!classes.length){ container.innerHTML='<div class="no-class">📭 No class on '+day+'</div>'; return; }
         classes.sort((a,b)=>a.time.localeCompare(b.time));
-        container.innerHTML=classes.map(c=>`<div class="class-item ${c.type==='Lab'?'lab':''}" data-code='${c.code}'><div class="time-badge">${c.time}<span class="duration-chip">${c.duration}</span></div><div class="details"><div class="course-code">${c.code}</div><div class="title">${c.title} (${c.credit} Cr)</div><div class="teacher"><i class="fas fa-chalkboard-user"></i> ${c.teacher}</div></div><div class="room">${c.room}</div></div>`).join('');
-        document.querySelectorAll('#studentClassList .class-item').forEach(el=>{ let code=el.dataset.code; let obj=classes.find(c=>c.code===code); if(obj) el.addEventListener('click',()=>addToGCalForClass(obj)); });
+        container.innerHTML = classes.map(c=>`<div class="class-item ${c.type==='Lab'?'lab':''}" data-code='${c.code}'><div class="time-badge">${c.time}<span class="duration-chip">${c.duration}</span></div><div class="details"><div class="course-code">${c.code}</div><div class="title">${c.title} (${c.credit} Cr)</div><div class="teacher"><i class="fas fa-chalkboard-user"></i> ${c.teacher}</div></div><div class="room">${c.room}</div></div>`).join('');
+        document.querySelectorAll('.class-item').forEach(el=>{ 
+            let code=el.dataset.code; 
+            let obj=classes.find(c=>c.code===code); 
+            if(obj) el.addEventListener('click',()=>addToGCal(obj)); 
+        });
     }
+    
+    function addToGCal(c){
+        let s=c.time.split('-')[0].trim(), e=c.time.split('-')[1].trim();
+        let today=new Date(); 
+        let dayMap={'MON':1,'TUE':2,'WED':3,'THU':4,'SAT':6};
+        let d=new Date(today); 
+        d.setDate(today.getDate()+((dayMap[c.day]-today.getDay()+7)%7));
+        let f=t=>{ 
+            let h=parseInt(t.match(/\d+/)[0]), m=parseInt(t.match(/:(\d+)/)?.[1]||0), 
+            pm=t.toLowerCase().includes('pm')&&h!==12; 
+            if(pm) h+=12; 
+            if(t.toLowerCase().includes('am')&&h===12) h=0; 
+            return `${h.toString().padStart(2,'0')}${m.toString().padStart(2,'0')}00`; 
+        };
+        let url=`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(c.code+' - '+c.title)}&dates=${d.getFullYear()}${(d.getMonth()+1).toString().padStart(2,'0')}${d.getDate().toString().padStart(2,'0')}T${f(s)}/${d.getFullYear()}${(d.getMonth()+1).toString().padStart(2,'0')}${d.getDate().toString().padStart(2,'0')}T${f(e)}&details=${encodeURIComponent('Teacher: '+c.teacher+'\nRoom: '+c.room)}&location=${encodeURIComponent(c.room)}`;
+        window.open(url,'_blank'); 
+        showToast(`📅 ${c.title}`);
+    }
+    
+    function addTodaysClasses(){ 
+        let tab=document.querySelector('#studentDayTabs .day-tab.active'); 
+        if(!tab){ showToast('Select day'); return; } 
+        let day=tab.innerText, batch=document.getElementById('studentBatchDisplay').innerText; 
+        let cls=getClasses(batch,day); 
+        if(!cls.length){ showToast('No classes'); return; } 
+        cls.forEach(c=>addToGCal(c)); 
+        showToast(`Adding ${cls.length} classes`); 
+    }
+    
     function updateStudentView(batch){ 
-        currentStudentBatch = batch; 
         renderSum(batch); 
         let days=['MON','TUE','WED','THU','SAT']; 
-        let active=days.filter(d=>getClasses(batch,d).length > 0); 
+        let active=days.filter(d=>getClasses(batch,d).length>0); 
         let tabs=document.getElementById('studentDayTabs'); 
-        if(tabs) {
-            tabs.innerHTML = '';
-            if(active.length === 0){
-                document.getElementById('studentClassList').innerHTML='<div class="no-class">📭 No classes found</div>';
-                return;
-            }
+        if (tabs) {
+            tabs.innerHTML=''; 
             active.forEach(day=>{ 
                 let tab=document.createElement('div'); 
                 tab.className='day-tab'; 
@@ -685,238 +693,425 @@
                 }; 
                 tabs.appendChild(tab); 
             }); 
-            if(active.length) renderView(batch,active[0]);
         }
-        scheduleAllNotificationsForBatch(batch);
-        let creditSpan = document.getElementById('studentCreditDisplay');
-        if(creditSpan) creditSpan.innerHTML = `⭐ ${totalCred(batch)} Cr`;
+        if(active.length) renderView(batch,active[0]); 
+        scheduleAllNotifications(batch); 
     }
+    
+    function initStudent(batch){ 
+        currentStudentBatch = batch;
+        const dashboard = document.getElementById('studentDashboard');
+        const loginCard = document.getElementById('studentLoginCard');
+        if (dashboard) dashboard.style.display='block'; 
+        if (loginCard) loginCard.style.display='none'; 
+        const batchDisplay = document.getElementById('studentBatchDisplay');
+        if (batchDisplay) batchDisplay.innerText=batch; 
+        const creditDisplay = document.getElementById('studentCreditDisplay');
+        if (creditDisplay) creditDisplay.innerHTML=`⭐ ${totalCred(batch)} Cr`; 
+        updateStudentView(batch); 
+        showToast(`✅ ${batch} loaded`); 
+    }
+    
     function studentLogin(){ 
         let b=document.getElementById('studentBatch').value.trim().toUpperCase(); 
-        if(!/^[8-9][0-9]A$/.test(b)){ showToast('Invalid batch (85A-96A)'); return; } 
-        document.getElementById('studentDashboard').style.display='block'; 
-        document.getElementById('studentLoginCard').style.display='none'; 
-        document.getElementById('studentBatchDisplay').innerText=b; 
-        updateStudentView(b); 
-        showToast(`✅ ${b} loaded | Google Sheets sync active`); 
+        if(!/^[8-9][0-9]A$/.test(b)){ showToast('Invalid batch (85A-96A)', 'error'); return; } 
+        initStudent(b); 
     }
+    
     function studentLogout(){ 
-        document.getElementById('studentDashboard').style.display='none'; 
-        document.getElementById('studentLoginCard').style.display='block'; 
+        const dashboard = document.getElementById('studentDashboard');
+        const loginCard = document.getElementById('studentLoginCard');
+        if (dashboard) dashboard.style.display='none'; 
+        if (loginCard) loginCard.style.display='block'; 
         clearAllTimers(); 
-        currentStudentBatch = null; 
+        currentStudentBatch = null;
     }
-
-    // ========== TEACHER SECTION ==========
-    function populateTeacherDropdown() {
-        let teachers = [...new Set(classData.map(c => c.teacher).filter(t => t && t.trim() !== ""))].sort();
-        let select = document.getElementById('teacherNameSelect');
-        if(select) {
-            let currentVal = select.value;
-            select.innerHTML = '<option value="">-- Select Teacher Name --</option>';
-            teachers.forEach(t => { let opt = document.createElement('option'); opt.value = t; opt.textContent = t; select.appendChild(opt); });
-            if(currentVal && teachers.includes(currentVal)) select.value = currentVal;
-        }
-    }
-    function getTeacherClasses(teacherName) { return classData.filter(c => c.teacher.toLowerCase().trim() === teacherName.toLowerCase().trim()); }
-    function renderTeacherClasses(teacherName){
-        let all = getTeacherClasses(teacherName);
-        let countSpan = document.getElementById('teacherClassesCount');
-        if(countSpan) countSpan.innerHTML = `📖 ${all.length} classes`;
-        let days = ['MON','TUE','WED','THU','SAT'];
-        let tabsDiv = document.getElementById('teacherDayTabs');
-        if(tabsDiv) tabsDiv.innerHTML = '';
-        let container = document.getElementById('teacherClassList');
-        let activeDays = days.filter(day => all.filter(c=>c.day===day).length > 0);
-        if(activeDays.length === 0) { if(container) container.innerHTML='<div class="no-class">📭 No classes assigned.</div>'; return; }
-        activeDays.forEach(day => {
-            let tab = document.createElement('div'); tab.className='day-tab'; tab.innerText=day;
-            if(day === activeDays[0]) tab.classList.add('active');
-            tab.onclick = () => {
-                document.querySelectorAll('#teacherDayTabs .day-tab').forEach(t=>t.classList.remove('active'));
-                tab.classList.add('active');
-                let dayClasses = all.filter(c=>c.day===day).sort((a,b)=>a.time.localeCompare(b.time));
-                if(container) container.innerHTML = dayClasses.map(c=>`<div class="class-item ${c.type==='Lab'?'lab':''}" data-code="${c.code}"><div class="time-badge">${c.time}<span class="duration-chip">${c.duration}</span></div><div class="details"><div class="course-code">${c.code}</div><div class="title">${c.title} (${c.credit} Cr)</div><div class="batch-badge"><i class="fas fa-users"></i> Batch: ${c.batch}</div></div><div class="room">${c.room}</div></div>`).join('');
-                document.querySelectorAll('#teacherClassList .class-item').forEach(el => { let code = el.dataset.code; let cls = dayClasses.find(cc=>cc.code===code); if(cls) el.addEventListener('click',()=>addToGCalForClass(cls)); });
-            };
-            if(tabsDiv) tabsDiv.appendChild(tab);
+    
+    // Teacher Functions
+    function getUniqueTeachers() {
+        const teachers = new Set();
+        classData.forEach(c => {
+            if (c.teacher && c.teacher.trim()) {
+                teachers.add(c.teacher.trim());
+            }
         });
-        let firstDay = activeDays[0];
-        let firstClasses = all.filter(c=>c.day===firstDay).sort((a,b)=>a.time.localeCompare(b.time));
-        if(container) container.innerHTML = firstClasses.map(c=>`<div class="class-item ${c.type==='Lab'?'lab':''}" data-code="${c.code}"><div class="time-badge">${c.time}<span class="duration-chip">${c.duration}</span></div><div class="details"><div class="course-code">${c.code}</div><div class="title">${c.title} (${c.credit} Cr)</div><div class="batch-badge"><i class="fas fa-users"></i> Batch: ${c.batch}</div></div><div class="room">${c.room}</div></div>`).join('');
-        document.querySelectorAll('#teacherClassList .class-item').forEach(el=>{ let code=el.dataset.code; let cls=firstClasses.find(cc=>cc.code===code); if(cls) el.addEventListener('click',()=>addToGCalForClass(cls)); });
+        return Array.from(teachers).sort();
     }
-    function teacherLogin(){
-        let name = document.getElementById('teacherNameSelect').value;
-        if(!name){ showToast("Please select a teacher name"); return; }
-        let existing = getTeacherClasses(name);
-        if(existing.length === 0){ showToast(`⚠️ No classes found for "${name}".`); return; }
-        currentTeacherName = name;
-        document.getElementById('teacherLoginCard').style.display = 'none';
-        document.getElementById('teacherDashboard').style.display = 'block';
-        document.getElementById('teacherNameDisplay').innerHTML = name;
-        renderTeacherClasses(name);
-        showToast(`👋 Welcome ${name}, ${existing.length} classes loaded.`);
+    
+    function populateTeacherDropdown() {
+        const select = document.getElementById('teacherNameSelect');
+        if (!select) return;
+        const currentValue = select.value;
+        const teachers = getUniqueTeachers();
+        select.innerHTML = '<option value="">-- Select Teacher --</option>';
+        teachers.forEach(teacher => {
+            const option = document.createElement('option');
+            option.value = teacher;
+            option.textContent = teacher;
+            select.appendChild(option);
+        });
+        if (currentValue && teachers.includes(currentValue)) select.value = currentValue;
     }
-    function teacherLogout(){ 
-        document.getElementById('teacherDashboard').style.display = 'none'; 
-        document.getElementById('teacherLoginCard').style.display = 'block'; 
-        currentTeacherName = null; 
+    
+    function getTeacherClasses(teacherName) {
+        return classData.filter(c => c.teacher === teacherName);
     }
-    function teacherAddTodayClasses(){
-        if(!currentTeacherName) return;
-        let activeTab = document.querySelector('#teacherDayTabs .day-tab.active');
-        if(!activeTab){ showToast("Select a day first"); return; }
-        let day = activeTab.innerText;
-        let classesToday = getTeacherClasses(currentTeacherName).filter(c=>c.day===day);
-        if(classesToday.length === 0){ showToast("No classes on "+day); return; }
-        classesToday.forEach(c=>addToGCalForClass(c));
-        showToast(`📅 Added ${classesToday.length} classes`);
+    
+    function updateTeacherView() {
+        if (!currentTeacher) return;
+        
+        let teacherClasses = getTeacherClasses(currentTeacher);
+        let batchFilter = document.getElementById('teacherBatchFilter')?.value.trim().toUpperCase() || '';
+        let dayFilter = document.getElementById('teacherDayFilter')?.value || '';
+        
+        let filtered = teacherClasses;
+        if (batchFilter) filtered = filtered.filter(c => c.batch === batchFilter);
+        if (dayFilter) filtered = filtered.filter(c => c.day === dayFilter);
+        
+        const classCountElem = document.getElementById('teacherClassCount');
+        const batchCountElem = document.getElementById('teacherBatchCount');
+        const weeklyHoursElem = document.getElementById('teacherWeeklyHours');
+        if (classCountElem) classCountElem.innerHTML = teacherClasses.length;
+        if (batchCountElem) {
+            let uniqueBatches = [...new Set(teacherClasses.map(c => c.batch))];
+            batchCountElem.innerHTML = uniqueBatches.length;
+        }
+        if (weeklyHoursElem) {
+            let totalMinutes = teacherClasses.reduce((sum, c) => sum + (parseInt(c.duration) || 100), 0);
+            weeklyHoursElem.innerHTML = (totalMinutes / 60).toFixed(1);
+        }
+        
+        let tbody = document.getElementById('teacherTableBody');
+        if (tbody) {
+            tbody.innerHTML = '';
+            filtered.sort((a,b) => {
+                const dayOrder = { 'SAT':0, 'MON':1, 'TUE':2, 'WED':3, 'THU':4 };
+                return (dayOrder[a.day] || 5) - (dayOrder[b.day] || 5) || a.time.localeCompare(b.time);
+            });
+            
+            filtered.forEach((c) => {
+                let row = tbody.insertRow();
+                row.insertCell(0).innerHTML = `<strong>${c.batch}</strong>`;
+                row.insertCell(1).innerHTML = c.day;
+                row.insertCell(2).innerHTML = c.time;
+                row.insertCell(3).innerHTML = c.code;
+                row.insertCell(4).innerHTML = c.title.length > 20 ? c.title.substring(0,20)+'..' : c.title;
+                row.insertCell(5).innerHTML = c.room;
+                row.insertCell(6).innerHTML = `<span style="background:${c.type === 'Lab' ? '#fef3c7' : '#e0f2fe'}; padding:2px 8px; border-radius:20px;">${c.type}</span>`;
+                row.insertCell(7).innerHTML = c.credit;
+                let actionCell = row.insertCell(8);
+                let requestBtn = document.createElement('button');
+                requestBtn.innerHTML = '<i class="fas fa-flag"></i> Request';
+                requestBtn.className = 'edit-btn';
+                requestBtn.style.background = '#f59e0b';
+                requestBtn.onclick = () => {
+                    showToast(`📧 Request sent to Admin regarding ${c.code} - ${c.title}`, 'success');
+                };
+                actionCell.appendChild(requestBtn);
+            });
+            
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;">📭 No classes found for this filter</td></tr>';
+            }
+        }
+        
+        const teacherNameSpan = document.getElementById('teacherName');
+        const welcomeNameSpan = document.getElementById('welcomeTeacherName');
+        if (teacherNameSpan) teacherNameSpan.innerHTML = currentTeacher;
+        if (welcomeNameSpan) welcomeNameSpan.innerHTML = currentTeacher.split(' ')[0];
     }
-
-    // ========== ADMIN SECTION ==========
-    function updateAdminTable(){
-        let tbody = document.getElementById('adminTableBody'); if(!tbody) return;
+    
+    function teacherLogin() {
+        let selectedTeacher = document.getElementById('teacherNameSelect')?.value;
+        if (!selectedTeacher) {
+            showToast('Please select a teacher name from the dropdown', 'error');
+            return;
+        }
+        
+        teacherLoggedIn = true;
+        currentTeacher = selectedTeacher;
+        const loginCard = document.getElementById('teacherLoginCard');
+        const dashboard = document.getElementById('teacherDashboard');
+        if (loginCard) loginCard.style.display = 'none';
+        if (dashboard) dashboard.style.display = 'block';
+        updateTeacherView();
+        showToast(`Welcome ${currentTeacher}!`, 'success');
+    }
+    
+    function teacherLogout() {
+        teacherLoggedIn = false;
+        currentTeacher = null;
+        const loginCard = document.getElementById('teacherLoginCard');
+        const dashboard = document.getElementById('teacherDashboard');
+        if (loginCard) loginCard.style.display = 'block';
+        if (dashboard) dashboard.style.display = 'none';
+        const select = document.getElementById('teacherNameSelect');
+        if (select) select.value = '';
+    }
+    
+    function teacherExportReport() {
+        if (!currentTeacher) return;
+        let teacherClasses = getTeacherClasses(currentTeacher);
+        let report = {
+            teacher: currentTeacher,
+            generated: new Date().toISOString(),
+            totalClasses: teacherClasses.length,
+            totalHours: (teacherClasses.reduce((sum, c) => sum + (parseInt(c.duration) || 100), 0) / 60).toFixed(1),
+            schedule: teacherClasses.map(c => ({
+                batch: c.batch,
+                day: c.day,
+                time: c.time,
+                course: c.code + ' - ' + c.title,
+                room: c.room,
+                type: c.type,
+                credit: c.credit
+            }))
+        };
+        let a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([JSON.stringify(report, null, 2)]));
+        a.download = `${currentTeacher.replace(/ /g, '_')}_schedule_${Date.now()}.json`;
+        a.click();
+        showToast('Report exported successfully');
+    }
+    
+    // Admin Functions
+    function updateAdminTable() {
+        let tbody = document.getElementById('adminTableBody');
+        if(!tbody) return;
         tbody.innerHTML = '';
         classData.forEach((c, idx) => {
             let row = tbody.insertRow();
-            row.insertCell(0).innerText = c.batch; row.insertCell(1).innerText = c.day; row.insertCell(2).innerText = c.time;
-            row.insertCell(3).innerText = c.code; row.insertCell(4).innerText = c.title.length>15?c.title.slice(0,15)+'..':c.title;
-            row.insertCell(5).innerText = c.teacher.length>12?c.teacher.slice(0,12)+'..':c.teacher;
-            row.insertCell(6).innerText = c.room; row.insertCell(7).innerText = c.type; row.insertCell(8).innerText = c.credit;
+            row.insertCell(0).innerText = c.batch;
+            row.insertCell(1).innerText = c.day;
+            row.insertCell(2).innerText = c.time;
+            row.insertCell(3).innerText = c.code;
+            row.insertCell(4).innerText = c.title.length>12?c.title.substring(0,12)+'..':c.title;
+            row.insertCell(5).innerText = c.teacher.length>10?c.teacher.substring(0,10)+'..':c.teacher;
+            row.insertCell(6).innerText = c.room;
+            row.insertCell(7).innerText = c.type;
+            row.insertCell(8).innerText = c.credit;
             row.insertCell(9).innerText = c.duration;
             let actionCell = row.insertCell(10);
-            let editBtn = document.createElement('button'); editBtn.innerText='✏️ Edit'; editBtn.className='edit-btn';
-            let delBtn = document.createElement('button'); delBtn.innerText='🗑️ Delete'; delBtn.className='delete-btn';
-            delBtn.onclick = () => { 
-                if(confirm('Delete this class?')){ 
-                    classData.splice(idx,1); 
-                    saveDataAndSync(); 
-                    updateAdminTable(); 
-                    showToast('🗑️ Deleted'); 
-                } 
+            let editBtn = document.createElement('button'); 
+            editBtn.innerText = '✏️ Edit'; 
+            editBtn.className = 'edit-btn';
+            let delBtn = document.createElement('button'); 
+            delBtn.innerText = '🗑️ Delete'; 
+            delBtn.className = 'delete-btn';
+            
+            delBtn.onclick = async function() {
+                if(confirm('Delete this class? This will sync to all devices.')) {
+                    classData.splice(idx, 1);
+                    await saveToGitHub(classData);
+                    updateAdminTable();
+                    if(currentStudentBatch) updateStudentView(currentStudentBatch);
+                    if(teacherLoggedIn) updateTeacherView();
+                }
             };
-            editBtn.onclick = () => openEditModal(idx);
-            actionCell.appendChild(editBtn); 
+            
+            editBtn.onclick = function() {
+                openEditModal(idx);
+            };
+            
+            actionCell.appendChild(editBtn);
             actionCell.appendChild(delBtn);
         });
-        let totalSpan = document.getElementById('totalClasses');
-        if(totalSpan) totalSpan.innerHTML = classData.length;
+        const totalClassesSpan = document.getElementById('totalClasses');
+        if (totalClassesSpan) totalClassesSpan.innerHTML = classData.length;
     }
-    function openEditModal(idx){
-        let c = classData[idx];
-        let modalDiv = document.createElement('div'); modalDiv.className='modal-overlay';
-        modalDiv.innerHTML = `<div class="edit-modal"><h3>✏️ Edit Class</h3><label>Batch:</label><input id="editBatch" value="${c.batch}"><label>Day:</label><select id="editDay"><option ${c.day==='MON'?'selected':''}>MON</option><option ${c.day==='TUE'?'selected':''}>TUE</option><option ${c.day==='WED'?'selected':''}>WED</option><option ${c.day==='THU'?'selected':''}>THU</option><option ${c.day==='SAT'?'selected':''}>SAT</option></select><label>Time:</label><input id="editTime" value="${c.time}"><label>Code:</label><input id="editCode" value="${c.code}"><label>Title:</label><input id="editTitle" value="${c.title}"><label>Teacher:</label><input id="editTeacher" value="${c.teacher}"><label>Room:</label><input id="editRoom" value="${c.room}"><label>Type:</label><select id="editType"><option ${c.type==='Theory'?'selected':''}>Theory</option><option ${c.type==='Lab'?'selected':''}>Lab</option></select><label>Credit:</label><input id="editCredit" value="${c.credit}" type="number"><label>Duration:</label><input id="editDuration" value="${c.duration}"><div style="text-align:center; margin-top:15px;"><button id="modalSaveBtn" style="background:#10b981;">Save</button><button id="modalCancelBtn">Cancel</button></div></div>`;
+    
+    function openEditModal(index) {
+        let c = classData[index];
+        let teachers = getUniqueTeachers();
+        let teacherOptions = teachers.map(t => `<option value="${t}" ${c.teacher === t ? 'selected' : ''}>${t}</option>`).join('');
+        
+        let modalDiv = document.createElement('div');
+        modalDiv.className = 'modal-overlay';
+        modalDiv.innerHTML = `
+            <div class="edit-modal">
+                <h3>✏️ Edit Class (Syncs to all devices via GitHub)</h3>
+                <label>Batch:</label><input type="text" id="editBatch" value="${c.batch}" placeholder="85A">
+                <label>Day:</label><select id="editDay"><option ${c.day==='MON'?'selected':''}>MON</option><option ${c.day==='TUE'?'selected':''}>TUE</option><option ${c.day==='WED'?'selected':''}>WED</option><option ${c.day==='THU'?'selected':''}>THU</option><option ${c.day==='SAT'?'selected':''}>SAT</option></select>
+                <label>Time:</label><input type="text" id="editTime" value="${c.time}" placeholder="09:30am-11:10am">
+                <label>Course Code:</label><input type="text" id="editCode" value="${c.code}">
+                <label>Course Title:</label><input type="text" id="editTitle" value="${c.title}">
+                <label>Teacher:</label><select id="editTeacher">${teacherOptions}<option value="${c.teacher}" selected>${c.teacher}</option></select>
+                <label>Room:</label><input type="text" id="editRoom" value="${c.room}">
+                <label>Type:</label><select id="editType"><option ${c.type==='Theory'?'selected':''}>Theory</option><option ${c.type==='Lab'?'selected':''}>Lab</option></select>
+                <label>Credit:</label><input type="number" id="editCredit" value="${c.credit}" step="1">
+                <label>Duration:</label><input type="text" id="editDuration" value="${c.duration}" placeholder="100 min">
+                <div style="text-align:center; margin-top:15px;">
+                    <button class="modal-save" id="modalSaveBtn">💾 Save Changes</button>
+                    <button class="modal-cancel" id="modalCancelBtn">Cancel</button>
+                </div>
+            </div>
+        `;
         document.body.appendChild(modalDiv);
-        document.getElementById('modalSaveBtn').onclick = () => {
-            classData[idx] = { 
-                batch:document.getElementById('editBatch').value.trim().toUpperCase(), 
-                day:document.getElementById('editDay').value, 
-                time:document.getElementById('editTime').value, 
-                code:document.getElementById('editCode').value, 
-                title:document.getElementById('editTitle').value, 
-                teacher:document.getElementById('editTeacher').value, 
-                room:document.getElementById('editRoom').value, 
-                type:document.getElementById('editType').value, 
-                credit:parseInt(document.getElementById('editCredit').value)||3, 
-                duration:document.getElementById('editDuration').value||"100 min" 
+        
+        document.getElementById('modalSaveBtn').onclick = async () => {
+            let updatedClass = {
+                batch: document.getElementById('editBatch').value.trim().toUpperCase(),
+                day: document.getElementById('editDay').value,
+                time: document.getElementById('editTime').value.trim(),
+                code: document.getElementById('editCode').value.trim(),
+                title: document.getElementById('editTitle').value.trim(),
+                teacher: document.getElementById('editTeacher').value,
+                room: document.getElementById('editRoom').value.trim(),
+                type: document.getElementById('editType').value,
+                credit: parseInt(document.getElementById('editCredit').value) || 3,
+                duration: document.getElementById('editDuration').value.trim() || "100 min"
             };
-            saveDataAndSync(); 
-            updateAdminTable(); 
-            showToast('✅ Updated'); 
+            
+            if(updatedClass.batch && updatedClass.time && updatedClass.code) {
+                classData[index] = updatedClass;
+                await saveToGitHub(classData);
+                updateAdminTable();
+                if(currentStudentBatch) updateStudentView(currentStudentBatch);
+                if(teacherLoggedIn) updateTeacherView();
+                showToast('✅ Class updated & synced to all devices');
+            } else {
+                showToast('❌ Batch, Time, Code are required', 'error');
+            }
             document.body.removeChild(modalDiv);
         };
         document.getElementById('modalCancelBtn').onclick = () => document.body.removeChild(modalDiv);
     }
-    function addNewClass(){
+    
+    async function addNewClass() {
+        let batch = document.getElementById('newBatch').value.trim().toUpperCase();
+        if(!batch) { showToast("Enter Batch (85A-96A)", 'error'); return; }
         let newClass = { 
-            batch:document.getElementById('newBatch').value.trim().toUpperCase(), 
-            day:document.getElementById('newDay').value, 
-            time:document.getElementById('newTime').value, 
-            code:document.getElementById('newCode').value, 
-            title:document.getElementById('newTitle').value, 
-            teacher:document.getElementById('newTeacher').value, 
-            room:document.getElementById('newRoom').value, 
-            type:document.getElementById('newType').value, 
-            credit:parseInt(document.getElementById('newCredit').value)||3, 
-            duration:"100 min" 
+            batch: batch, 
+            day: document.getElementById('newDay').value, 
+            time: document.getElementById('newTime').value, 
+            code: document.getElementById('newCode').value, 
+            title: document.getElementById('newTitle').value, 
+            teacher: document.getElementById('newTeacher').value, 
+            room: document.getElementById('newRoom').value, 
+            type: document.getElementById('newType').value, 
+            credit: parseInt(document.getElementById('newCredit').value) || 3, 
+            duration: document.getElementById('newDuration').value || "100 min" 
         };
-        if(!newClass.batch || !newClass.time || !newClass.code) { showToast("Batch, Time & Code required"); return; }
-        classData.push(newClass); 
-        saveDataAndSync(); 
-        updateAdminTable(); 
-        showToast('✅ Class added');
+        classData.push(newClass);
+        await saveToGitHub(classData);
+        updateAdminTable();
+        if(currentStudentBatch) updateStudentView(currentStudentBatch);
+        if(teacherLoggedIn) updateTeacherView();
+        
         document.getElementById('newBatch').value = '';
         document.getElementById('newCode').value = '';
         document.getElementById('newTitle').value = '';
         document.getElementById('newTeacher').value = '';
         document.getElementById('newRoom').value = '';
     }
-    function resetDefault(){ 
-        if(confirm('Reset to original master data?')){ 
-            classData = JSON.parse(JSON.stringify(originalMasterData)); 
-            saveDataAndSync(); 
-            updateAdminTable(); 
-            showToast('Reset complete'); 
+    
+    async function resetDefault() { 
+        if(confirm('Reset to original master data? This will sync to all devices.')) {
+            classData = JSON.parse(JSON.stringify(originalMasterData));
+            await saveToGitHub(classData);
+            updateAdminTable();
+            if(currentStudentBatch) updateStudentView(currentStudentBatch);
+            if(teacherLoggedIn) updateTeacherView();
+            showToast('Reset complete - synced to all devices');
         } 
     }
     
-    function adminLogin(){ 
-        let e = document.getElementById('adminEmail').value.trim(); 
-        let p = document.getElementById('adminPassword').value; 
-        if(e === VALID_EMAIL && p === VALID_PASS){ 
-            document.getElementById('adminLoginCard').style.display='none'; 
-            document.getElementById('adminDashboard').style.display='block'; 
+    async function forceSync() {
+        await loadFromGitHub();
+        updateAdminTable();
+        if(currentStudentBatch) updateStudentView(currentStudentBatch);
+        if(teacherLoggedIn) updateTeacherView();
+        showToast('Manual sync complete');
+    }
+    
+    function exportData() { 
+        let a=document.createElement('a'); 
+        a.href=URL.createObjectURL(new Blob([JSON.stringify(classData,null,2)])); 
+        a.download=`wub_routine_${Date.now()}.json`; 
+        a.click(); 
+        showToast('Exported'); 
+    }
+    
+    function adminLogin() { 
+        let e = document.getElementById('adminEmail').value.trim();
+        let p = document.getElementById('adminPassword').value;
+        if(e === ADMIN_EMAIL && p === ADMIN_PASS){ 
+            adminLoggedIn = true;
+            const loginCard = document.getElementById('adminLoginCard');
+            const dashboard = document.getElementById('adminDashboard');
+            if (loginCard) loginCard.style.display='none'; 
+            if (dashboard) dashboard.style.display='block'; 
             updateAdminTable(); 
-            showToast('✅ Admin access granted'); 
-        } else { 
-            showToast('❌ Access Denied'); 
-        } 
-    }
-    function adminLogout(){ 
-        document.getElementById('adminLoginCard').style.display='block'; 
-        document.getElementById('adminDashboard').style.display='none'; 
-        document.getElementById('adminEmail').value = '';
-        document.getElementById('adminPassword').value = '';
+            showToast('Admin Access Granted');
+        } else showToast('Access Denied', 'error'); 
     }
     
-    // Event Listeners
-    document.getElementById('studentLoginBtn').onclick = studentLogin;
-    document.getElementById('studentLogoutBtn').onclick = studentLogout;
-    document.getElementById('teacherLoginBtn').onclick = teacherLogin;
-    document.getElementById('teacherLogoutBtn').onclick = teacherLogout;
-    document.getElementById('teacherAddTodayBtn').onclick = teacherAddTodayClasses;
-    document.getElementById('adminLoginBtn').onclick = adminLogin;
-    document.getElementById('adminLogoutBtn').onclick = adminLogout;
-    document.getElementById('addClassBtn').onclick = addNewClass;
-    document.getElementById('resetDefaultBtn').onclick = resetDefault;
-    document.getElementById('addToCalendarBtn').onclick = function(){ 
-        let tab = document.querySelector('#studentDayTabs .day-tab.active'); 
-        if(tab && currentStudentBatch){ 
-            let cls = getClasses(currentStudentBatch, tab.innerText); 
-            cls.forEach(c=>addToGCalForClass(c)); 
-            showToast(`📅 Added ${cls.length} classes`); 
-        } else { showToast("Select a day first"); } 
-    };
-    
-    document.querySelectorAll('.mode-btn').forEach(btn => {
-        btn.onclick = () => {
-            document.getElementById('studentPanel').classList.toggle('active', btn.dataset.mode === 'student');
-            document.getElementById('teacherPanel').classList.toggle('active', btn.dataset.mode === 'teacher');
-            document.getElementById('adminPanel').classList.toggle('active', btn.dataset.mode === 'admin');
-            if(btn.dataset.mode === 'teacher') populateTeacherDropdown();
-        };
-    });
+    function adminLogout() { 
+        adminLoggedIn = false;
+        const loginCard = document.getElementById('adminLoginCard');
+        const dashboard = document.getElementById('adminDashboard');
+        if (loginCard) loginCard.style.display='block'; 
+        if (dashboard) dashboard.style.display='none'; 
+    }
     
     // Initialize
-    loadLocalData();
-    if (!loadSheetsConfig()) {
-        // Config not found - setup card remains visible
-    } else {
-        startCloudSync();
+    async function init() {
+        await loadFromGitHub();
+        if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
+        
+        // Check if GitHub is configured
+        const isConfigured = GITHUB_CONFIG.token && GITHUB_CONFIG.owner;
+        const setupGuide = document.getElementById('setupGuide');
+        if (setupGuide) setupGuide.style.display = isConfigured ? 'none' : 'block';
     }
-    populateTeacherDropdown();
-    if('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
+    
+    init();
+    
+    // Event Listeners
+    const studentLoginBtn = document.getElementById('studentLoginBtn');
+    const studentLogoutBtn = document.getElementById('studentLogoutBtn');
+    const adminLoginBtn = document.getElementById('adminLoginBtn');
+    const adminLogoutBtn = document.getElementById('adminLogoutBtn');
+    const teacherLoginBtn = document.getElementById('teacherLoginBtn');
+    const teacherLogoutBtn = document.getElementById('teacherLogoutBtn');
+    const teacherRefreshBtn = document.getElementById('teacherRefreshBtn');
+    const teacherReportBtn = document.getElementById('teacherReportBtn');
+    const teacherRequestBtn = document.getElementById('teacherRequestBtn');
+    const exportBtn = document.getElementById('exportFullBtn');
+    const resetBtn = document.getElementById('resetDefaultBtn');
+    const forceSyncBtn = document.getElementById('forceSyncBtn');
+    const addToCalendarBtn = document.getElementById('addToCalendarBtn');
+    const addClassBtn = document.getElementById('addClassBtn');
+    const teacherBatchFilter = document.getElementById('teacherBatchFilter');
+    const teacherDayFilter = document.getElementById('teacherDayFilter');
+    
+    if (studentLoginBtn) studentLoginBtn.onclick = studentLogin;
+    if (studentLogoutBtn) studentLogoutBtn.onclick = studentLogout;
+    if (adminLoginBtn) adminLoginBtn.onclick = adminLogin;
+    if (adminLogoutBtn) adminLogoutBtn.onclick = adminLogout;
+    if (teacherLoginBtn) teacherLoginBtn.onclick = teacherLogin;
+    if (teacherLogoutBtn) teacherLogoutBtn.onclick = teacherLogout;
+    if (teacherRefreshBtn) teacherRefreshBtn.onclick = () => updateTeacherView();
+    if (teacherReportBtn) teacherReportBtn.onclick = teacherExportReport;
+    if (teacherRequestBtn) teacherRequestBtn.onclick = () => showToast('📧 Request sent to Admin. They will review your schedule change request!', 'success');
+    if (exportBtn) exportBtn.onclick = exportData;
+    if (resetBtn) resetBtn.onclick = resetDefault;
+    if (forceSyncBtn) forceSyncBtn.onclick = forceSync;
+    if (addToCalendarBtn) addToCalendarBtn.onclick = addTodaysClasses;
+    if (addClassBtn) addClassBtn.onclick = addNewClass;
+    
+    if (teacherBatchFilter) teacherBatchFilter.oninput = () => updateTeacherView();
+    if (teacherDayFilter) teacherDayFilter.onchange = () => updateTeacherView();
+    
+    document.querySelectorAll('.mode-btn').forEach(btn=>btn.onclick=()=>{
+        const studentPanel = document.getElementById('studentPanel');
+        const teacherPanel = document.getElementById('teacherPanel');
+        const adminPanel = document.getElementById('adminPanel');
+        if (studentPanel) studentPanel.classList.toggle('active', btn.dataset.mode==='student');
+        if (teacherPanel) teacherPanel.classList.toggle('active', btn.dataset.mode==='teacher');
+        if (adminPanel) adminPanel.classList.toggle('active', btn.dataset.mode==='admin');
+        if (btn.dataset.mode === 'teacher') populateTeacherDropdown();
+    });
 </script>
 </body>
 </html>
