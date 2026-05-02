@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>WUB EEE | Real-Time Sync | Admin CRUD → Instant Student/Teacher Update</title>
+    <title>WUB EEE | Admin CRUD + Teacher Panel</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -76,15 +76,14 @@
         .notification-bell { display: inline-flex; align-items: center; gap: 5px; background: #f1f5f9; padding: 4px 10px; border-radius: 30px; cursor: pointer; font-size: 0.7rem; }
         .popup-alert { position: fixed; top: 12px; left: 12px; right: 12px; background: linear-gradient(135deg, #1f6392, #0e4a6e); color: white; padding: 12px 16px; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); z-index: 10000; animation: slideDown 0.3s ease; font-size: 0.8rem; border-left: 4px solid #f59e0b; }
         @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .live-badge { background: #10b981; color: white; padding: 2px 8px; border-radius: 20px; font-size: 0.6rem; margin-left: 8px; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+        .hidden-password { display: none; }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header">
         <h1><i class="fas fa-microchip"></i> WUB - EEE</h1>
-        <p>Real-Time Sync | Admin CRUD → Instant Update on Student/Teacher Devices</p>
+        <p>Student | Teacher Panel | Admin CRUD → Live Sync</p>
     </div>
     <div class="mode-selector">
         <button class="mode-btn active" data-mode="student"><i class="fas fa-user-graduate"></i> Student</button>
@@ -99,7 +98,7 @@
             <h3>📚 Select Your Batch</h3>
             <input type="text" id="studentBatch" placeholder="Batch Code (85A - 96A)" value="96A">
             <button id="studentLoginBtn"><i class="fas fa-calendar-alt"></i> Show Routine</button>
-            <p style="margin-top:12px; font-size:0.7rem;">✅ Real-time sync: Admin changes reflect instantly | Auto-notifications</p>
+            <p style="margin-top:12px; font-size:0.7rem;">✅ Auto-notifications 15 min before class | Popup + Browser alert</p>
             <div class="notification-bell" onclick="requestNotificationPermission()" style="margin-top:8px; display:inline-flex;"><i class="fas fa-bell"></i> Enable Notifications</div>
         </div>
         <div id="studentDashboard" class="dashboard">
@@ -107,7 +106,6 @@
                 <div class="batch-info">
                     <span class="batch-name"><i class="fas fa-id-card"></i> <span id="studentBatchDisplay"></span></span>
                     <span class="total-credit" id="studentCreditDisplay">⭐ -- Cr</span>
-                    <span class="live-badge"><i class="fas fa-sync-alt"></i> Live Sync</span>
                 </div>
                 <button id="studentLogoutBtn" class="btn" style="background:#64748b;">Change Batch</button>
             </div>
@@ -118,7 +116,7 @@
             <div class="day-tabs" id="studentDayTabs"></div>
             <div id="studentClassList" class="class-list"></div>
             <button id="addToCalendarBtn" class="btn" style="background:#34a853;"><i class="fab fa-google"></i> 📅 Add Today's Classes</button>
-            <footer><i class="fas fa-bell"></i> Notifications auto-scheduled | Admin edits appear immediately</footer>
+            <footer>📌 ক্লাসে ক্লিক করে Google Calendar-এ যোগ করুন | Notifications run even after logout</footer>
         </div>
     </div>
 
@@ -131,14 +129,13 @@
                 <option value="">-- Select Teacher Name --</option>
             </select>
             <button id="teacherLoginBtn"><i class="fas fa-sign-in-alt"></i> View My Classes</button>
-            <p style="font-size:0.7rem; margin-top:8px;">📌 Real-time sync: Any admin change updates your schedule instantly</p>
+            <p style="font-size:0.7rem; margin-top:8px;">📌 Teachers: Debprosad Das, Dr. Md. Riyad Tanshen, Dr. M. Quamruzzaman, Md. Istianatur Rahman, Nayeem Hasan Mallick, Farhana Latif, Abdullah Ibna Karim, etc.</p>
         </div>
         <div id="teacherDashboard" class="dashboard" style="display:none;">
             <div class="teacher-header">
                 <div class="teacher-info">
                     <span class="teacher-name"><i class="fas fa-user-graduate"></i> <span id="teacherNameDisplay"></span></span>
                     <span class="total-credit" id="teacherClassesCount">📖 0 classes</span>
-                    <span class="live-badge"><i class="fas fa-sync-alt"></i> Live Sync</span>
                 </div>
                 <button id="teacherLogoutBtn" class="btn" style="background:#64748b;">Logout</button>
             </div>
@@ -148,7 +145,8 @@
             </div>
             <div class="day-tabs" id="teacherDayTabs"></div>
             <div id="teacherClassList" class="class-list"></div>
-            <button id="teacherAddTodayBtn" class="btn" style="background:#34a853;"><i class="fab fa-google"></i> 📅 Add Today's Classes</button>
+            <button id="teacherAddTodayBtn" class="btn" style="background:#34a853;"><i class="fab fa-google"></i> 📅 Add Today's Classes to Calendar</button>
+            <footer>✅ Routine updates from Admin reflect instantly | Reminders 15 min before class</footer>
         </div>
     </div>
 
@@ -157,16 +155,18 @@
         <div id="adminLoginCard" class="admin-login">
             <i class="fas fa-user-shield" style="font-size: 1.8rem;"></i>
             <h3>🔐 Admin Login</h3>
-            <input type="email" id="adminEmail" placeholder="Admin Email" value="sharif.uddin@eee.wub.edu.bd">
-            <input type="password" id="adminPassword" placeholder="Password" value="Sr@123580Sr@">
+            <input type="email" id="adminEmail" placeholder="Admin Email" value="">
+            <input type="password" id="adminPassword" placeholder="Password" value="">
             <button id="adminLoginBtn"><i class="fas fa-sign-in-alt"></i> Login</button>
+            <p class="hidden-password">Credentials hidden from view</p>
         </div>
         <div id="adminDashboard" style="display:none;">
             <div class="admin-dashboard">
-                <div class="admin-header"><h2><i class="fas fa-user-shield"></i> Admin Panel - Full CRUD <span class="live-badge"><i class="fas fa-globe"></i> Changes sync instantly</span></h2><button id="adminLogoutBtn" class="btn">Logout</button></div>
+                <div class="admin-header"><h2><i class="fas fa-user-shield"></i> Admin Panel - Full CRUD</h2><button id="adminLogoutBtn" class="btn">Logout</button></div>
                 <div class="stats"><div class="stat-card"><i class="fas fa-chalkboard"></i><h3 id="totalClasses">0</h3><p>Total Classes</p></div></div>
+                
                 <div class="admin-form">
-                    <h4><i class="fas fa-plus-circle"></i> Add New Class (Syncs to all users)</h4>
+                    <h4><i class="fas fa-plus-circle"></i> Add New Class</h4>
                     <div style="display: flex; flex-wrap: wrap; gap: 6px;">
                         <input type="text" id="newBatch" placeholder="Batch (85A-96A)" style="width:85px;">
                         <select id="newDay"><option>MON</option><option>TUE</option><option>WED</option><option>THU</option><option>SAT</option></select>
@@ -178,11 +178,12 @@
                         <select id="newType"><option>Theory</option><option>Lab</option></select>
                         <input type="number" id="newCredit" placeholder="Cr" step="1" style="width:55px;">
                         <input type="text" id="newDuration" placeholder="Dur" value="100 min" style="width:80px;">
-                        <button id="addClassBtn" style="background:#10b981;">➕ Add & Sync</button>
+                        <button id="addClassBtn" style="background:#10b981;">➕ Add</button>
                     </div>
                 </div>
+
                 <div class="form-card">
-                    <h3>📋 All Classes (Edit/Delete → Student/Teacher panels update immediately)</h3>
+                    <h3>📋 All Classes (Edit/Delete → Sync to Student & Teacher)</h3>
                     <div class="scrollable-table">
                         <table class="data-table"><thead><tr><th>Batch</th><th>Day</th><th>Time</th><th>Code</th><th>Course</th><th>Teacher</th><th>Room</th><th>Type</th><th>Cr</th><th>Dur</th><th>Actions</th></tr></thead><tbody id="adminTableBody"></tbody></table>
                     </div>
@@ -194,7 +195,7 @@
 </div>
 
 <script>
-    // ===================== COMPLETE MASTER DATA (FULLY PRESERVED) ==================
+    // ===================== COMPLETE MASTER DATA (85A-96A) - FULLY PRESERVED ==================
     const originalMasterData = [
         {batch:"85A", day:"MON", time:"12:00pm-12:50pm", code:"EEE07144263", title:"Microwave Engineering", teacher:"Debprosad Das", room:"504", type:"Theory", credit:3, duration:"50 min"},
         {batch:"85A", day:"MON", time:"12:50pm-03:10pm", code:"EEE07144264", title:"Microwave Lab", teacher:"Debprosad Das", room:"B15", type:"Lab", credit:1, duration:"100 min"},
@@ -315,6 +316,10 @@
     let currentTeacherName = null;
     let activeTimers = [];
 
+    // Admin credentials (hidden from display)
+    const VALID_EMAIL = "sharif.uddin@eee.wub.edu.bd";
+    const VALID_PASS = "Sr@123580Sr@";
+
     function loadData() { 
         let stored = localStorage.getItem('wub_eee_crud_fixed'); 
         if(stored && stored !== 'undefined' && stored !== 'null') { 
@@ -328,25 +333,21 @@
     
     function saveData() { 
         localStorage.setItem('wub_eee_crud_fixed', JSON.stringify(classData)); 
-        // IMMEDIATELY refresh ALL active panels
         refreshAllActivePanels();
     }
     
     function refreshAllActivePanels() {
-        // Refresh student panel if logged in
         if (currentStudentBatch && document.getElementById('studentDashboard').style.display === 'block') {
             updateStudentView(currentStudentBatch);
         }
-        // Refresh teacher panel if logged in
         if (currentTeacherName && document.getElementById('teacherDashboard').style.display === 'block') {
             renderTeacherClasses(currentTeacherName);
         }
-        // Update admin table if visible
         if (document.getElementById('adminDashboard').style.display === 'block') {
             updateAdminTable();
         }
         populateTeacherDropdown();
-        showToast('🔄 Data updated - changes applied to all panels');
+        showToast('🔄 Data updated - changes applied');
     }
     
     loadData();
@@ -452,7 +453,7 @@
         document.getElementById('studentLoginCard').style.display='none'; 
         document.getElementById('studentBatchDisplay').innerText=b; 
         updateStudentView(b); 
-        showToast(`✅ ${b} loaded | Real-time sync active`); 
+        showToast(`✅ ${b} loaded | Notifications auto-scheduled`); 
     }
     function studentLogout(){ 
         document.getElementById('studentDashboard').style.display='none'; 
@@ -509,7 +510,7 @@
         document.getElementById('teacherDashboard').style.display = 'block';
         document.getElementById('teacherNameDisplay').innerHTML = name;
         renderTeacherClasses(name);
-        showToast(`👋 Welcome ${name}, ${existing.length} classes loaded. Real-time sync active.`);
+        showToast(`👋 Welcome ${name}, ${existing.length} classes loaded.`);
     }
     function teacherLogout(){ 
         document.getElementById('teacherDashboard').style.display = 'none'; 
@@ -542,25 +543,23 @@
             let editBtn = document.createElement('button'); editBtn.innerText='✏️ Edit'; editBtn.className='edit-btn';
             let delBtn = document.createElement('button'); delBtn.innerText='🗑️ Delete'; delBtn.className='delete-btn';
             delBtn.onclick = () => { 
-                if(confirm('⚠️ Delete this class? Student and Teacher panels will update instantly.')){ 
+                if(confirm('Delete this class? Student/Teacher panels will update instantly.')){ 
                     classData.splice(idx,1); 
                     saveData(); 
                     updateAdminTable(); 
-                    refreshAllActivePanels();
-                    showToast('🗑️ Deleted & synced to all users'); 
+                    showToast('🗑️ Deleted & synced'); 
                 } 
             };
             editBtn.onclick = () => openEditModal(idx);
             actionCell.appendChild(editBtn); 
             actionCell.appendChild(delBtn);
         });
-        let totalElem = document.getElementById('totalClasses');
-        if(totalElem) totalElem.innerHTML = classData.length;
+        document.getElementById('totalClasses').innerHTML = classData.length;
     }
     function openEditModal(idx){
         let c = classData[idx];
         let modalDiv = document.createElement('div'); modalDiv.className='modal-overlay';
-        modalDiv.innerHTML = `<div class="edit-modal"><h3>✏️ Edit Class (Changes sync instantly)</h3><label>Batch:</label><input id="editBatch" value="${c.batch}"><label>Day:</label><select id="editDay"><option ${c.day==='MON'?'selected':''}>MON</option><option ${c.day==='TUE'?'selected':''}>TUE</option><option ${c.day==='WED'?'selected':''}>WED</option><option ${c.day==='THU'?'selected':''}>THU</option><option ${c.day==='SAT'?'selected':''}>SAT</option></select><label>Time:</label><input id="editTime" value="${c.time}"><label>Code:</label><input id="editCode" value="${c.code}"><label>Title:</label><input id="editTitle" value="${c.title}"><label>Teacher:</label><input id="editTeacher" value="${c.teacher}"><label>Room:</label><input id="editRoom" value="${c.room}"><label>Type:</label><select id="editType"><option ${c.type==='Theory'?'selected':''}>Theory</option><option ${c.type==='Lab'?'selected':''}>Lab</option></select><label>Credit:</label><input id="editCredit" value="${c.credit}" type="number"><label>Duration:</label><input id="editDuration" value="${c.duration}"><div style="text-align:center; margin-top:15px;"><button id="modalSaveBtn" style="background:#10b981;">💾 Save & Sync</button><button id="modalCancelBtn">Cancel</button></div></div>`;
+        modalDiv.innerHTML = `<div class="edit-modal"><h3>✏️ Edit Class</h3><label>Batch:</label><input id="editBatch" value="${c.batch}"><label>Day:</label><select id="editDay"><option ${c.day==='MON'?'selected':''}>MON</option><option ${c.day==='TUE'?'selected':''}>TUE</option><option ${c.day==='WED'?'selected':''}>WED</option><option ${c.day==='THU'?'selected':''}>THU</option><option ${c.day==='SAT'?'selected':''}>SAT</option></select><label>Time:</label><input id="editTime" value="${c.time}"><label>Code:</label><input id="editCode" value="${c.code}"><label>Title:</label><input id="editTitle" value="${c.title}"><label>Teacher:</label><input id="editTeacher" value="${c.teacher}"><label>Room:</label><input id="editRoom" value="${c.room}"><label>Type:</label><select id="editType"><option ${c.type==='Theory'?'selected':''}>Theory</option><option ${c.type==='Lab'?'selected':''}>Lab</option></select><label>Credit:</label><input id="editCredit" value="${c.credit}" type="number"><label>Duration:</label><input id="editDuration" value="${c.duration}"><div style="text-align:center; margin-top:15px;"><button id="modalSaveBtn" style="background:#10b981;">Save</button><button id="modalCancelBtn">Cancel</button></div></div>`;
         document.body.appendChild(modalDiv);
         document.getElementById('modalSaveBtn').onclick = () => {
             classData[idx] = { 
@@ -577,8 +576,7 @@
             };
             saveData(); 
             updateAdminTable(); 
-            refreshAllActivePanels();
-            showToast('✅ Updated & synced to all panels'); 
+            showToast('✅ Updated & synced'); 
             document.body.removeChild(modalDiv);
         };
         document.getElementById('modalCancelBtn').onclick = () => document.body.removeChild(modalDiv);
@@ -596,13 +594,11 @@
             credit:parseInt(document.getElementById('newCredit').value)||3, 
             duration:document.getElementById('newDuration').value||"100 min" 
         };
-        if(!newClass.batch || !newClass.time || !newClass.code) { showToast("❌ Batch, Time & Code required"); return; }
+        if(!newClass.batch || !newClass.time || !newClass.code) { showToast("Batch, Time & Code required"); return; }
         classData.push(newClass); 
         saveData(); 
         updateAdminTable(); 
-        refreshAllActivePanels();
-        showToast('✅ Class added & synced to all users');
-        // Clear form
+        showToast('✅ Class added & synced');
         document.getElementById('newBatch').value = '';
         document.getElementById('newCode').value = '';
         document.getElementById('newTitle').value = '';
@@ -610,12 +606,11 @@
         document.getElementById('newRoom').value = '';
     }
     function resetDefault(){ 
-        if(confirm('⚠️ Reset to original master data? All custom changes will be lost. Student/Teacher panels will update.')){ 
+        if(confirm('Reset to original master data?')){ 
             classData = JSON.parse(JSON.stringify(originalMasterData)); 
             saveData(); 
             updateAdminTable(); 
-            refreshAllActivePanels();
-            showToast('Reset complete - synced to all users'); 
+            showToast('Reset complete'); 
         } 
     }
     function exportData(){ 
@@ -626,25 +621,23 @@
         showToast('Exported'); 
     }
     
-    // Admin Auth - YOUR EXACT CREDENTIALS
-    const VALID_EMAIL = "sharif.uddin@eee.wub.edu.bd";
-    const VALID_PASS = "Sr@123580Sr@";
-    
     function adminLogin(){ 
-        let e=document.getElementById('adminEmail').value.trim(); 
-        let p=document.getElementById('adminPassword').value; 
+        let e = document.getElementById('adminEmail').value.trim(); 
+        let p = document.getElementById('adminPassword').value; 
         if(e === VALID_EMAIL && p === VALID_PASS){ 
             document.getElementById('adminLoginCard').style.display='none'; 
             document.getElementById('adminDashboard').style.display='block'; 
             updateAdminTable(); 
-            showToast('✅ Admin access granted - All changes sync to student/teacher devices'); 
+            showToast('✅ Admin access granted'); 
         } else { 
-            showToast('❌ Access Denied - Invalid credentials'); 
+            showToast('❌ Access Denied'); 
         } 
     }
     function adminLogout(){ 
         document.getElementById('adminLoginCard').style.display='block'; 
         document.getElementById('adminDashboard').style.display='none'; 
+        document.getElementById('adminEmail').value = '';
+        document.getElementById('adminPassword').value = '';
     }
 
     // Event Listeners
@@ -663,13 +656,10 @@
         if(tab && currentStudentBatch){ 
             let cls = getClasses(currentStudentBatch, tab.innerText); 
             cls.forEach(c=>addToGCalForClass(c)); 
-            showToast(`📅 Added ${cls.length} classes to Google Calendar`); 
-        } else { 
-            showToast("Select a day first"); 
-        } 
+            showToast(`📅 Added ${cls.length} classes`); 
+        } else { showToast("Select a day first"); } 
     };
     
-    // Mode switching
     document.querySelectorAll('.mode-btn').forEach(btn => {
         btn.onclick = () => {
             document.getElementById('studentPanel').classList.toggle('active', btn.dataset.mode === 'student');
@@ -679,7 +669,6 @@
         };
     });
     
-    // Initial load
     updateAdminTable();
     populateTeacherDropdown();
     if('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
