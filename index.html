@@ -64,14 +64,16 @@
         .toast { position: fixed; bottom: 20px; left: 20px; right: 20px; background: #1e293b; color: white; padding: 12px; border-radius: 50px; text-align: center; z-index: 2000; animation: slideIn 0.3s ease; font-size: 0.8rem; }
         @keyframes slideIn { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         
-        .sync-status { position: fixed; bottom: 10px; right: 10px; padding: 4px 12px; border-radius: 20px; font-size: 0.6rem; z-index: 1000; }
+        .sync-status { position: fixed; bottom: 10px; right: 10px; padding: 4px 12px; border-radius: 20px; font-size: 0.6rem; z-index: 1000; cursor: pointer; }
         .sync-status.cloud { background: #10b981; color: white; }
         .sync-status.syncing { background: #f59e0b; animation: pulse 1s infinite; }
         .sync-status.error { background: #dc2626; color: white; }
+        .sync-status.local { background: #64748b; color: white; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
         
         .setup-box { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 12px; margin-bottom: 15px; font-size: 0.7rem; }
         .setup-box code { background: white; padding: 2px 6px; border-radius: 6px; font-family: monospace; }
+        .setup-box input { width: 100%; padding: 8px; margin: 10px 0; border-radius: 8px; border: 1px solid #f59e0b; max-width: 100%; }
         
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 10001; display: flex; align-items: center; justify-content: center; }
         .edit-modal { background: white; border-radius: 24px; padding: 20px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto; }
@@ -96,20 +98,21 @@
         <div class="mode-btn admin" data-mode="admin">👑 Admin</div>
     </div>
 
-    <!-- Setup Box (শুধু প্রথমবার দেখাবে) -->
+    <!-- Setup Box - Token Input -->
     <div id="setupBox" class="setup-box" style="display:none;">
-        <h4><i class="fab fa-github"></i> 🔧 GitHub Setup Required</h4>
-        <p>টোকেন কনফিগার করতে নিচের ধাপগুলো করুন:</p>
-        <ol style="margin-left: 20px;">
+        <h4><i class="fab fa-github"></i> 🔧 GitHub Token প্রয়োজন</h4>
+        <p>ক্রস-ডিভাইস সিঙ্কের জন্য টোকেন দিন:</p>
+        <ol style="margin-left: 20px; margin-bottom: 10px;">
             <li><a href="https://github.com/settings/tokens/new" target="_blank">এখানে ক্লিক করুন</a> টোকেন তৈরি করতে</li>
-            <li>Token name: <code>wub-routine</code></li>
-            <li>Expiration: <code>No expiration</code></li>
-            <li>Repository access: <code>Only select repositories</code> → আপনার রিপো সিলেক্ট করুন</li>
-            <li>Permissions → Contents: <code>Read and write</code></li>
-            <li>Generate করে টোকেন কপি করুন</li>
-            <li>নিচের বাটনে ক্লিক করে টোকেন দিন</li>
+            <li>নাম: <code>wub-routine</code></li>
+            <li>এক্সপায়ারি: <code>No expiration</code></li>
+            <li>রিপো অ্যাক্সেস: <code>Only select repositories</code> → <strong>EEE-CLASS-ROUTIN-DAY</strong></li>
+            <li>পারমিশন: <code>Contents → Read and write</code></li>
+            <li>টোকেন জেনারেট করে কপি করুন</li>
         </ol>
-        <button id="setupGitHubBtn" class="btn-warning" style="margin-top:10px;"><i class="fab fa-github"></i> Configure GitHub</button>
+        <input type="text" id="tokenInput" placeholder="পেস্ট করুন: github_pat_xxxx..." style="width:100%;">
+        <button id="saveTokenBtn" class="btn-success" style="width:100%;"><i class="fab fa-github"></i> সংরক্ষণ করুন</button>
+        <p style="margin-top:8px; font-size:0.6rem;">টোকেন শুধুমাত্র আপনার ব্রাউজারে সেভ হবে</p>
     </div>
 
     <!-- Student Panel -->
@@ -160,6 +163,7 @@
                         <option value="WED">বুধ</option><option value="THU">বৃহস্পতি</option>
                         <option value="SAT">শনি</option>
                     </select>
+                    <button id="teacherRefreshBtn" class="btn-success" style="margin:0; padding:8px 16px;">🔄</button>
                 </div>
                 <div id="teacherClassList"></div>
             </div>
@@ -203,7 +207,7 @@
                 <h4 style="margin-top:20px;">📋 সব ক্লাস</h4>
                 <div style="overflow-x:auto;">
                     <table class="data-table">
-                        <thead><tr><th>ব্যাচ</th><th>দিন</th><th>সময়</th><th>কোড</th><th>কোর্স</th><th>শিক্ষক</th><th>রুম</th><th>ধরন</th><th>ক্রেডিট</th><th>অ্যাকশন</th></tr></thead>
+                        <thead><tr><th>ব্যাচ</th><th>দিন</th><th>সময়</th><th>কোড</th><th>কোর্স</th><th>শিক্ষক</th><th>রুম</th><th>ধরন</th><th>ক্রেডিট</th><th>অ্যাকশন</th><td></thead>
                         <tbody id="adminTable"></tbody>
                     </table>
                 </div>
@@ -213,29 +217,26 @@
         </div>
     </div>
 </div>
-<div class="sync-status" id="syncStatus"><i class="fab fa-github"></i> Checking...</div>
+<div class="sync-status" id="syncStatus"><i class="fas fa-spinner fa-pulse"></i> চেক করা হচ্ছে...</div>
 
 <script>
     // ==================== গিটহাব কনফিগারেশন ====================
-    let githubConfig = {
-        owner: "sharifuddin",
-        repo: "EEE-CLASS-ROUTIN-DAY",
-        path: "wub-routine-data.json",
-        branch: "main",
-        token: ""
-    };
+    const REPO_OWNER = "sharifuddin";
+    const REPO_NAME = "EEE-CLASS-ROUTIN-DAY";
+    const FILE_PATH = "wub-routine-data.json";
+    const BRANCH = "main";
     
-    // এডমিন ক্রেডেনশিয়াল
-    const ADMIN_EMAIL = "sharif.uddin@eee.wub.edu.bd";
-    const ADMIN_PASS = "Sr@123580Sr@";
-    
-    // অরিজিনাল ডাটা (সম্পূর্ণ)
+    let githubToken = "";
     let classData = [];
     let currentStudentBatch = null;
     let currentTeacher = null;
     let adminLoggedIn = false;
     
-    // ==================== অরিজিনাল মাস্টার ডাটা (সম্পূর্ণ) ====================
+    // এডমিন ক্রেডেনশিয়াল
+    const ADMIN_EMAIL = "sharif.uddin@eee.wub.edu.bd";
+    const ADMIN_PASS = "Sr@123580Sr@";
+    
+    // ==================== অরিজিনাল মাস্টার ডাটা ====================
     const originalMasterData = [
         {batch:"85A", day:"MON", time:"12:00pm-12:50pm", code:"EEE07144263", title:"Microwave Engineering", teacher:"Debprosad Das", room:"504", type:"Theory", credit:3},
         {batch:"85A", day:"MON", time:"12:50pm-03:10pm", code:"EEE07144264", title:"Microwave Lab", teacher:"Debprosad Das", room:"B15", type:"Lab", credit:1},
@@ -369,47 +370,51 @@
         } else if (status === 'syncing') {
             el.className = 'sync-status syncing';
             el.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> ' + msg;
+        } else if (status === 'local') {
+            el.className = 'sync-status local';
+            el.innerHTML = '<i class="fas fa-database"></i> ' + msg;
         } else {
             el.className = 'sync-status error';
             el.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ' + msg;
         }
     }
     
-    // লোকাল স্টোরেজ থেকে টোকেন লোড
+    // টোকেন ম্যানেজমেন্ট
     function loadToken() {
-        const saved = localStorage.getItem('wub_github_token');
-        if (saved) {
-            githubConfig.token = saved;
+        const saved = localStorage.getItem('wub_github_token_final');
+        if (saved && saved.length > 20) {
+            githubToken = saved;
             document.getElementById('setupBox').style.display = 'none';
             return true;
         }
         document.getElementById('setupBox').style.display = 'block';
+        updateSyncStatus('local', 'টোকেন দিন');
         return false;
     }
     
     function saveToken(token) {
-        githubConfig.token = token;
-        localStorage.setItem('wub_github_token', token);
+        githubToken = token;
+        localStorage.setItem('wub_github_token_final', token);
         document.getElementById('setupBox').style.display = 'none';
-        showToast('✅ টোকেন সংরক্ষিত হয়েছে! পেজ রিফ্রেশ হচ্ছে...');
-        setTimeout(() => location.reload(), 1500);
+        showToast('✅ টোকেন সংরক্ষিত!');
+        loadFromGitHub();
     }
     
-    // গিটহাব থেকে ডাটা লোড
+    // গিটহাব API ফাংশন
     async function loadFromGitHub() {
-        if (!githubConfig.token) {
-            updateSyncStatus('error', 'টোকেন নেই');
+        if (!githubToken) {
             classData = JSON.parse(JSON.stringify(originalMasterData));
             updateAllViews();
+            updateSyncStatus('local', 'লোকাল ডাটা');
             return false;
         }
         
         updateSyncStatus('syncing', 'গিটহাব থেকে লোড হচ্ছে...');
         
         try {
-            const url = `https://api.github.com/repos/${githubConfig.owner}/${githubConfig.repo}/contents/${githubConfig.path}`;
+            const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
             const res = await fetch(url, {
-                headers: { 'Authorization': `token ${githubConfig.token}` }
+                headers: { 'Authorization': `Bearer ${githubToken}` }
             });
             
             if (res.status === 404) {
@@ -421,17 +426,18 @@
                 return true;
             }
             
-            if (!res.ok) throw new Error('API error');
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
             
             const data = await res.json();
-            const content = JSON.parse(atob(data.content));
-            classData = content;
+            const decoded = atob(data.content);
+            const loadedData = JSON.parse(decoded);
+            classData = loadedData;
             updateSyncStatus('cloud', '✅ গিটহাব থেকে লোড হয়েছে');
             updateAllViews();
             return true;
             
         } catch(e) {
-            console.error(e);
+            console.error('GitHub load error:', e);
             updateSyncStatus('error', 'গিটহাব লোড ব্যর্থ');
             classData = JSON.parse(JSON.stringify(originalMasterData));
             updateAllViews();
@@ -439,23 +445,22 @@
         }
     }
     
-    // গিটহাবে ডাটা সেভ
     async function saveToGitHub(data) {
-        if (!githubConfig.token) {
-            showToast('টোকেন নেই! প্রথমে কনফিগার করুন', true);
+        if (!githubToken) {
+            showToast('টোকেন নেই! প্রথমে টোকেন দিন', true);
             return false;
         }
         
         updateSyncStatus('syncing', 'গিটহাবে সেভ হচ্ছে...');
         
         try {
-            // প্রথমে SHA পেতে চেষ্টা
-            const getUrl = `https://api.github.com/repos/${githubConfig.owner}/${githubConfig.repo}/contents/${githubConfig.path}`;
+            const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
             let sha = null;
             
+            // প্রথমে SHA পেতে চেষ্টা
             try {
-                const getRes = await fetch(getUrl, {
-                    headers: { 'Authorization': `token ${githubConfig.token}` }
+                const getRes = await fetch(url, {
+                    headers: { 'Authorization': `Bearer ${githubToken}` }
                 });
                 if (getRes.ok) {
                     const fileData = await getRes.json();
@@ -464,35 +469,35 @@
             } catch(e) {}
             
             const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
-            const res = await fetch(getUrl, {
+            const res = await fetch(url, {
                 method: 'PUT',
                 headers: {
-                    'Authorization': `token ${githubConfig.token}`,
+                    'Authorization': `Bearer ${githubToken}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     message: `রুটিন আপডেট - ${new Date().toLocaleString('bn-BD')}`,
                     content: content,
                     sha: sha,
-                    branch: githubConfig.branch
+                    branch: BRANCH
                 })
             });
             
-            if (!res.ok) throw new Error('সেভ ব্যর্থ');
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
             
             updateSyncStatus('cloud', '✅ গিটহাবে সেভ হয়েছে');
             showToast('✅ ডাটা গিটহাবে সেভ হয়েছে! সব ডিভাইসে আপডেট হবে।');
             return true;
             
         } catch(e) {
-            console.error(e);
+            console.error('GitHub save error:', e);
             updateSyncStatus('error', 'সেভ ব্যর্থ');
             showToast('❌ গিটহাবে সেভ করতে পারেনি', true);
             return false;
         }
     }
     
-    // UI আপডেট
+    // UI আপডেট ফাংশন
     function updateAllViews() {
         if (adminLoggedIn) updateAdminTable();
         if (currentStudentBatch) updateStudentView(currentStudentBatch);
@@ -519,18 +524,16 @@
         const days = ['MON', 'TUE', 'WED', 'THU', 'SAT'];
         const activeDays = days.filter(d => getClasses(batch, d).length > 0);
         
-        // ক্রেডিট কার্ড
         const totalCr = getTotalCredits(batch);
+        const uniqueCourses = [...new Map(classData.filter(c => c.batch === batch).map(c => [c.code, {title: c.title, credit: c.credit}]))];
+        
         document.getElementById('studentCreditCard').innerHTML = `
             <strong><i class="fas fa-star"></i> মোট ক্রেডিট: ${totalCr}</strong>
             <div class="credit-grid">
-                ${[...new Map(classData.filter(c => c.batch === batch).map(c => [c.code, {title: c.title, credit: c.credit}]))].map(([code, info]) => 
-                    `<div class="credit-item"><span>${info.title.substring(0,20)}</span><span class="credit-badge">${info.credit} Cr</span></div>`
-                ).join('')}
+                ${uniqueCourses.map(([code, info]) => `<div class="credit-item"><span>${info.title.substring(0,25)}</span><span class="credit-badge">${info.credit} Cr</span></div>`).join('')}
             </div>
         `;
         
-        // ডে ট্যাব
         const tabsDiv = document.getElementById('studentDayTabs');
         tabsDiv.innerHTML = '';
         activeDays.forEach(day => {
@@ -547,6 +550,7 @@
         });
         
         if (activeDays.length) renderStudentClasses(batch, activeDays[0]);
+        document.getElementById('studentBatchShow').innerHTML = batch;
     }
     
     function renderStudentClasses(batch, day) {
@@ -560,7 +564,7 @@
         container.innerHTML = classes.map(c => `
             <div class="class-item ${c.type === 'Lab' ? 'lab' : ''}" onclick="addToGoogleCalendar('${c.title}', '${c.time}', '${c.teacher}', '${c.room}')">
                 <div class="time-badge">${c.time}</div>
-                <div>
+                <div style="flex:2">
                     <div class="course-code">${c.code}</div>
                     <div class="title">${c.title} (${c.credit} Cr)</div>
                     <div class="teacher"><i class="fas fa-user"></i> ${c.teacher}</div>
@@ -588,7 +592,6 @@
         currentStudentBatch = batch;
         document.getElementById('studentDashboard').style.display = 'block';
         document.getElementById('studentLoginCard').style.display = 'none';
-        document.getElementById('studentBatchShow').innerHTML = batch;
         updateStudentView(batch);
         showToast(`✅ ${batch} লোড হয়েছে`);
     }
@@ -633,7 +636,7 @@
         container.innerHTML = filtered.map(c => `
             <div class="class-item ${c.type === 'Lab' ? 'lab' : ''}">
                 <div class="time-badge">${c.time}</div>
-                <div>
+                <div style="flex:2">
                     <div class="course-code">${c.code}</div>
                     <div class="title">${c.title} (${c.credit} Cr)</div>
                     <div><strong>ব্যাচ:</strong> ${c.batch} | <strong>রুম:</strong> ${c.room}</div>
@@ -653,8 +656,8 @@
             row.insertCell(1).innerHTML = c.day;
             row.insertCell(2).innerHTML = c.time;
             row.insertCell(3).innerHTML = c.code;
-            row.insertCell(4).innerHTML = c.title.substring(0,15);
-            row.insertCell(5).innerHTML = c.teacher.substring(0,12);
+            row.insertCell(4).innerHTML = c.title.substring(0,20);
+            row.insertCell(5).innerHTML = c.teacher.substring(0,15);
             row.insertCell(6).innerHTML = c.room;
             row.insertCell(7).innerHTML = c.type;
             row.insertCell(8).innerHTML = c.credit;
@@ -689,13 +692,22 @@
             <div class="edit-modal">
                 <h3>✏️ ক্লাস এডিট করুন</h3>
                 <input type="text" id="editBatch" value="${c.batch}" placeholder="ব্যাচ">
-                <select id="editDay"><option ${c.day==='MON'?'selected':''}>MON</option><option ${c.day==='TUE'?'selected':''}>TUE</option><option ${c.day==='WED'?'selected':''}>WED</option><option ${c.day==='THU'?'selected':''}>THU</option><option ${c.day==='SAT'?'selected':''}>SAT</option></select>
+                <select id="editDay">
+                    <option ${c.day==='MON'?'selected':''}>MON</option>
+                    <option ${c.day==='TUE'?'selected':''}>TUE</option>
+                    <option ${c.day==='WED'?'selected':''}>WED</option>
+                    <option ${c.day==='THU'?'selected':''}>THU</option>
+                    <option ${c.day==='SAT'?'selected':''}>SAT</option>
+                </select>
                 <input type="text" id="editTime" value="${c.time}" placeholder="সময়">
                 <input type="text" id="editCode" value="${c.code}" placeholder="কোড">
                 <input type="text" id="editTitle" value="${c.title}" placeholder="টাইটেল">
                 <input type="text" id="editTeacher" value="${c.teacher}" placeholder="শিক্ষক">
                 <input type="text" id="editRoom" value="${c.room}" placeholder="রুম">
-                <select id="editType"><option ${c.type==='Theory'?'selected':''}>Theory</option><option ${c.type==='Lab'?'selected':''}>Lab</option></select>
+                <select id="editType">
+                    <option ${c.type==='Theory'?'selected':''}>Theory</option>
+                    <option ${c.type==='Lab'?'selected':''}>Lab</option>
+                </select>
                 <input type="number" id="editCredit" value="${c.credit}" placeholder="ক্রেডিট">
                 <div style="text-align:center; margin-top:15px;">
                     <button class="btn-success" id="saveEditBtn">সংরক্ষণ</button>
@@ -715,7 +727,7 @@
                 teacher: document.getElementById('editTeacher').value,
                 room: document.getElementById('editRoom').value,
                 type: document.getElementById('editType').value,
-                credit: parseInt(document.getElementById('editCredit').value)
+                credit: parseInt(document.getElementById('editCredit').value) || 3
             };
             await saveToGitHub(classData);
             updateAdminTable();
@@ -750,7 +762,6 @@
         if (currentTeacher) updateTeacherView();
         showToast('✅ নতুন ক্লাস যোগ হয়েছে');
         
-        // ফর্ম ক্লিয়ার
         document.getElementById('newBatch').value = '';
         document.getElementById('newCode').value = '';
         document.getElementById('newTitle').value = '';
@@ -786,11 +797,13 @@
         }
         initStudent(batch);
     };
+    
     document.getElementById('studentLogoutBtn').onclick = () => {
         document.getElementById('studentDashboard').style.display = 'none';
         document.getElementById('studentLoginCard').style.display = 'block';
         currentStudentBatch = null;
     };
+    
     document.getElementById('studentCalendarBtn').onclick = () => {
         const batch = currentStudentBatch;
         const activeDay = document.querySelector('#studentDayTabs .day-tab.active');
@@ -815,11 +828,13 @@
         updateTeacherView();
         showToast(`👨‍🏫 স্বাগতম ${teacher}`);
     };
+    
     document.getElementById('teacherLogoutBtn').onclick = () => {
         document.getElementById('teacherDashboard').style.display = 'none';
         document.getElementById('teacherLoginCard').style.display = 'block';
         currentTeacher = null;
     };
+    
     document.getElementById('teacherRefreshBtn').onclick = () => updateTeacherView();
     document.getElementById('teacherBatchFilter').oninput = () => updateTeacherView();
     document.getElementById('teacherDayFilter').onchange = () => updateTeacherView();
@@ -837,24 +852,27 @@
             showToast('ভুল ইমেইল বা পাসওয়ার্ড', true);
         }
     };
+    
     document.getElementById('adminLogoutBtn').onclick = () => {
         adminLoggedIn = false;
         document.getElementById('adminDashboard').style.display = 'none';
         document.getElementById('adminLoginCard').style.display = 'block';
     };
+    
     document.getElementById('addClassBtn').onclick = addNewClass;
     document.getElementById('resetDataBtn').onclick = resetData;
     document.getElementById('refreshDataBtn').onclick = refreshData;
     
-    document.getElementById('setupGitHubBtn').onclick = () => {
-        const token = prompt('আপনার GitHub Personal Access Token দিন:', '');
-        if (token && token.length > 10) {
+    document.getElementById('saveTokenBtn').onclick = () => {
+        const token = document.getElementById('tokenInput').value.trim();
+        if (token && token.length > 20) {
             saveToken(token);
         } else {
             showToast('সঠিক টোকেন দিন', true);
         }
     };
     
+    // মোড স্যুইচ
     document.querySelectorAll('.mode-btn').forEach(btn => {
         btn.onclick = () => {
             document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
