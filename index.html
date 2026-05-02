@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>WUB EEE | Cross-Device Auto Sync | Admin Only Config</title>
+    <title>WUB EEE | TRUE Cross-Device Auto Sync</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -77,18 +77,15 @@
         @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .online-badge { background: #10b981; color: white; padding: 3px 10px; border-radius: 20px; font-size: 0.65rem; margin-left: 8px; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
-        .hidden-password { display: none; }
-        .setup-card { background: #fef3c7; border: 1px solid #f59e0b; border-radius: 16px; padding: 12px; margin-bottom: 16px; font-size: 0.7rem; text-align: left; }
-        .setup-card a { color: #1f6392; }
-        .sync-status { font-size: 0.65rem; padding: 4px 8px; border-radius: 20px; display: inline-block; background: #10b98120; color: #10b981; }
-        .force-sync-btn { background: #3b82f6; color: white; border: none; padding: 5px 12px; border-radius: 20px; font-size: 0.65rem; cursor: pointer; margin-left: 8px; }
+        .sync-status { background: #10b98120; color: #10b981; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; }
+        .sync-error { background: #ef444420; color: #dc2626; }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header">
         <h1><i class="fas fa-microchip"></i> WUB - EEE</h1>
-        <p><i class="fab fa-github"></i> Cross-Device Auto Sync | Admin Changes → ALL Devices Update Instantly</p>
+        <p><i class="fab fa-github"></i> TRUE Cross-Device Auto Sync | All Devices Share Same Data</p>
     </div>
     <div class="mode-selector">
         <button class="mode-btn active" data-mode="student"><i class="fas fa-user-graduate"></i> Student</button>
@@ -103,7 +100,7 @@
             <h3>📚 Select Your Batch</h3>
             <input type="text" id="studentBatch" placeholder="Batch Code (85A - 96A)" value="96A">
             <button id="studentLoginBtn"><i class="fas fa-calendar-alt"></i> Show Routine</button>
-            <p style="margin-top:12px; font-size:0.7rem;">✅ Auto-notifications 15 min before class | <span id="studentSyncStatus"><i class="fas fa-cloud-upload-alt"></i> Cloud Sync Active</span></p>
+            <p style="margin-top:12px; font-size:0.7rem;">✅ Auto-notifications 15 min before class | <span id="studentSyncStatus"><i class="fas fa-cloud-upload-alt"></i> Checking...</span></p>
             <div class="notification-bell" onclick="requestNotificationPermission()" style="margin-top:8px; display:inline-flex;"><i class="fas fa-bell"></i> Enable Notifications</div>
         </div>
         <div id="studentDashboard" class="dashboard">
@@ -122,7 +119,7 @@
             <div class="day-tabs" id="studentDayTabs"></div>
             <div id="studentClassList" class="class-list"></div>
             <button id="addToCalendarBtn" class="btn" style="background:#34a853;"><i class="fab fa-google"></i> 📅 Add Today's Classes</button>
-            <footer>📌 Admin changes appear INSTANTLY on ALL devices via GitHub Cloud Sync</footer>
+            <footer>📌 Admin changes appear on ALL devices automatically</footer>
         </div>
     </div>
 
@@ -153,7 +150,7 @@
             <div class="day-tabs" id="teacherDayTabs"></div>
             <div id="teacherClassList" class="class-list"></div>
             <button id="teacherAddTodayBtn" class="btn" style="background:#34a853;"><i class="fab fa-google"></i> 📅 Add Today's Classes to Calendar</button>
-            <footer>✅ Admin changes sync via GitHub Cloud</footer>
+            <footer>✅ Admin changes sync automatically via GitHub</footer>
         </div>
     </div>
 
@@ -165,26 +162,19 @@
             <input type="email" id="adminEmail" placeholder="Admin Email" value="">
             <input type="password" id="adminPassword" placeholder="Password" value="">
             <button id="adminLoginBtn"><i class="fas fa-sign-in-alt"></i> Login</button>
-            <p class="hidden-password">Credentials hidden from view</p>
         </div>
         <div id="adminDashboard" style="display:none;">
             <div class="admin-dashboard">
-                <div class="admin-header"><h2><i class="fas fa-user-shield"></i> Admin Panel <span class="online-badge"><i class="fab fa-github"></i> Cloud Sync Enabled</span></h2><button id="adminLogoutBtn" class="btn">Logout</button></div>
+                <div class="admin-header"><h2><i class="fas fa-user-shield"></i> Admin Panel <span class="online-badge"><i class="fab fa-github"></i> Cloud Sync</span></h2><button id="adminLogoutBtn" class="btn">Logout</button></div>
                 
-                <!-- GitHub Setup Card - ONLY SHOWN IN ADMIN PANEL -->
-                <div id="githubSetupCard" class="setup-card">
-                    <i class="fab fa-github"></i> <strong>🔧 GitHub Cloud Sync Setup (One Time Configuration)</strong><br>
-                    <ol style="margin-left: 20px; margin-top: 5px; margin-bottom: 8px;">
-                        <li>Go to <a href="https://gist.github.com" target="_blank">gist.github.com</a> → Create a <strong>secret gist</strong> named <code>wub_eee_data.json</code></li>
-                        <li>Copy the Gist ID from URL (example: <code>https://gist.github.com/username/<strong>abc123xyz</strong></code>)</li>
-                        <li>Create GitHub Token: <a href="https://github.com/settings/tokens" target="_blank">Settings → Tokens</a> → Generate new token (classic)</li>
-                        <li>Select <strong>gist</strong> scope → Generate → Copy token</li>
-                    </ol>
-                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                        <input type="text" id="gistId" placeholder="Gist ID" style="flex:1; padding:8px; border-radius:20px; border:1px solid #cbd5e1;">
-                        <input type="password" id="githubToken" placeholder="GitHub Token" style="flex:1; padding:8px; border-radius:20px; border:1px solid #cbd5e1;">
-                        <button id="saveGithubConfigBtn" style="background:#10b981; padding:8px 16px;"><i class="fab fa-github"></i> Enable Cloud Sync</button>
-                        <button id="useLocalOnlyBtn" style="background:#6b7280; padding:8px 16px;">Local Only</button>
+                <!-- GitHub Setup Card -->
+                <div id="githubSetupCard" style="background:#fef3c7; border:1px solid #f59e0b; border-radius:16px; padding:12px; margin-bottom:16px;">
+                    <i class="fab fa-github"></i> <strong>🔧 GitHub Cloud Sync Setup</strong><br>
+                    <div style="margin-top:8px;">
+                        <input type="text" id="gistId" placeholder="Gist ID" style="width:100%; padding:8px; margin:5px 0; border-radius:20px; border:1px solid #cbd5e1;">
+                        <input type="password" id="githubToken" placeholder="GitHub Token" style="width:100%; padding:8px; margin:5px 0; border-radius:20px; border:1px solid #cbd5e1;">
+                        <button id="saveGithubConfigBtn" style="background:#10b981; padding:8px 16px; border-radius:20px;"><i class="fab fa-github"></i> Enable Cloud Sync</button>
+                        <button id="useLocalOnlyBtn" style="background:#6b7280; padding:8px 16px; border-radius:20px;">Local Only</button>
                     </div>
                     <div id="syncStatusDisplay" style="margin-top:8px;"></div>
                 </div>
@@ -192,29 +182,28 @@
                 <div class="stats"><div class="stat-card"><i class="fas fa-chalkboard"></i><h3 id="totalClasses">0</h3><p>Total Classes</p></div></div>
                 
                 <div class="admin-form">
-                    <h4><i class="fas fa-plus-circle"></i> Add New Class (Syncs to GitHub → ALL Devices)</h4>
+                    <h4><i class="fas fa-plus-circle"></i> Add New Class (Syncs to ALL devices)</h4>
                     <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-                        <input type="text" id="newBatch" placeholder="Batch (85A-96A)" style="width:85px;">
+                        <input type="text" id="newBatch" placeholder="Batch" style="width:75px;">
                         <select id="newDay"><option>MON</option><option>TUE</option><option>WED</option><option>THU</option><option>SAT</option></select>
-                        <input type="text" id="newTime" placeholder="09:30am-11:10am" style="width:130px;">
-                        <input type="text" id="newCode" placeholder="Code" style="width:100px;">
-                        <input type="text" id="newTitle" placeholder="Title" style="width:130px;">
-                        <input type="text" id="newTeacher" placeholder="Teacher" style="width:120px;">
-                        <input type="text" id="newRoom" placeholder="Room" style="width:65px;">
+                        <input type="text" id="newTime" placeholder="09:30am-11:10am" style="width:120px;">
+                        <input type="text" id="newCode" placeholder="Code" style="width:90px;">
+                        <input type="text" id="newTitle" placeholder="Title" style="width:120px;">
+                        <input type="text" id="newTeacher" placeholder="Teacher" style="width:110px;">
+                        <input type="text" id="newRoom" placeholder="Room" style="width:60px;">
                         <select id="newType"><option>Theory</option><option>Lab</option></select>
-                        <input type="number" id="newCredit" placeholder="Cr" step="1" style="width:55px;">
-                        <input type="text" id="newDuration" placeholder="Dur" value="100 min" style="width:80px;">
-                        <button id="addClassBtn" style="background:#10b981;">➕ Add & Sync</button>
+                        <input type="number" id="newCredit" placeholder="Cr" style="width:50px;">
+                        <button id="addClassBtn" style="background:#10b981;">➕ Add</button>
                     </div>
                 </div>
 
                 <div class="form-card">
-                    <h3>📋 All Classes (Edit/Delete → Syncs to ALL devices via GitHub Cloud)</h3>
+                    <h3>📋 All Classes (Edit/Delete → Syncs to ALL devices)</h3>
                     <div class="scrollable-table">
                         <table class="data-table"><thead><tr><th>Batch</th><th>Day</th><th>Time</th><th>Code</th><th>Course</th><th>Teacher</th><th>Room</th><th>Type</th><th>Cr</th><th>Dur</th><th>Actions</th></tr></thead><tbody id="adminTableBody"></tbody></table>
                     </div>
-                    <div class="action-buttons">
-                        <button id="forceSyncToCloudBtn" style="background:#3b82f6;"><i class="fab fa-github"></i> Force Sync to Cloud</button>
+                    <div style="margin-top:10px;">
+                        <button id="forceSyncBtn" style="background:#3b82f6;"><i class="fab fa-github"></i> Force Sync Now</button>
                         <button id="resetDefaultBtn" style="background:#f97316;"><i class="fas fa-undo-alt"></i> Reset to Original</button>
                     </div>
                 </div>
@@ -349,7 +338,7 @@
     let isGitHubConfigured = false;
     let githubGistId = "";
     let githubToken = "";
-    let lastSyncVersion = 0;
+    let currentVersion = 0;
 
     // Admin credentials
     const VALID_EMAIL = "sharif.uddin@eee.wub.edu.bd";
@@ -396,20 +385,21 @@
         localStorage.removeItem('github_token');
         document.getElementById('githubSetupCard').style.display = 'none';
         loadLocalData();
-        showToast('Using local storage only - no cross-device sync');
+        showToast('Using local storage only');
         updateSyncStatus('local', 'Local Only Mode');
     }
 
-    // Sync to GitHub Gist (Cloud)
+    // Sync to GitHub Gist (WRITE)
     async function syncToGitHub() {
         if (!isGitHubConfigured || !githubGistId || !githubToken) return false;
         
-        updateSyncStatus('syncing', 'Syncing to cloud...');
+        updateSyncStatus('syncing', 'Uploading to cloud...');
         
         try {
+            const newVersion = Date.now();
             const syncData = {
                 lastUpdated: new Date().toISOString(),
-                version: Date.now(),
+                version: newVersion,
                 classes: classData
             };
             
@@ -421,7 +411,7 @@
                     'Accept': 'application/vnd.github.v3+json'
                 },
                 body: JSON.stringify({
-                    description: "WUB EEE Routine Data - Auto Synced",
+                    description: "WUB EEE Routine Data",
                     files: {
                         "wub_eee_data.json": {
                             content: JSON.stringify(syncData, null, 2)
@@ -431,15 +421,14 @@
             });
             
             if (response.ok) {
-                lastSyncVersion = syncData.version;
-                localStorage.setItem('dataVersion', lastSyncVersion);
+                currentVersion = newVersion;
+                localStorage.setItem('dataVersion', currentVersion);
                 updateSyncStatus('connected', '✅ Synced to cloud');
-                showToast('📤 Data synced to cloud - All devices will update');
                 return true;
             } else {
                 const error = await response.json();
                 console.error('GitHub sync error:', error);
-                updateSyncStatus('error', 'Sync failed - Check token/Gist ID');
+                updateSyncStatus('error', 'Sync failed - Check token');
                 return false;
             }
         } catch (error) {
@@ -449,63 +438,53 @@
         }
     }
 
-    // Fetch from GitHub Gist (Cloud) - KEY FOR CROSS-DEVICE SYNC
+    // Fetch from GitHub Gist (READ) - THIS IS CRITICAL for other devices
     async function fetchFromGitHub() {
         if (!isGitHubConfigured || !githubGistId) return false;
         
-        updateSyncStatus('syncing', 'Checking cloud for updates...');
-        
         try {
-            const response = await fetch(`https://api.github.com/gists/${githubGistId}`, {
-                headers: {
-                    'Accept': 'application/vnd.github.v3+json'
-                },
-                cache: 'no-cache'
+            // Use the raw.githubusercontent.com URL for CORS-free access
+            const rawUrl = `https://raw.githubusercontent.com/gist/${githubGistId}/raw/wub_eee_data.json`;
+            const response = await fetch(rawUrl, {
+                cache: 'no-store',
+                headers: { 'Accept': 'application/json' }
             });
             
             if (response.ok) {
-                const gist = await response.json();
-                const fileContent = gist.files['wub_eee_data.json']?.content;
+                const remoteData = await response.json();
+                const remoteVersion = remoteData.version || 0;
+                const localVersion = localStorage.getItem('dataVersion') || 0;
                 
-                if (fileContent) {
-                    const remoteData = JSON.parse(fileContent);
-                    const remoteClasses = remoteData.classes;
-                    const remoteVersion = remoteData.version || 0;
-                    const localVersion = localStorage.getItem('dataVersion') || 0;
-                    
-                    if (remoteVersion > parseInt(localVersion)) {
-                        classData = remoteClasses;
-                        localStorage.setItem('wub_eee_crud_fixed', JSON.stringify(classData));
-                        localStorage.setItem('dataVersion', remoteVersion);
-                        refreshAllPanels();
-                        updateSyncStatus('connected', '✅ Updated from cloud');
-                        showToast('🔄 Cloud sync: New data received from another device!');
-                        return true;
-                    } else {
-                        updateSyncStatus('connected', '✅ Up to date with cloud');
-                        return true;
-                    }
-                }
-            } else {
-                if (response.status === 404) {
-                    await syncToGitHub();
+                if (remoteVersion > parseInt(localVersion)) {
+                    classData = remoteData.classes;
+                    localStorage.setItem('wub_eee_crud_fixed', JSON.stringify(classData));
+                    localStorage.setItem('dataVersion', remoteVersion);
+                    currentVersion = remoteVersion;
+                    refreshAllPanels();
+                    updateSyncStatus('connected', '✅ Updated from cloud');
+                    showToast('🔄 Cloud sync: New data received!');
+                    return true;
+                } else {
+                    updateSyncStatus('connected', '✅ Up to date');
+                    return true;
                 }
             }
             return false;
         } catch (error) {
             console.error('Fetch error:', error);
-            updateSyncStatus('error', 'Cloud connection issue');
+            updateSyncStatus('error', 'Connection issue');
             return false;
         }
     }
 
     function startCloudSync() {
         if (syncInterval) clearInterval(syncInterval);
+        // Fetch from cloud every 10 seconds
         syncInterval = setInterval(() => {
             if (isGitHubConfigured) {
                 fetchFromGitHub();
             }
-        }, 15000);
+        }, 10000);
     }
 
     function updateSyncStatus(status, message) {
@@ -513,13 +492,12 @@
         const studentSync = document.getElementById('studentSyncStatus');
         const teacherSync = document.getElementById('teacherSyncStatus');
         
-        let icon = '';
-        if (status === 'connected') icon = '✅';
-        else if (status === 'error') icon = '⚠️';
-        else if (status === 'syncing') icon = '🔄';
-        else if (status === 'local') icon = '💾';
+        let color = '';
+        if (status === 'connected') color = '#10b981';
+        else if (status === 'error') color = '#ef4444';
+        else if (status === 'syncing') color = '#f59e0b';
         
-        const statusHtml = `<span class="sync-status">${icon} ${message}</span>`;
+        const statusHtml = `<span style="background:${color}20; color:${color}; padding:4px 10px; border-radius:20px; font-size:0.7rem;">${message}</span>`;
         
         if (statusDiv) statusDiv.innerHTML = statusHtml;
         if (studentSync) studentSync.innerHTML = statusHtml;
@@ -527,9 +505,10 @@
     }
 
     function saveDataAndSync() {
-        let newVersion = Date.now();
+        const newVersion = Date.now();
         localStorage.setItem('wub_eee_crud_fixed', JSON.stringify(classData));
         localStorage.setItem('dataVersion', newVersion);
+        currentVersion = newVersion;
         refreshAllPanels();
         
         if (isGitHubConfigured) {
@@ -549,7 +528,7 @@
         } else { classData = JSON.parse(JSON.stringify(originalMasterData)); }
         
         let storedVersion = localStorage.getItem('dataVersion');
-        if (storedVersion) lastSyncVersion = parseInt(storedVersion);
+        if (storedVersion) currentVersion = parseInt(storedVersion);
         
         refreshAllPanels();
     }
@@ -575,20 +554,20 @@
         setTimeout(()=>t.remove(),3000); 
     }
 
-    // Event listeners for buttons
+    // Event listeners
     document.getElementById('saveGithubConfigBtn')?.addEventListener('click', saveGitHubConfig);
     document.getElementById('useLocalOnlyBtn')?.addEventListener('click', useLocalOnly);
-    document.getElementById('forceSyncToCloudBtn')?.addEventListener('click', () => { if(isGitHubConfigured) syncToGitHub(); else showToast('Configure GitHub first'); });
+    document.getElementById('forceSyncBtn')?.addEventListener('click', () => { if(isGitHubConfigured) syncToGitHub(); else showToast('Configure GitHub first'); });
 
     // ========== NOTIFICATION SYSTEM ==========
     function clearAllTimers() { activeTimers.forEach(t => clearTimeout(t)); activeTimers = []; }
     function showPopupAlert(classItem) {
         const popup = document.createElement('div');
         popup.className = 'popup-alert';
-        popup.innerHTML = `<i class="fas fa-bell"></i> <strong>📚 Class in 15 min!</strong><br>${classItem.title} (${classItem.code})<br>⏰ ${classItem.time} | 🏫 ${classItem.room}<br>👨‍🏫 ${classItem.teacher}`;
+        popup.innerHTML = `<i class="fas fa-bell"></i> <strong>📚 Class in 15 min!</strong><br>${classItem.title}<br>⏰ ${classItem.time} | 🏫 ${classItem.room}`;
         document.body.appendChild(popup);
         setTimeout(() => popup.remove(), 10000);
-        if (Notification.permission === "granted") new Notification(`🔔 ${classItem.title} starts in 15 min`, { body: `${classItem.time} | Room: ${classItem.room}` });
+        if (Notification.permission === "granted") new Notification(`🔔 ${classItem.title} starts in 15 min`);
     }
     function scheduleClassNotification(classItem) {
         try {
@@ -619,7 +598,7 @@
     }
     function requestNotificationPermission() {
         if (Notification.permission === "granted") showToast("✅ Notifications enabled!");
-        else if (Notification.permission !== "denied") Notification.requestPermission().then(perm => { if(perm==="granted") showToast("🔔 Notifications active!"); });
+        else if (Notification.permission !== "denied") Notification.requestPermission();
         else showToast("⚠️ Allow notifications in browser settings.");
     }
 
@@ -628,7 +607,7 @@
         let today = new Date(); let dayMap={'MON':1,'TUE':2,'WED':3,'THU':4,'SAT':6};
         let d = new Date(today); d.setDate(today.getDate()+((dayMap[c.day]-today.getDay()+7)%7));
         let f = t => { let h=parseInt(t.match(/\d+/)[0]), m=parseInt(t.match(/:(\d+)/)?.[1]||0), pm=t.toLowerCase().includes('pm')&&h!==12; if(pm) h+=12; if(t.toLowerCase().includes('am')&&h===12) h=0; return `${h.toString().padStart(2,'0')}${m.toString().padStart(2,'0')}00`; };
-        let url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(c.code+' - '+c.title)}&dates=${d.getFullYear()}${(d.getMonth()+1).toString().padStart(2,'0')}${d.getDate().toString().padStart(2,'0')}T${f(s)}/${d.getFullYear()}${(d.getMonth()+1).toString().padStart(2,'0')}${d.getDate().toString().padStart(2,'0')}T${f(e)}&details=${encodeURIComponent('Teacher: '+c.teacher+'\nRoom: '+c.room+'\nBatch: '+c.batch)}&location=${encodeURIComponent(c.room)}`;
+        let url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(c.code+' - '+c.title)}&dates=${d.getFullYear()}${(d.getMonth()+1).toString().padStart(2,'0')}${d.getDate().toString().padStart(2,'0')}T${f(s)}/${d.getFullYear()}${(d.getMonth()+1).toString().padStart(2,'0')}${d.getDate().toString().padStart(2,'0')}T${f(e)}&details=${encodeURIComponent('Room: '+c.room)}&location=${encodeURIComponent(c.room)}`;
         window.open(url,'_blank'); showToast(`📅 ${c.title} added`);
     }
 
@@ -658,7 +637,7 @@
         if(tabs) {
             tabs.innerHTML = '';
             if(active.length === 0){
-                document.getElementById('studentClassList').innerHTML='<div class="no-class">📭 No classes found for this batch</div>';
+                document.getElementById('studentClassList').innerHTML='<div class="no-class">📭 No classes found</div>';
                 return;
             }
             active.forEach(day=>{ 
@@ -686,7 +665,7 @@
         document.getElementById('studentLoginCard').style.display='none'; 
         document.getElementById('studentBatchDisplay').innerText=b; 
         updateStudentView(b); 
-        showToast(`✅ ${b} loaded | Cloud sync active across all devices`); 
+        showToast(`✅ ${b} loaded | Cloud sync active`); 
     }
     function studentLogout(){ 
         document.getElementById('studentDashboard').style.display='none'; 
@@ -710,13 +689,13 @@
     function renderTeacherClasses(teacherName){
         let all = getTeacherClasses(teacherName);
         let countSpan = document.getElementById('teacherClassesCount');
-        if(countSpan) countSpan.innerHTML = `📖 ${all.length} classes (all batches)`;
+        if(countSpan) countSpan.innerHTML = `📖 ${all.length} classes`;
         let days = ['MON','TUE','WED','THU','SAT'];
         let tabsDiv = document.getElementById('teacherDayTabs');
         if(tabsDiv) tabsDiv.innerHTML = '';
         let container = document.getElementById('teacherClassList');
         let activeDays = days.filter(day => all.filter(c=>c.day===day).length > 0);
-        if(activeDays.length === 0) { if(container) container.innerHTML='<div class="no-class">📭 No classes assigned for this teacher.</div>'; return; }
+        if(activeDays.length === 0) { if(container) container.innerHTML='<div class="no-class">📭 No classes assigned.</div>'; return; }
         activeDays.forEach(day => {
             let tab = document.createElement('div'); tab.className='day-tab'; tab.innerText=day;
             if(day === activeDays[0]) tab.classList.add('active');
@@ -744,7 +723,7 @@
         document.getElementById('teacherDashboard').style.display = 'block';
         document.getElementById('teacherNameDisplay').innerHTML = name;
         renderTeacherClasses(name);
-        showToast(`👋 Welcome ${name}, ${existing.length} classes loaded. Cloud sync active.`);
+        showToast(`👋 Welcome ${name}, ${existing.length} classes loaded.`);
     }
     function teacherLogout(){ 
         document.getElementById('teacherDashboard').style.display = 'none'; 
@@ -759,7 +738,7 @@
         let classesToday = getTeacherClasses(currentTeacherName).filter(c=>c.day===day);
         if(classesToday.length === 0){ showToast("No classes on "+day); return; }
         classesToday.forEach(c=>addToGCalForClass(c));
-        showToast(`📅 Added ${classesToday.length} classes to Google Calendar`);
+        showToast(`📅 Added ${classesToday.length} classes`);
     }
 
     // ========== ADMIN SECTION ==========
@@ -777,11 +756,11 @@
             let editBtn = document.createElement('button'); editBtn.innerText='✏️ Edit'; editBtn.className='edit-btn';
             let delBtn = document.createElement('button'); delBtn.innerText='🗑️ Delete'; delBtn.className='delete-btn';
             delBtn.onclick = () => { 
-                if(confirm('Delete this class? Changes will sync to ALL devices via cloud.')){ 
+                if(confirm('Delete this class? Changes will sync to ALL devices.')){ 
                     classData.splice(idx,1); 
                     saveDataAndSync(); 
                     updateAdminTable(); 
-                    showToast('🗑️ Deleted & syncing to cloud - All devices will update'); 
+                    showToast('🗑️ Deleted & syncing to cloud'); 
                 } 
             };
             editBtn.onclick = () => openEditModal(idx);
@@ -794,7 +773,7 @@
     function openEditModal(idx){
         let c = classData[idx];
         let modalDiv = document.createElement('div'); modalDiv.className='modal-overlay';
-        modalDiv.innerHTML = `<div class="edit-modal"><h3>✏️ Edit Class (Syncs to ALL devices via Cloud)</h3><label>Batch:</label><input id="editBatch" value="${c.batch}"><label>Day:</label><select id="editDay"><option ${c.day==='MON'?'selected':''}>MON</option><option ${c.day==='TUE'?'selected':''}>TUE</option><option ${c.day==='WED'?'selected':''}>WED</option><option ${c.day==='THU'?'selected':''}>THU</option><option ${c.day==='SAT'?'selected':''}>SAT</option></select><label>Time:</label><input id="editTime" value="${c.time}"><label>Code:</label><input id="editCode" value="${c.code}"><label>Title:</label><input id="editTitle" value="${c.title}"><label>Teacher:</label><input id="editTeacher" value="${c.teacher}"><label>Room:</label><input id="editRoom" value="${c.room}"><label>Type:</label><select id="editType"><option ${c.type==='Theory'?'selected':''}>Theory</option><option ${c.type==='Lab'?'selected':''}>Lab</option></select><label>Credit:</label><input id="editCredit" value="${c.credit}" type="number"><label>Duration:</label><input id="editDuration" value="${c.duration}"><div style="text-align:center; margin-top:15px;"><button id="modalSaveBtn" style="background:#10b981;">Save & Sync to Cloud</button><button id="modalCancelBtn">Cancel</button></div></div>`;
+        modalDiv.innerHTML = `<div class="edit-modal"><h3>✏️ Edit Class (Syncs to ALL devices)</h3><label>Batch:</label><input id="editBatch" value="${c.batch}"><label>Day:</label><select id="editDay"><option ${c.day==='MON'?'selected':''}>MON</option><option ${c.day==='TUE'?'selected':''}>TUE</option><option ${c.day==='WED'?'selected':''}>WED</option><option ${c.day==='THU'?'selected':''}>THU</option><option ${c.day==='SAT'?'selected':''}>SAT</option></select><label>Time:</label><input id="editTime" value="${c.time}"><label>Code:</label><input id="editCode" value="${c.code}"><label>Title:</label><input id="editTitle" value="${c.title}"><label>Teacher:</label><input id="editTeacher" value="${c.teacher}"><label>Room:</label><input id="editRoom" value="${c.room}"><label>Type:</label><select id="editType"><option ${c.type==='Theory'?'selected':''}>Theory</option><option ${c.type==='Lab'?'selected':''}>Lab</option></select><label>Credit:</label><input id="editCredit" value="${c.credit}" type="number"><label>Duration:</label><input id="editDuration" value="${c.duration}"><div style="text-align:center; margin-top:15px;"><button id="modalSaveBtn" style="background:#10b981;">Save & Sync</button><button id="modalCancelBtn">Cancel</button></div></div>`;
         document.body.appendChild(modalDiv);
         document.getElementById('modalSaveBtn').onclick = () => {
             classData[idx] = { 
@@ -811,7 +790,7 @@
             };
             saveDataAndSync(); 
             updateAdminTable(); 
-            showToast('✅ Updated & syncing to cloud - All devices will update'); 
+            showToast('✅ Updated & syncing to cloud'); 
             document.body.removeChild(modalDiv);
         };
         document.getElementById('modalCancelBtn').onclick = () => document.body.removeChild(modalDiv);
@@ -827,13 +806,13 @@
             room:document.getElementById('newRoom').value, 
             type:document.getElementById('newType').value, 
             credit:parseInt(document.getElementById('newCredit').value)||3, 
-            duration:document.getElementById('newDuration').value||"100 min" 
+            duration:"100 min" 
         };
         if(!newClass.batch || !newClass.time || !newClass.code) { showToast("Batch, Time & Code required"); return; }
         classData.push(newClass); 
         saveDataAndSync(); 
         updateAdminTable(); 
-        showToast('✅ Class added & syncing to cloud - All devices will see this');
+        showToast('✅ Class added & syncing to cloud');
         document.getElementById('newBatch').value = '';
         document.getElementById('newCode').value = '';
         document.getElementById('newTitle').value = '';
@@ -841,11 +820,11 @@
         document.getElementById('newRoom').value = '';
     }
     function resetDefault(){ 
-        if(confirm('Reset to original master data? This will sync to ALL devices via cloud.')){ 
+        if(confirm('Reset to original master data?')){ 
             classData = JSON.parse(JSON.stringify(originalMasterData)); 
             saveDataAndSync(); 
             updateAdminTable(); 
-            showToast('Reset complete - syncing to cloud'); 
+            showToast('Reset complete'); 
         } 
     }
     
@@ -856,7 +835,7 @@
             document.getElementById('adminLoginCard').style.display='none'; 
             document.getElementById('adminDashboard').style.display='block'; 
             updateAdminTable(); 
-            showToast('✅ Admin access granted - Changes will sync to ALL devices via cloud'); 
+            showToast('✅ Admin access granted - Changes sync to ALL devices'); 
         } else { 
             showToast('❌ Access Denied'); 
         } 
@@ -899,10 +878,10 @@
     // Initialize
     loadLocalData();
     if (!loadGitHubConfig()) {
-        // Config not found - show setup card only in admin panel (already visible)
-        // But if user is not admin, they won't see it because admin dashboard is hidden
+        // Config not found - setup card remains visible
+    } else {
+        startCloudSync();
     }
-    startCloudSync(); // This will only run if config is loaded, otherwise it checks and waits
     populateTeacherDropdown();
     if('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
 </script>
