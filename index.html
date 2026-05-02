@@ -209,14 +209,13 @@
 <div class="sync-status" id="syncStatus"><i class="fas fa-spinner fa-pulse"></i> Loading...</div>
 
 <script>
-    // ==================== GITHUB CONFIGURATION ====================
-    // UPDATE THESE WITH YOUR ACTUAL VALUES
-    const GITHUB_TOKEN = 'github_pat_YOUR_TOKEN_HERE';
-    const GITHUB_OWNER = 'YOUR_USERNAME';
-    const GITHUB_REPO = 'YOUR_REPO_NAME';
+    // ==================== GITHUB CONFIGURATION (YOUR TOKEN IS HERE) ====================
+    const GITHUB_TOKEN = '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';
+    const GITHUB_OWNER = 'sharifuddin';
+    const GITHUB_REPO = 'EEE-CLASS-ROUTIN-DAY';
     const GITHUB_FILE = 'routine-data.json';
     
-    // Admin credentials (hidden)
+    // Admin credentials
     const ADMIN_EMAIL = 'sharif.uddin@eee.wub.edu.bd';
     const ADMIN_PASS = 'Sr@123580Sr@';
     
@@ -228,7 +227,7 @@
     let isSaving = false;
     let lastSavedData = null;
     
-    // ==================== COMPLETE ORIGINAL DATA ====================
+    // ==================== ORIGINAL MASTER DATA ====================
     const originalMasterData = [
         {batch:"85A", day:"MON", time:"12:00pm-12:50pm", code:"EEE07144263", title:"Microwave Engineering", teacher:"Debprosad Das", room:"504", type:"Theory", credit:3},
         {batch:"85A", day:"MON", time:"12:50pm-03:10pm", code:"EEE07144264", title:"Microwave Lab", teacher:"Debprosad Das", room:"B15", type:"Lab", credit:1},
@@ -368,7 +367,6 @@
         }
     }
     
-    // Get all unique teachers
     function getAllTeachers() {
         const teachers = new Set();
         classData.forEach(c => {
@@ -381,12 +379,6 @@
     
     // ==================== GITHUB API FUNCTIONS ====================
     async function saveToGitHub(data, showMsg = true) {
-        if (!GITHUB_TOKEN || GITHUB_TOKEN === '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') {
-            if (showMsg) showToast('⚠️ GitHub token not configured', true);
-            localStorage.setItem('wub_data', JSON.stringify(data));
-            return false;
-        }
-        
         if (isSaving) return false;
         isSaving = true;
         
@@ -396,7 +388,6 @@
             const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_FILE}`;
             let sha = null;
             
-            // Get current file SHA
             const getRes = await fetch(url, {
                 headers: { 'Authorization': `Bearer ${GITHUB_TOKEN}` }
             });
@@ -445,18 +436,6 @@
     }
     
     async function loadFromGitHub(showMsg = true) {
-        if (!GITHUB_TOKEN || GITHUB_TOKEN === 'github_pat_YOUR_TOKEN_HERE') {
-            if (showMsg) updateSyncStatus('error', 'GitHub not configured');
-            const saved = localStorage.getItem('wub_data');
-            if (saved) {
-                classData = JSON.parse(saved);
-            } else {
-                classData = JSON.parse(JSON.stringify(originalMasterData));
-            }
-            refreshAllViews();
-            return false;
-        }
-        
         if (showMsg) updateSyncStatus('syncing', 'Loading from GitHub...');
         
         try {
@@ -466,7 +445,6 @@
             });
             
             if (res.status === 404) {
-                // File doesn't exist, create it
                 await saveToGitHub(originalMasterData, false);
                 classData = JSON.parse(JSON.stringify(originalMasterData));
                 if (showMsg) updateSyncStatus('cloud', '✅ Created new file');
@@ -495,7 +473,6 @@
         return true;
     }
     
-    // Auto-save after any change
     async function autoSave() {
         if (adminLoggedIn && JSON.stringify(classData) !== JSON.stringify(lastSavedData)) {
             await saveToGitHub(classData, false);
@@ -821,6 +798,9 @@
     async function pullFromGitHub() {
         if (confirm('Pull latest data from GitHub? Any unsaved changes will be lost.')) {
             await loadFromGitHub(true);
+            renderAdminTable();
+            if (currentStudentBatch) renderStudentView(currentStudentBatch);
+            if (currentTeacher) loadTeacherClasses();
             showToast('✅ Latest data loaded from GitHub');
         }
     }
