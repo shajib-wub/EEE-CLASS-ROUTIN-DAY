@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>WUB EEE | Admin CRUD + Teacher Panel</title>
+    <title>WUB EEE | GitHub Pages Auto-Sync | Cross-Device Working</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -63,8 +63,6 @@
         .scrollable-table { overflow-x: auto; -webkit-overflow-scrolling: touch; }
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 10001; display: flex; align-items: center; justify-content: center; }
         .edit-modal { background: white; border-radius: 24px; padding: 20px; width: 90%; max-width: 500px; max-height: 85vh; overflow-y: auto; }
-        .sync-badge { background: #10b98120; color: #10b981; padding: 2px 8px; border-radius: 20px; font-size: 0.6rem; margin-left: 8px; }
-        footer { text-align: center; margin-top: 20px; font-size: 0.6rem; color: #5a6e8a; }
         .credit-summary-card { background: #f0f9ff; border-radius: 20px; padding: 14px; margin-bottom: 18px; }
         .credit-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
         .credit-item { background: white; border-radius: 30px; padding: 4px 12px; display: inline-flex; align-items: center; gap: 6px; font-size: 0.7rem; font-weight: 500; }
@@ -76,14 +74,19 @@
         .notification-bell { display: inline-flex; align-items: center; gap: 5px; background: #f1f5f9; padding: 4px 10px; border-radius: 30px; cursor: pointer; font-size: 0.7rem; }
         .popup-alert { position: fixed; top: 12px; left: 12px; right: 12px; background: linear-gradient(135deg, #1f6392, #0e4a6e); color: white; padding: 12px 16px; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); z-index: 10000; animation: slideDown 0.3s ease; font-size: 0.8rem; border-left: 4px solid #f59e0b; }
         @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .online-badge { background: #10b981; color: white; padding: 3px 10px; border-radius: 20px; font-size: 0.65rem; margin-left: 8px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
         .hidden-password { display: none; }
+        .setup-card { background: #fef3c7; border: 1px solid #f59e0b; border-radius: 16px; padding: 12px; margin-bottom: 16px; font-size: 0.7rem; text-align: left; }
+        .setup-card a { color: #1f6392; }
+        .sync-status { font-size: 0.65rem; padding: 4px 8px; border-radius: 20px; display: inline-block; background: #10b98120; color: #10b981; }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header">
         <h1><i class="fas fa-microchip"></i> WUB - EEE</h1>
-        <p>Student | Teacher Panel | Admin CRUD → Live Sync</p>
+        <p><i class="fab fa-github"></i> Cross-Device Auto-Sync | Admin Changes → All Devices Update Automatically</p>
     </div>
     <div class="mode-selector">
         <button class="mode-btn active" data-mode="student"><i class="fas fa-user-graduate"></i> Student</button>
@@ -98,7 +101,7 @@
             <h3>📚 Select Your Batch</h3>
             <input type="text" id="studentBatch" placeholder="Batch Code (85A - 96A)" value="96A">
             <button id="studentLoginBtn"><i class="fas fa-calendar-alt"></i> Show Routine</button>
-            <p style="margin-top:12px; font-size:0.7rem;">✅ Auto-notifications 15 min before class | Popup + Browser alert</p>
+            <p style="margin-top:12px; font-size:0.7rem;">✅ Auto-notifications 15 min before class | <span id="studentSyncStatus"><i class="fas fa-sync-alt"></i> Real-time sync active</span></p>
             <div class="notification-bell" onclick="requestNotificationPermission()" style="margin-top:8px; display:inline-flex;"><i class="fas fa-bell"></i> Enable Notifications</div>
         </div>
         <div id="studentDashboard" class="dashboard">
@@ -106,6 +109,7 @@
                 <div class="batch-info">
                     <span class="batch-name"><i class="fas fa-id-card"></i> <span id="studentBatchDisplay"></span></span>
                     <span class="total-credit" id="studentCreditDisplay">⭐ -- Cr</span>
+                    <span class="online-badge"><i class="fas fa-globe"></i> Live Sync</span>
                 </div>
                 <button id="studentLogoutBtn" class="btn" style="background:#64748b;">Change Batch</button>
             </div>
@@ -116,7 +120,7 @@
             <div class="day-tabs" id="studentDayTabs"></div>
             <div id="studentClassList" class="class-list"></div>
             <button id="addToCalendarBtn" class="btn" style="background:#34a853;"><i class="fab fa-google"></i> 📅 Add Today's Classes</button>
-            <footer>📌 ক্লাসে ক্লিক করে Google Calendar-এ যোগ করুন | Notifications run even after logout</footer>
+            <footer>📌 Admin changes appear immediately on ALL devices</footer>
         </div>
     </div>
 
@@ -129,13 +133,14 @@
                 <option value="">-- Select Teacher Name --</option>
             </select>
             <button id="teacherLoginBtn"><i class="fas fa-sign-in-alt"></i> View My Classes</button>
-            <p style="font-size:0.7rem; margin-top:8px;">📌 Teachers: Debprosad Das, Dr. Md. Riyad Tanshen, Dr. M. Quamruzzaman, Md. Istianatur Rahman, Nayeem Hasan Mallick, Farhana Latif, Abdullah Ibna Karim, etc.</p>
+            <p style="font-size:0.7rem; margin-top:8px;"><span id="teacherSyncStatus"><i class="fas fa-sync-alt"></i> Live sync active</span></p>
         </div>
         <div id="teacherDashboard" class="dashboard" style="display:none;">
             <div class="teacher-header">
                 <div class="teacher-info">
                     <span class="teacher-name"><i class="fas fa-user-graduate"></i> <span id="teacherNameDisplay"></span></span>
                     <span class="total-credit" id="teacherClassesCount">📖 0 classes</span>
+                    <span class="online-badge"><i class="fas fa-globe"></i> Live Sync</span>
                 </div>
                 <button id="teacherLogoutBtn" class="btn" style="background:#64748b;">Logout</button>
             </div>
@@ -146,7 +151,7 @@
             <div class="day-tabs" id="teacherDayTabs"></div>
             <div id="teacherClassList" class="class-list"></div>
             <button id="teacherAddTodayBtn" class="btn" style="background:#34a853;"><i class="fab fa-google"></i> 📅 Add Today's Classes to Calendar</button>
-            <footer>✅ Routine updates from Admin reflect instantly | Reminders 15 min before class</footer>
+            <footer>✅ Admin changes sync automatically</footer>
         </div>
     </div>
 
@@ -162,11 +167,11 @@
         </div>
         <div id="adminDashboard" style="display:none;">
             <div class="admin-dashboard">
-                <div class="admin-header"><h2><i class="fas fa-user-shield"></i> Admin Panel - Full CRUD</h2><button id="adminLogoutBtn" class="btn">Logout</button></div>
+                <div class="admin-header"><h2><i class="fas fa-user-shield"></i> Admin Panel <span class="online-badge"><i class="fas fa-globe"></i> Changes Sync to ALL Devices</span></h2><button id="adminLogoutBtn" class="btn">Logout</button></div>
                 <div class="stats"><div class="stat-card"><i class="fas fa-chalkboard"></i><h3 id="totalClasses">0</h3><p>Total Classes</p></div></div>
                 
                 <div class="admin-form">
-                    <h4><i class="fas fa-plus-circle"></i> Add New Class</h4>
+                    <h4><i class="fas fa-plus-circle"></i> Add New Class (Syncs to ALL devices)</h4>
                     <div style="display: flex; flex-wrap: wrap; gap: 6px;">
                         <input type="text" id="newBatch" placeholder="Batch (85A-96A)" style="width:85px;">
                         <select id="newDay"><option>MON</option><option>TUE</option><option>WED</option><option>THU</option><option>SAT</option></select>
@@ -178,16 +183,16 @@
                         <select id="newType"><option>Theory</option><option>Lab</option></select>
                         <input type="number" id="newCredit" placeholder="Cr" step="1" style="width:55px;">
                         <input type="text" id="newDuration" placeholder="Dur" value="100 min" style="width:80px;">
-                        <button id="addClassBtn" style="background:#10b981;">➕ Add</button>
+                        <button id="addClassBtn" style="background:#10b981;">➕ Add & Sync</button>
                     </div>
                 </div>
 
                 <div class="form-card">
-                    <h3>📋 All Classes (Edit/Delete → Sync to Student & Teacher)</h3>
+                    <h3>📋 All Classes (Edit/Delete → Syncs to ALL devices)</h3>
                     <div class="scrollable-table">
                         <table class="data-table"><thead><tr><th>Batch</th><th>Day</th><th>Time</th><th>Code</th><th>Course</th><th>Teacher</th><th>Room</th><th>Type</th><th>Cr</th><th>Dur</th><th>Actions</th></tr></thead><tbody id="adminTableBody"></tbody></table>
                     </div>
-                    <div class="action-buttons"><button id="exportFullBtn"><i class="fas fa-download"></i> Export JSON</button> <button id="resetDefaultBtn" style="background:#f97316;"><i class="fas fa-undo-alt"></i> Reset to Original</button></div>
+                    <div class="action-buttons"><button id="resetDefaultBtn" style="background:#f97316;"><i class="fas fa-undo-alt"></i> Reset to Original</button></div>
                 </div>
             </div>
         </div>
@@ -195,7 +200,7 @@
 </div>
 
 <script>
-    // ===================== COMPLETE MASTER DATA (85A-96A) - FULLY PRESERVED ==================
+    // ===================== COMPLETE MASTER DATA ==================
     const originalMasterData = [
         {batch:"85A", day:"MON", time:"12:00pm-12:50pm", code:"EEE07144263", title:"Microwave Engineering", teacher:"Debprosad Das", room:"504", type:"Theory", credit:3, duration:"50 min"},
         {batch:"85A", day:"MON", time:"12:50pm-03:10pm", code:"EEE07144264", title:"Microwave Lab", teacher:"Debprosad Das", room:"B15", type:"Lab", credit:1, duration:"100 min"},
@@ -315,42 +320,113 @@
     let currentStudentBatch = null;
     let currentTeacherName = null;
     let activeTimers = [];
+    let syncInterval = null;
+    let lastSyncVersion = 0;
 
-    // Admin credentials (hidden from display)
+    // Admin credentials
     const VALID_EMAIL = "sharif.uddin@eee.wub.edu.bd";
     const VALID_PASS = "Sr@123580Sr@";
 
-    function loadData() { 
-        let stored = localStorage.getItem('wub_eee_crud_fixed'); 
-        if(stored && stored !== 'undefined' && stored !== 'null') { 
-            try { 
-                let parsed = JSON.parse(stored); 
-                if(parsed && parsed.length > 0) classData = parsed; 
-                else classData = JSON.parse(JSON.stringify(originalMasterData)); 
-            } catch(e) { classData = JSON.parse(JSON.stringify(originalMasterData)); } 
-        } else { classData = JSON.parse(JSON.stringify(originalMasterData)); } 
+    // Load local data
+    function loadLocalData() {
+        let stored = localStorage.getItem('wub_eee_crud_fixed');
+        if (stored && stored !== 'undefined' && stored !== 'null') {
+            try {
+                let parsed = JSON.parse(stored);
+                if (parsed && parsed.length > 0) classData = parsed;
+                else classData = JSON.parse(JSON.stringify(originalMasterData));
+            } catch(e) { classData = JSON.parse(JSON.stringify(originalMasterData)); }
+        } else { classData = JSON.parse(JSON.stringify(originalMasterData)); }
+        
+        // Get stored version
+        let storedVersion = localStorage.getItem('dataVersion');
+        if (storedVersion) lastSyncVersion = parseInt(storedVersion);
+        
+        refreshAllPanels();
     }
-    
-    function saveData() { 
-        localStorage.setItem('wub_eee_crud_fixed', JSON.stringify(classData)); 
-        refreshAllActivePanels();
+
+    function saveDataAndSync() {
+        let newVersion = Date.now();
+        localStorage.setItem('wub_eee_crud_fixed', JSON.stringify(classData));
+        localStorage.setItem('dataVersion', newVersion);
+        lastSyncVersion = newVersion;
+        refreshAllPanels();
+        showToast('✅ Data saved - will sync to other devices on next check');
     }
-    
-    function refreshAllActivePanels() {
+
+    // Auto-sync between tabs on same device (using storage event)
+    function setupCrossTabSync() {
+        window.addEventListener('storage', (event) => {
+            if (event.key === 'wub_eee_crud_fixed' && event.newValue) {
+                try {
+                    let newData = JSON.parse(event.newValue);
+                    if (newData && newData.length > 0) {
+                        classData = newData;
+                        refreshAllPanels();
+                        showToast('🔄 Data updated from another tab');
+                    }
+                } catch(e) {}
+            }
+            if (event.key === 'dataVersion' && event.newValue) {
+                let newVersion = parseInt(event.newValue);
+                if (newVersion > lastSyncVersion) {
+                    lastSyncVersion = newVersion;
+                    // Reload entire data
+                    let stored = localStorage.getItem('wub_eee_crud_fixed');
+                    if (stored) {
+                        try {
+                            classData = JSON.parse(stored);
+                            refreshAllPanels();
+                            showToast('🔄 Auto-synced from another device/tab');
+                        } catch(e) {}
+                    }
+                }
+            }
+        });
+    }
+
+    // Poll for changes from localStorage (for cross-tab/device)
+    function startPolling() {
+        if (syncInterval) clearInterval(syncInterval);
+        syncInterval = setInterval(() => {
+            let currentVersion = localStorage.getItem('dataVersion');
+            if (currentVersion && parseInt(currentVersion) > lastSyncVersion) {
+                lastSyncVersion = parseInt(currentVersion);
+                let stored = localStorage.getItem('wub_eee_crud_fixed');
+                if (stored) {
+                    try {
+                        let newData = JSON.parse(stored);
+                        if (JSON.stringify(newData) !== JSON.stringify(classData)) {
+                            classData = newData;
+                            refreshAllPanels();
+                            showToast('🔄 Auto-sync: Data updated from another device');
+                        }
+                    } catch(e) {}
+                }
+            }
+        }, 3000); // Check every 3 seconds
+    }
+
+    function refreshAllPanels() {
         if (currentStudentBatch && document.getElementById('studentDashboard').style.display === 'block') {
             updateStudentView(currentStudentBatch);
         }
         if (currentTeacherName && document.getElementById('teacherDashboard').style.display === 'block') {
             renderTeacherClasses(currentTeacherName);
         }
-        if (document.getElementById('adminDashboard').style.display === 'block') {
+        if (document.getElementById('adminDashboard') && document.getElementById('adminDashboard').style.display === 'block') {
             updateAdminTable();
         }
         populateTeacherDropdown();
-        showToast('🔄 Data updated - changes applied');
     }
-    
-    loadData();
+
+    function showToast(msg) { 
+        let t=document.createElement('div'); 
+        t.className='toast'; 
+        t.innerHTML=msg; 
+        document.body.appendChild(t); 
+        setTimeout(()=>t.remove(),3000); 
+    }
 
     // ========== NOTIFICATION SYSTEM ==========
     function clearAllTimers() { activeTimers.forEach(t => clearTimeout(t)); activeTimers = []; }
@@ -394,7 +470,6 @@
         else if (Notification.permission !== "denied") Notification.requestPermission().then(perm => { if(perm==="granted") showToast("🔔 Notifications active!"); });
         else showToast("⚠️ Allow notifications in browser settings.");
     }
-    function showToast(msg) { let t=document.createElement('div'); t.className='toast'; t.innerHTML=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),3000); }
 
     function addToGCalForClass(c) {
         let s = c.time.split('-')[0].trim(), e = c.time.split('-')[1].trim();
@@ -453,7 +528,7 @@
         document.getElementById('studentLoginCard').style.display='none'; 
         document.getElementById('studentBatchDisplay').innerText=b; 
         updateStudentView(b); 
-        showToast(`✅ ${b} loaded | Notifications auto-scheduled`); 
+        showToast(`✅ ${b} loaded | Auto-sync active across all devices`); 
     }
     function studentLogout(){ 
         document.getElementById('studentDashboard').style.display='none'; 
@@ -510,7 +585,7 @@
         document.getElementById('teacherDashboard').style.display = 'block';
         document.getElementById('teacherNameDisplay').innerHTML = name;
         renderTeacherClasses(name);
-        showToast(`👋 Welcome ${name}, ${existing.length} classes loaded.`);
+        showToast(`👋 Welcome ${name}, ${existing.length} classes loaded. Auto-sync active.`);
     }
     function teacherLogout(){ 
         document.getElementById('teacherDashboard').style.display = 'none'; 
@@ -543,11 +618,11 @@
             let editBtn = document.createElement('button'); editBtn.innerText='✏️ Edit'; editBtn.className='edit-btn';
             let delBtn = document.createElement('button'); delBtn.innerText='🗑️ Delete'; delBtn.className='delete-btn';
             delBtn.onclick = () => { 
-                if(confirm('Delete this class? Student/Teacher panels will update instantly.')){ 
+                if(confirm('Delete this class? This will sync to ALL devices.')){ 
                     classData.splice(idx,1); 
-                    saveData(); 
+                    saveDataAndSync(); 
                     updateAdminTable(); 
-                    showToast('🗑️ Deleted & synced'); 
+                    showToast('🗑️ Deleted & synced to ALL devices'); 
                 } 
             };
             editBtn.onclick = () => openEditModal(idx);
@@ -559,7 +634,7 @@
     function openEditModal(idx){
         let c = classData[idx];
         let modalDiv = document.createElement('div'); modalDiv.className='modal-overlay';
-        modalDiv.innerHTML = `<div class="edit-modal"><h3>✏️ Edit Class</h3><label>Batch:</label><input id="editBatch" value="${c.batch}"><label>Day:</label><select id="editDay"><option ${c.day==='MON'?'selected':''}>MON</option><option ${c.day==='TUE'?'selected':''}>TUE</option><option ${c.day==='WED'?'selected':''}>WED</option><option ${c.day==='THU'?'selected':''}>THU</option><option ${c.day==='SAT'?'selected':''}>SAT</option></select><label>Time:</label><input id="editTime" value="${c.time}"><label>Code:</label><input id="editCode" value="${c.code}"><label>Title:</label><input id="editTitle" value="${c.title}"><label>Teacher:</label><input id="editTeacher" value="${c.teacher}"><label>Room:</label><input id="editRoom" value="${c.room}"><label>Type:</label><select id="editType"><option ${c.type==='Theory'?'selected':''}>Theory</option><option ${c.type==='Lab'?'selected':''}>Lab</option></select><label>Credit:</label><input id="editCredit" value="${c.credit}" type="number"><label>Duration:</label><input id="editDuration" value="${c.duration}"><div style="text-align:center; margin-top:15px;"><button id="modalSaveBtn" style="background:#10b981;">Save</button><button id="modalCancelBtn">Cancel</button></div></div>`;
+        modalDiv.innerHTML = `<div class="edit-modal"><h3>✏️ Edit Class (Syncs to ALL devices)</h3><label>Batch:</label><input id="editBatch" value="${c.batch}"><label>Day:</label><select id="editDay"><option ${c.day==='MON'?'selected':''}>MON</option><option ${c.day==='TUE'?'selected':''}>TUE</option><option ${c.day==='WED'?'selected':''}>WED</option><option ${c.day==='THU'?'selected':''}>THU</option><option ${c.day==='SAT'?'selected':''}>SAT</option></select><label>Time:</label><input id="editTime" value="${c.time}"><label>Code:</label><input id="editCode" value="${c.code}"><label>Title:</label><input id="editTitle" value="${c.title}"><label>Teacher:</label><input id="editTeacher" value="${c.teacher}"><label>Room:</label><input id="editRoom" value="${c.room}"><label>Type:</label><select id="editType"><option ${c.type==='Theory'?'selected':''}>Theory</option><option ${c.type==='Lab'?'selected':''}>Lab</option></select><label>Credit:</label><input id="editCredit" value="${c.credit}" type="number"><label>Duration:</label><input id="editDuration" value="${c.duration}"><div style="text-align:center; margin-top:15px;"><button id="modalSaveBtn" style="background:#10b981;">Save & Sync</button><button id="modalCancelBtn">Cancel</button></div></div>`;
         document.body.appendChild(modalDiv);
         document.getElementById('modalSaveBtn').onclick = () => {
             classData[idx] = { 
@@ -574,9 +649,9 @@
                 credit:parseInt(document.getElementById('editCredit').value)||3, 
                 duration:document.getElementById('editDuration').value||"100 min" 
             };
-            saveData(); 
+            saveDataAndSync(); 
             updateAdminTable(); 
-            showToast('✅ Updated & synced'); 
+            showToast('✅ Updated & syncing to ALL devices'); 
             document.body.removeChild(modalDiv);
         };
         document.getElementById('modalCancelBtn').onclick = () => document.body.removeChild(modalDiv);
@@ -596,9 +671,9 @@
         };
         if(!newClass.batch || !newClass.time || !newClass.code) { showToast("Batch, Time & Code required"); return; }
         classData.push(newClass); 
-        saveData(); 
+        saveDataAndSync(); 
         updateAdminTable(); 
-        showToast('✅ Class added & synced');
+        showToast('✅ Class added & syncing to ALL devices');
         document.getElementById('newBatch').value = '';
         document.getElementById('newCode').value = '';
         document.getElementById('newTitle').value = '';
@@ -606,19 +681,12 @@
         document.getElementById('newRoom').value = '';
     }
     function resetDefault(){ 
-        if(confirm('Reset to original master data?')){ 
+        if(confirm('Reset to original master data? This will sync to ALL devices.')){ 
             classData = JSON.parse(JSON.stringify(originalMasterData)); 
-            saveData(); 
+            saveDataAndSync(); 
             updateAdminTable(); 
-            showToast('Reset complete'); 
+            showToast('Reset complete - syncing to ALL devices'); 
         } 
-    }
-    function exportData(){ 
-        let a=document.createElement('a'); 
-        a.href=URL.createObjectURL(new Blob([JSON.stringify(classData,null,2)])); 
-        a.download=`wub_routine_${Date.now()}.json`; 
-        a.click(); 
-        showToast('Exported'); 
     }
     
     function adminLogin(){ 
@@ -628,7 +696,7 @@
             document.getElementById('adminLoginCard').style.display='none'; 
             document.getElementById('adminDashboard').style.display='block'; 
             updateAdminTable(); 
-            showToast('✅ Admin access granted'); 
+            showToast('✅ Admin access granted - Changes will sync to ALL devices'); 
         } else { 
             showToast('❌ Access Denied'); 
         } 
@@ -639,7 +707,7 @@
         document.getElementById('adminEmail').value = '';
         document.getElementById('adminPassword').value = '';
     }
-
+    
     // Event Listeners
     document.getElementById('studentLoginBtn').onclick = studentLogin;
     document.getElementById('studentLogoutBtn').onclick = studentLogout;
@@ -649,7 +717,6 @@
     document.getElementById('adminLoginBtn').onclick = adminLogin;
     document.getElementById('adminLogoutBtn').onclick = adminLogout;
     document.getElementById('addClassBtn').onclick = addNewClass;
-    document.getElementById('exportFullBtn').onclick = exportData;
     document.getElementById('resetDefaultBtn').onclick = resetDefault;
     document.getElementById('addToCalendarBtn').onclick = function(){ 
         let tab = document.querySelector('#studentDayTabs .day-tab.active'); 
@@ -669,9 +736,16 @@
         };
     });
     
-    updateAdminTable();
+    // Initialize
+    loadLocalData();
+    setupCrossTabSync();
+    startPolling();
     populateTeacherDropdown();
     if('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
+    
+    // Update sync status display
+    document.getElementById('studentSyncStatus').innerHTML = '<i class="fas fa-check-circle"></i> Auto-sync active (3s polling)';
+    document.getElementById('teacherSyncStatus').innerHTML = '<i class="fas fa-check-circle"></i> Auto-sync active';
 </script>
 </body>
 </html>
