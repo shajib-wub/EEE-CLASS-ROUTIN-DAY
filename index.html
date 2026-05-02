@@ -64,11 +64,7 @@
         .toast{position:fixed;bottom:20px;left:20px;right:20px;background:#1e293b;color:white;padding:12px;border-radius:50px;text-align:center;z-index:2000;animation:slideIn 0.3s ease;font-size:0.8rem;}
         @keyframes slideIn{from{transform:translateY(100%);opacity:0;}to{transform:translateY(0);opacity:1;}}
         
-        .sync-status{position:fixed;bottom:10px;right:10px;padding:4px 12px;border-radius:20px;font-size:0.6rem;z-index:1000;cursor:pointer;}
-        .sync-status.cloud{background:#10b981;color:white;}
-        .sync-status.syncing{background:#f59e0b;animation:pulse 1s infinite;}
-        .sync-status.error{background:#dc2626;color:white;}
-        @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.6;}}
+        .sync-status{position:fixed;bottom:10px;right:10px;padding:4px 12px;border-radius:20px;font-size:0.6rem;z-index:1000;cursor:pointer;background:#10b981;color:white;}
         
         .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10001;display:flex;align-items:center;justify-content:center;}
         .edit-modal{background:white;border-radius:24px;padding:20px;width:90%;max-width:500px;max-height:80vh;overflow-y:auto;}
@@ -83,6 +79,8 @@
         .stat-card{flex:1;background:#10b98120;padding:10px;border-radius:16px;text-align:center;}
         .filter-bar{display:flex;gap:8px;margin-bottom:15px;}
         .filter-bar input,.filter-bar select{flex:1;margin:0;padding:8px 12px;}
+        
+        .info-banner{background:#e0f2fe;padding:10px;border-radius:16px;margin-bottom:15px;font-size:0.7rem;text-align:center;}
     </style>
 </head>
 <body>
@@ -136,6 +134,9 @@
                     <span class="batch-name"><i class="fas fa-chalkboard-user"></i> <span id="teacherNameShow"></span></span>
                     <button id="teacherLogoutBtn" class="btn-danger">Exit</button>
                 </div>
+                <div class="info-banner">
+                    <i class="fas fa-sync-alt"></i> Live updates from Admin
+                </div>
                 <div class="stats">
                     <div class="stat-card"><span id="teacherClassCount">0</span><br><small>Total Classes</small></div>
                     <div class="stat-card"><span id="teacherBatchCount">0</span><br><small>Batches</small></div>
@@ -173,8 +174,8 @@
                     <button id="adminLogoutBtn" class="btn-danger">Logout</button>
                 </div>
                 
-                <div style="background:#e6f7ec; padding:12px; border-radius:16px; margin-bottom:20px;">
-                    <p style="font-size:0.7rem;"><i class="fab fa-github"></i> <strong>Auto-save Active!</strong> Any change you make is instantly saved to GitHub and synced to all devices.</p>
+                <div class="info-banner" style="background:#e6f7ec;">
+                    <i class="fas fa-globe"></i> <strong>Auto-save Active!</strong> Changes sync to all open tabs/devices (refresh other devices to see updates)
                 </div>
                 
                 <h4>➕ Add New Class</h4>
@@ -201,33 +202,19 @@
                     </table>
                 </div>
                 <button id="resetDataBtn" class="btn-warning" style="width:100%; margin-top:15px;">⟳ Reset to Default</button>
-                <button id="pullFromGitHubBtn" class="btn-success" style="width:100%; margin-top:10px;"><i class="fab fa-github"></i> Pull Latest from GitHub</button>
+                <button id="forceRefreshBtn" class="btn-success" style="width:100%; margin-top:10px;"><i class="fas fa-sync-alt"></i> Refresh All Views</button>
             </div>
         </div>
     </div>
 </div>
-<div class="sync-status" id="syncStatus"><i class="fas fa-spinner fa-pulse"></i> Loading...</div>
+<div class="sync-status" id="syncStatus"><i class="fas fa-check-circle"></i> Live Sync Active</div>
 
 <script>
-    // ==================== GITHUB CONFIGURATION (YOUR TOKEN IS HERE) ====================
-    const GITHUB_TOKEN = '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';
-    const GITHUB_OWNER = 'sharifuddin';
-    const GITHUB_REPO = 'EEE-CLASS-ROUTIN-DAY';
-    const GITHUB_FILE = 'routine-data.json';
-    
-    // Admin credentials
+    // ==================== ADMIN CREDENTIALS ====================
     const ADMIN_EMAIL = 'sharif.uddin@eee.wub.edu.bd';
     const ADMIN_PASS = 'Sr@123580Sr@';
     
-    // Global variables
-    let classData = [];
-    let currentStudentBatch = null;
-    let currentTeacher = null;
-    let adminLoggedIn = false;
-    let isSaving = false;
-    let lastSavedData = null;
-    
-    // ==================== ORIGINAL MASTER DATA ====================
+    // ==================== COMPLETE ORIGINAL DATA ====================
     const originalMasterData = [
         {batch:"85A", day:"MON", time:"12:00pm-12:50pm", code:"EEE07144263", title:"Microwave Engineering", teacher:"Debprosad Das", room:"504", type:"Theory", credit:3},
         {batch:"85A", day:"MON", time:"12:50pm-03:10pm", code:"EEE07144264", title:"Microwave Lab", teacher:"Debprosad Das", room:"B15", type:"Lab", credit:1},
@@ -343,6 +330,12 @@
         {batch:"96A", day:"THU", time:"12:00pm-01:40pm", code:"BAN", title:"Bengali Language", teacher:"Sadia Sultana", room:"507", type:"Theory", credit:2}
     ];
     
+    // Global variables
+    let classData = [];
+    let currentStudentBatch = null;
+    let currentTeacher = null;
+    let adminLoggedIn = false;
+    
     // Helper functions
     function showToast(msg, isError = false) {
         let t = document.createElement('div');
@@ -353,18 +346,54 @@
         setTimeout(() => t.remove(), 3000);
     }
     
-    function updateSyncStatus(status, msg) {
-        const el = document.getElementById('syncStatus');
-        if (status === 'cloud') {
-            el.className = 'sync-status cloud';
-            el.innerHTML = '<i class="fab fa-github"></i> ' + msg;
-        } else if (status === 'syncing') {
-            el.className = 'sync-status syncing';
-            el.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> ' + msg;
+    // Load/Save data from localStorage
+    function loadData() {
+        const saved = localStorage.getItem('wub_eee_data');
+        if (saved && saved !== 'undefined') {
+            try {
+                classData = JSON.parse(saved);
+                if (!classData || classData.length === 0) {
+                    classData = JSON.parse(JSON.stringify(originalMasterData));
+                }
+            } catch(e) {
+                classData = JSON.parse(JSON.stringify(originalMasterData));
+            }
         } else {
-            el.className = 'sync-status error';
-            el.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ' + msg;
+            classData = JSON.parse(JSON.stringify(originalMasterData));
         }
+        refreshAllViews();
+    }
+    
+    function saveData() {
+        localStorage.setItem('wub_eee_data', JSON.stringify(classData));
+        // Trigger storage event for cross-tab sync
+        window.dispatchEvent(new StorageEvent('storage', {
+            key: 'wub_eee_data',
+            newValue: JSON.stringify(classData)
+        }));
+        refreshAllViews();
+        showToast('✅ Changes saved and synced');
+    }
+    
+    // Listen for changes from other tabs
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'wub_eee_data' && e.newValue) {
+            try {
+                const newData = JSON.parse(e.newValue);
+                if (JSON.stringify(newData) !== JSON.stringify(classData)) {
+                    classData = newData;
+                    refreshAllViews();
+                    showToast('🔄 Data updated from another tab/device');
+                }
+            } catch(e) {}
+        }
+    });
+    
+    function refreshAllViews() {
+        if (adminLoggedIn) renderAdminTable();
+        if (currentStudentBatch) renderStudentView(currentStudentBatch);
+        if (currentTeacher) loadTeacherClasses();
+        updateTeacherSelect();
     }
     
     function getAllTeachers() {
@@ -375,115 +404,6 @@
             }
         });
         return Array.from(teachers).sort();
-    }
-    
-    // ==================== GITHUB API FUNCTIONS ====================
-    async function saveToGitHub(data, showMsg = true) {
-        if (isSaving) return false;
-        isSaving = true;
-        
-        if (showMsg) updateSyncStatus('syncing', 'Saving to GitHub...');
-        
-        try {
-            const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_FILE}`;
-            let sha = null;
-            
-            const getRes = await fetch(url, {
-                headers: { 'Authorization': `Bearer ${GITHUB_TOKEN}` }
-            });
-            if (getRes.ok) {
-                const fileData = await getRes.json();
-                sha = fileData.sha;
-            }
-            
-            const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
-            const res = await fetch(url, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${GITHUB_TOKEN}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    message: `Routine updated - ${new Date().toLocaleString()}`,
-                    content: content,
-                    sha: sha,
-                    branch: 'main'
-                })
-            });
-            
-            if (res.ok) {
-                if (showMsg) {
-                    updateSyncStatus('cloud', '✅ Saved to GitHub');
-                    showToast('✅ Data saved to GitHub!');
-                }
-                localStorage.setItem('wub_data', JSON.stringify(data));
-                lastSavedData = JSON.parse(JSON.stringify(data));
-                isSaving = false;
-                return true;
-            } else {
-                throw new Error('Save failed');
-            }
-        } catch(e) {
-            console.error('Save error:', e);
-            if (showMsg) {
-                updateSyncStatus('error', 'Save failed');
-                showToast('❌ Failed to save to GitHub', true);
-            }
-            localStorage.setItem('wub_data', JSON.stringify(data));
-            isSaving = false;
-            return false;
-        }
-    }
-    
-    async function loadFromGitHub(showMsg = true) {
-        if (showMsg) updateSyncStatus('syncing', 'Loading from GitHub...');
-        
-        try {
-            const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_FILE}`;
-            const res = await fetch(url, {
-                headers: { 'Authorization': `Bearer ${GITHUB_TOKEN}` }
-            });
-            
-            if (res.status === 404) {
-                await saveToGitHub(originalMasterData, false);
-                classData = JSON.parse(JSON.stringify(originalMasterData));
-                if (showMsg) updateSyncStatus('cloud', '✅ Created new file');
-            } else if (res.ok) {
-                const data = await res.json();
-                const decoded = atob(data.content);
-                classData = JSON.parse(decoded);
-                if (showMsg) updateSyncStatus('cloud', '✅ Loaded from GitHub');
-                localStorage.setItem('wub_data', JSON.stringify(classData));
-                lastSavedData = JSON.parse(JSON.stringify(classData));
-            } else {
-                throw new Error('API error');
-            }
-        } catch(e) {
-            console.error('Load error:', e);
-            if (showMsg) updateSyncStatus('error', 'Load failed, using local');
-            const saved = localStorage.getItem('wub_data');
-            if (saved) {
-                classData = JSON.parse(saved);
-            } else {
-                classData = JSON.parse(JSON.stringify(originalMasterData));
-            }
-        }
-        
-        refreshAllViews();
-        return true;
-    }
-    
-    async function autoSave() {
-        if (adminLoggedIn && JSON.stringify(classData) !== JSON.stringify(lastSavedData)) {
-            await saveToGitHub(classData, false);
-        }
-    }
-    
-    function refreshAllViews() {
-        if (adminLoggedIn) renderAdminTable();
-        if (currentStudentBatch) renderStudentView(currentStudentBatch);
-        if (currentTeacher) loadTeacherClasses();
-        updateTeacherSelect();
     }
     
     // ============= Student Functions =============
@@ -688,7 +608,7 @@
         });
     }
     
-    window.editClass = async function(idx) {
+    window.editClass = function(idx) {
         const c = classData[idx];
         const modal = document.createElement('div');
         modal.className = 'modal-overlay';
@@ -721,7 +641,7 @@
         `;
         document.body.appendChild(modal);
         
-        document.getElementById('saveEditBtn').onclick = async () => {
+        document.getElementById('saveEditBtn').onclick = () => {
             classData[idx] = {
                 batch: document.getElementById('editBatch').value.toUpperCase(),
                 day: document.getElementById('editDay').value,
@@ -733,28 +653,28 @@
                 type: document.getElementById('editType').value,
                 credit: parseInt(document.getElementById('editCredit').value) || 3
             };
-            await autoSave();
+            saveData();
             renderAdminTable();
             if (currentStudentBatch) renderStudentView(currentStudentBatch);
             if (currentTeacher) loadTeacherClasses();
-            showToast('✅ Class updated and synced');
+            showToast('✅ Class updated');
             modal.remove();
         };
         document.getElementById('cancelEditBtn').onclick = () => modal.remove();
     };
     
-    window.deleteClass = async function(idx) {
+    window.deleteClass = function(idx) {
         if (confirm('Delete this class?')) {
             classData.splice(idx, 1);
-            await autoSave();
+            saveData();
             renderAdminTable();
             if (currentStudentBatch) renderStudentView(currentStudentBatch);
             if (currentTeacher) loadTeacherClasses();
-            showToast('✅ Class deleted and synced');
+            showToast('✅ Class deleted');
         }
     };
     
-    async function addNewClass() {
+    function addNewClass() {
         const newClass = {
             batch: document.getElementById('newBatch').value.trim().toUpperCase(),
             day: document.getElementById('newDay').value,
@@ -771,11 +691,11 @@
             return;
         }
         classData.push(newClass);
-        await autoSave();
+        saveData();
         renderAdminTable();
         if (currentStudentBatch) renderStudentView(currentStudentBatch);
         if (currentTeacher) loadTeacherClasses();
-        showToast('✅ New class added and synced');
+        showToast('✅ New class added');
         
         document.getElementById('newBatch').value = '';
         document.getElementById('newCode').value = '';
@@ -784,10 +704,10 @@
         document.getElementById('newRoom').value = '';
     }
     
-    async function resetToDefault() {
+    function resetToDefault() {
         if (confirm('Reset all data to original? This will sync to all devices.')) {
             classData = JSON.parse(JSON.stringify(originalMasterData));
-            await saveToGitHub(classData, true);
+            saveData();
             renderAdminTable();
             if (currentStudentBatch) renderStudentView(currentStudentBatch);
             if (currentTeacher) loadTeacherClasses();
@@ -795,14 +715,9 @@
         }
     }
     
-    async function pullFromGitHub() {
-        if (confirm('Pull latest data from GitHub? Any unsaved changes will be lost.')) {
-            await loadFromGitHub(true);
-            renderAdminTable();
-            if (currentStudentBatch) renderStudentView(currentStudentBatch);
-            if (currentTeacher) loadTeacherClasses();
-            showToast('✅ Latest data loaded from GitHub');
-        }
+    function forceRefresh() {
+        refreshAllViews();
+        showToast('✅ Views refreshed');
     }
     
     function adminLogin() {
@@ -841,7 +756,7 @@
         document.getElementById('adminLogoutBtn').onclick = adminLogout;
         document.getElementById('addClassBtn').onclick = addNewClass;
         document.getElementById('resetDataBtn').onclick = resetToDefault;
-        document.getElementById('pullFromGitHubBtn').onclick = pullFromGitHub;
+        document.getElementById('forceRefreshBtn').onclick = forceRefresh;
         
         document.querySelectorAll('.mode-btn').forEach(btn => {
             btn.onclick = () => {
@@ -853,7 +768,7 @@
             };
         });
         
-        loadFromGitHub(true);
+        loadData();
     }
     
     init();
