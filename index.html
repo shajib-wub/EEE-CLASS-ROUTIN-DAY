@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>WUB EEE | Full CRUD Working | Admin Delete/Edit/Add → Student Auto Sync</title>
+    <title>WUB EEE | Student + Teacher + Admin CRUD</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -13,27 +13,20 @@
         .header { background: linear-gradient(135deg, #0f2b3d, #1b4a6e); color: white; padding: 18px 16px; border-radius: 24px; margin-bottom: 18px; text-align: center; }
         .header h1 { font-size: 1.4rem; margin-bottom: 6px; }
         .header p { font-size: 0.7rem; opacity: 0.9; }
-        .mode-selector { display: flex; justify-content: center; gap: 12px; margin-bottom: 18px; }
-        .mode-btn { background: white; color: #1f6392; border: 2px solid #1f6392; padding: 10px 20px; border-radius: 50px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 0.85rem; }
+        .mode-selector { display: flex; justify-content: center; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+        .mode-btn { background: white; color: #1f6392; border: 2px solid #1f6392; padding: 8px 18px; border-radius: 50px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 0.85rem; }
         .mode-btn.active { background: #1f6392; color: white; }
         .panel { display: none; animation: fadeIn 0.3s ease; }
         .panel.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
-        .login-card, .dashboard { background: white; border-radius: 24px; padding: 20px 16px; margin-bottom: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .login-card, .dashboard, .teacher-dashboard { background: white; border-radius: 24px; padding: 20px 16px; margin-bottom: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
         .login-card { text-align: center; }
-        .login-card input { padding: 12px 16px; margin: 8px 0; border-radius: 40px; border: 1px solid #cbd5e1; font-size: 1rem; width: 100%; max-width: 280px; outline: none; }
-        .login-card button, .btn { background: #1f6392; color: white; border: none; padding: 12px 24px; border-radius: 40px; font-weight: 600; cursor: pointer; margin: 8px; transition: 0.2s; font-size: 0.9rem; }
+        .login-card input, .teacher-login select { padding: 12px 16px; margin: 8px 0; border-radius: 40px; border: 1px solid #cbd5e1; font-size: 1rem; width: 100%; max-width: 280px; outline: none; }
+        .login-card button, .btn { background: #1f6392; color: white; border: none; padding: 10px 22px; border-radius: 40px; font-weight: 600; cursor: pointer; margin: 8px; transition: 0.2s; font-size: 0.9rem; }
         .dashboard { display: none; }
-        .batch-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid #e2e8f0; }
-        .batch-info { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-        .batch-name { font-size: 1.2rem; font-weight: 700; color: #1f6392; }
-        .total-credit { background: #e6f7ec; padding: 4px 12px; border-radius: 30px; color: #2b6e3c; font-weight: 600; font-size: 0.8rem; }
-        .credit-summary-card { background: #f0f9ff; border-radius: 20px; padding: 14px; margin-bottom: 18px; border: 1px solid #b9d9f0; max-height: 200px; overflow-y: auto; }
-        .credit-summary-card h3 { color: #1f6392; margin-bottom: 10px; font-size: 1rem; display: flex; align-items: center; gap: 6px; }
-        .credit-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
-        .credit-item { background: white; border-radius: 30px; padding: 4px 12px; display: inline-flex; align-items: center; gap: 6px; font-size: 0.7rem; font-weight: 500; }
-        .credit-badge { background: #1f6392; color: white; border-radius: 20px; padding: 2px 8px; font-size: 0.65rem; }
+        .teacher-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid #e2e8f0; }
+        .teacher-name { font-size: 1.2rem; font-weight: 700; color: #b45309; background: #fffbeb; padding: 6px 14px; border-radius: 40px; }
         .day-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 14px; }
         .day-tab { background: #f1f5f9; padding: 6px 18px; border-radius: 40px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 0.8rem; }
         .day-tab.active { background: #1f6392; color: white; }
@@ -45,8 +38,8 @@
         .details { flex: 2; min-width: 140px; }
         .course-code { font-weight: 800; color: #1e293b; font-size: 0.8rem; }
         .title { font-weight: 600; color: #334155; margin: 3px 0; font-size: 0.75rem; }
-        .teacher { font-size: 0.7rem; color: #5588b1; }
         .room { background: #e6f7ec; padding: 3px 10px; border-radius: 30px; font-size: 0.7rem; font-weight: 600; color: #2b6e3c; }
+        .batch-badge { background: #e0f2fe; padding: 3px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; color: #0369a1; }
         .no-class { text-align: center; padding: 30px; color: #94a3b8; font-style: italic; font-size: 0.85rem; }
         .toast { position: fixed; bottom: 16px; left: 16px; right: 16px; background: #1e293b; color: white; padding: 12px 20px; border-radius: 50px; z-index: 2000; font-size: 0.8rem; text-align: center; animation: slideIn 0.3s ease; }
         @keyframes slideIn { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -55,52 +48,45 @@
         .admin-login { text-align: center; }
         .admin-login input { padding: 12px 16px; margin: 8px 0; border-radius: 40px; border: 1px solid #cbd5e1; width: 100%; max-width: 280px; outline: none; }
         .admin-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
-        .admin-header h2 { font-size: 1.1rem; }
         .stats { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
         .stat-card { background: linear-gradient(135deg, #1f6392, #0e4a6e); color: white; padding: 14px; border-radius: 18px; flex: 1; min-width: 120px; text-align: center; }
         .stat-card h3 { font-size: 1.6rem; }
-        .stat-card p { font-size: 0.7rem; }
         .form-card { background: #f8fafc; padding: 16px; border-radius: 18px; margin-bottom: 18px; overflow-x: auto; }
         .data-table { width: 100%; border-collapse: collapse; background: white; border-radius: 16px; overflow: hidden; font-size: 0.7rem; }
         .data-table th, .data-table td { padding: 8px 6px; text-align: left; border-bottom: 1px solid #e2e8f0; }
         .data-table th { background: #1f6392; color: white; font-size: 0.7rem; }
         .action-buttons { display: flex; gap: 10px; justify-content: center; margin-top: 12px; flex-wrap: wrap; }
         .admin-form { background: #fff; padding: 16px; border-radius: 18px; margin-top: 16px; border: 1px solid #cbd5e1; }
-        .admin-form h4 { margin-bottom: 12px; color: #1f6392; font-size: 0.9rem; }
-        .admin-form input, .admin-form select { padding: 8px 12px; border-radius: 30px; border: 1px solid #cbd5e1; font-size: 0.8rem; margin: 4px; }
         .edit-btn, .delete-btn { padding: 4px 10px; border-radius: 20px; font-size: 0.65rem; cursor: pointer; margin: 0 2px; border: none; }
         .edit-btn { background: #f59e0b; color: white; }
         .delete-btn { background: #dc2626; color: white; }
-        footer { text-align: center; margin-top: 20px; font-size: 0.6rem; color: #5a6e8a; }
-        .notification-bell { display: inline-flex; align-items: center; gap: 5px; background: #f1f5f9; padding: 4px 10px; border-radius: 30px; cursor: pointer; font-size: 0.7rem; }
-        .popup-alert { position: fixed; top: 12px; left: 12px; right: 12px; background: linear-gradient(135deg, #1f6392, #0e4a6e); color: white; padding: 12px 16px; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); z-index: 10000; animation: slideDown 0.3s ease; font-size: 0.8rem; border-left: 4px solid #f59e0b; }
-        .popup-alert i { margin-right: 8px; }
-        @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .scrollable-table { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 10001; display: flex; align-items: center; justify-content: center; }
+        .edit-modal { background: white; border-radius: 24px; padding: 20px; width: 90%; max-width: 500px; max-height: 85vh; overflow-y: auto; }
+        .sync-badge { background: #10b98120; color: #10b981; padding: 2px 8px; border-radius: 20px; font-size: 0.6rem; margin-left: 8px; }
+        footer { text-align: center; margin-top: 20px; font-size: 0.6rem; color: #5a6e8a; }
+        .credit-summary-card { background: #f0f9ff; border-radius: 20px; padding: 14px; margin-bottom: 18px; }
+        .credit-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+        .credit-item { background: white; border-radius: 30px; padding: 4px 12px; display: inline-flex; align-items: center; gap: 6px; font-size: 0.7rem; font-weight: 500; }
+        .credit-badge { background: #1f6392; color: white; border-radius: 20px; padding: 2px 8px; font-size: 0.65rem; }
         @media (max-width: 550px) {
             .class-item { flex-direction: column; align-items: flex-start; }
             .time-badge { width: 100%; text-align: left; }
-            .admin-form input, .admin-form select { width: calc(50% - 10px); }
         }
-        .sync-badge { background: #10b98120; color: #10b981; padding: 2px 8px; border-radius: 20px; font-size: 0.6rem; margin-left: 8px; }
-        
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 10001; display: flex; align-items: center; justify-content: center; }
-        .edit-modal { background: white; border-radius: 24px; padding: 20px; width: 90%; max-width: 500px; max-height: 85vh; overflow-y: auto; }
-        .edit-modal h3 { color: #1f6392; margin-bottom: 15px; }
-        .edit-modal input, .edit-modal select { width: 100%; padding: 10px 14px; margin: 8px 0; border-radius: 30px; border: 1px solid #cbd5e1; font-size: 0.9rem; }
-        .edit-modal button { padding: 10px 20px; margin: 8px 5px; border-radius: 30px; border: none; cursor: pointer; }
-        .modal-save { background: #10b981; color: white; }
-        .modal-cancel { background: #64748b; color: white; }
+        .notification-bell { display: inline-flex; align-items: center; gap: 5px; background: #f1f5f9; padding: 4px 10px; border-radius: 30px; cursor: pointer; font-size: 0.7rem; }
+        .popup-alert { position: fixed; top: 12px; left: 12px; right: 12px; background: linear-gradient(135deg, #1f6392, #0e4a6e); color: white; padding: 12px 16px; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); z-index: 10000; animation: slideDown 0.3s ease; font-size: 0.8rem; border-left: 4px solid #f59e0b; }
+        @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header">
         <h1><i class="fas fa-microchip"></i> WUB - EEE</h1>
-        <p>Complete Routine 85A-96A | Delete/Edit/Add Working | Admin → Student Auto Sync</p>
+        <p>Student (Auto Notifications) | Teacher Dropdown | Admin CRUD → Live Sync</p>
     </div>
     <div class="mode-selector">
         <button class="mode-btn active" data-mode="student"><i class="fas fa-user-graduate"></i> Student</button>
+        <button class="mode-btn" data-mode="teacher"><i class="fas fa-chalkboard-user"></i> Teacher</button>
         <button class="mode-btn" data-mode="admin"><i class="fas fa-user-shield"></i> Admin</button>
     </div>
 
@@ -108,33 +94,56 @@
     <div id="studentPanel" class="panel active">
         <div id="studentLoginCard" class="login-card">
             <i class="fas fa-user-graduate" style="font-size: 1.8rem; color: #1f6392;"></i>
-            <h3 style="margin: 8px 0;">📚 Select Your Batch</h3>
+            <h3>📚 Select Your Batch</h3>
             <input type="text" id="studentBatch" placeholder="Batch Code (85A - 96A)" value="96A">
             <button id="studentLoginBtn"><i class="fas fa-calendar-alt"></i> Show Routine</button>
-            <p style="margin-top:12px; font-size:0.7rem;">✅ Batches: 85A to 96A | Popup notifications 15 min before class</p>
-            <p style="font-size:0.65rem; color:#5588b1;"><i class="fas fa-sync-alt"></i> Admin changes reflect instantly | <i class="fas fa-info-circle"></i> ক্লাসে ক্লিক করে Google Calendar-এ যোগ করুন</p>
+            <p style="margin-top:12px; font-size:0.7rem;">✅ Notifications auto-scheduled 15 min before each class | Popup + Browser alert</p>
+            <div class="notification-bell" onclick="requestNotificationPermission()" style="margin-top:8px; display:inline-flex;"><i class="fas fa-bell"></i> Enable Notifications</div>
         </div>
         <div id="studentDashboard" class="dashboard">
             <div class="batch-header">
                 <div class="batch-info">
                     <span class="batch-name"><i class="fas fa-id-card"></i> <span id="studentBatchDisplay"></span></span>
                     <span class="total-credit" id="studentCreditDisplay">⭐ -- Cr</span>
-                    <div class="notification-bell" onclick="requestNotificationPermission()">
-                        <i class="fas fa-bell"></i> <span>Alert</span>
-                    </div>
                 </div>
-                <button id="studentLogoutBtn" class="btn" style="background:#64748b; padding:8px 16px; font-size:0.75rem;">Change Batch</button>
+                <button id="studentLogoutBtn" class="btn" style="background:#64748b;">Change Batch</button>
             </div>
             <div class="credit-summary-card">
-                <h3><i class="fas fa-list-check"></i> Course Credit Summary <span class="sync-badge"><i class="fas fa-sync-alt"></i> Live Sync</span></h3>
+                <h3><i class="fas fa-list-check"></i> Course Credit Summary</h3>
                 <div id="creditSummaryList" class="credit-grid">Loading...</div>
             </div>
             <div class="day-tabs" id="studentDayTabs"></div>
             <div id="studentClassList" class="class-list"></div>
-            <div class="action-buttons">
-                <button id="addToCalendarBtn" class="btn calendar-btn" style="background:#34a853;"><i class="fab fa-google"></i> 📅 Add Today's Classes</button>
+            <button id="addToCalendarBtn" class="btn" style="background:#34a853;"><i class="fab fa-google"></i> 📅 Add Today's Classes</button>
+        </div>
+    </div>
+
+    <!-- Teacher Panel -->
+    <div id="teacherPanel" class="panel">
+        <div id="teacherLoginCard" class="login-card">
+            <i class="fas fa-chalkboard-user" style="font-size: 1.8rem; color:#b45309;"></i>
+            <h3>👩‍🏫 Teacher Login</h3>
+            <select id="teacherNameSelect" style="width:100%; max-width:280px; padding:12px 16px; border-radius:40px;">
+                <option value="">-- Select Teacher Name --</option>
+            </select>
+            <button id="teacherLoginBtn"><i class="fas fa-sign-in-alt"></i> View My Classes</button>
+            <p style="font-size:0.7rem; margin-top:8px;">📌 Select your name from dropdown to see your schedule</p>
+        </div>
+        <div id="teacherDashboard" class="dashboard" style="display:none;">
+            <div class="teacher-header">
+                <div class="teacher-info">
+                    <span class="teacher-name"><i class="fas fa-user-graduate"></i> <span id="teacherNameDisplay"></span></span>
+                    <span class="total-credit" id="teacherClassesCount">📖 0 classes</span>
+                </div>
+                <button id="teacherLogoutBtn" class="btn" style="background:#64748b;">Logout</button>
             </div>
-            <footer>📌 ক্লাসে ক্লিক করে Google Calendar-এ যোগ করুন | Notifications run even after logout</footer>
+            <div class="credit-summary-card" style="background:#fff7ed; border:1px solid #fed7aa;">
+                <h3><i class="fas fa-chalkboard"></i> Your Classes (All Batches)</h3>
+                <div id="teacherSummaryInfo" style="font-size:0.75rem; margin-bottom:8px;">📌 Click any class to add to Google Calendar</div>
+            </div>
+            <div class="day-tabs" id="teacherDayTabs"></div>
+            <div id="teacherClassList" class="class-list"></div>
+            <button id="teacherAddTodayBtn" class="btn" style="background:#34a853;"><i class="fab fa-google"></i> 📅 Add Today's Classes</button>
         </div>
     </div>
 
@@ -142,16 +151,15 @@
     <div id="adminPanel" class="panel">
         <div id="adminLoginCard" class="admin-login">
             <i class="fas fa-user-shield" style="font-size: 1.8rem;"></i>
-            <h3 style="margin: 8px 0;">🔐 Admin Login</h3>
+            <h3>🔐 Admin Login</h3>
             <input type="email" id="adminEmail" placeholder="Admin Email">
             <input type="password" id="adminPassword" placeholder="Password">
             <button id="adminLoginBtn"><i class="fas fa-sign-in-alt"></i> Login</button>
         </div>
         <div id="adminDashboard" style="display:none;">
             <div class="admin-dashboard">
-                <div class="admin-header"><h2><i class="fas fa-user-shield"></i> Admin Panel - Delete/Edit/Add Working</h2><button id="adminLogoutBtn" class="btn" style="padding:8px 16px;">Logout</button></div>
+                <div class="admin-header"><h2><i class="fas fa-user-shield"></i> Admin Panel - Full CRUD</h2><button id="adminLogoutBtn" class="btn">Logout</button></div>
                 <div class="stats"><div class="stat-card"><i class="fas fa-chalkboard"></i><h3 id="totalClasses">0</h3><p>Total Classes</p></div></div>
-                
                 <div class="admin-form">
                     <h4><i class="fas fa-plus-circle"></i> Add New Class</h4>
                     <div style="display: flex; flex-wrap: wrap; gap: 6px;">
@@ -165,17 +173,13 @@
                         <select id="newType"><option>Theory</option><option>Lab</option></select>
                         <input type="number" id="newCredit" placeholder="Cr" step="1" style="width:55px;">
                         <input type="text" id="newDuration" placeholder="Dur" value="100 min" style="width:80px;">
-                        <button id="addClassBtn" style="background:#10b981; padding:8px 16px;">➕ Add</button>
+                        <button id="addClassBtn" style="background:#10b981;">➕ Add</button>
                     </div>
                 </div>
-
                 <div class="form-card">
-                    <h3 style="font-size:0.9rem;">📋 All Classes (Click DELETE to remove - instantly syncs to student panel)</h3>
+                    <h3>📋 All Classes (Edit/Delete → Sync to Student & Teacher)</h3>
                     <div class="scrollable-table">
-                        <table class="data-table">
-                            <thead><tr><th>Batch</th><th>Day</th><th>Time</th><th>Code</th><th>Course</th><th>Teacher</th><th>Room</th><th>Type</th><th>Cr</th><th>Dur</th><th>Actions</th></tr></thead>
-                            <tbody id="adminTableBody"></tbody>
-                        </table>
+                        <table class="data-table"><thead><tr><th>Batch</th><th>Day</th><th>Time</th><th>Code</th><th>Course</th><th>Teacher</th><th>Room</th><th>Type</th><th>Cr</th><th>Dur</th><th>Actions</th></tr></thead><tbody id="adminTableBody"></tbody></table>
                     </div>
                     <div class="action-buttons"><button id="exportFullBtn"><i class="fas fa-download"></i> Export JSON</button> <button id="resetDefaultBtn" style="background:#f97316;"><i class="fas fa-undo-alt"></i> Reset to Original</button></div>
                 </div>
@@ -185,7 +189,7 @@
 </div>
 
 <script>
-    // ===================== COMPLETE MASTER DATA (85A-96A) ==================
+    // ===================== COMPLETE MASTER DATA (85A-96A) - FULLY PRESERVED ==================
     const originalMasterData = [
         {batch:"85A", day:"MON", time:"12:00pm-12:50pm", code:"EEE07144263", title:"Microwave Engineering", teacher:"Debprosad Das", room:"504", type:"Theory", credit:3, duration:"50 min"},
         {batch:"85A", day:"MON", time:"12:50pm-03:10pm", code:"EEE07144264", title:"Microwave Lab", teacher:"Debprosad Das", room:"B15", type:"Lab", credit:1, duration:"100 min"},
@@ -300,33 +304,19 @@
         {batch:"96A", day:"THU", time:"10:20am-12:00pm", code:"MAT-DIC", title:"Calculus", teacher:"Md Toriqul Islam", room:"507", type:"Theory", credit:3, duration:"100 min"},
         {batch:"96A", day:"THU", time:"12:00pm-01:40pm", code:"BAN", title:"Bengali Language", teacher:"Sadia Sultana", room:"507", type:"Theory", credit:2, duration:"100 min"}
     ];
-    
-    // Initialize data from localStorage or use master data
+
     let classData = [];
-    function loadData() {
-        let stored = localStorage.getItem('wub_eee_crud_fixed');
-        if(stored && stored !== 'undefined') {
-            try {
-                classData = JSON.parse(stored);
-                if(!classData || classData.length === 0) classData = JSON.parse(JSON.stringify(originalMasterData));
-            } catch(e) { classData = JSON.parse(JSON.stringify(originalMasterData)); }
-        } else {
-            classData = JSON.parse(JSON.stringify(originalMasterData));
-        }
-    }
+    function loadData() { let stored = localStorage.getItem('wub_eee_crud_fixed'); if(stored && stored!=='undefined') { try { classData = JSON.parse(stored); if(!classData.length) classData = JSON.parse(JSON.stringify(originalMasterData)); } catch(e) { classData = JSON.parse(JSON.stringify(originalMasterData)); } } else { classData = JSON.parse(JSON.stringify(originalMasterData)); } }
     loadData();
-    
-    function saveData() {
-        localStorage.setItem('wub_eee_crud_fixed', JSON.stringify(classData));
-    }
-    
-    // Notification System
+    function saveData() { localStorage.setItem('wub_eee_crud_fixed', JSON.stringify(classData)); refreshAllPanels(); }
+
+    // ========== NOTIFICATION SYSTEM (Auto-schedule for student) ==========
     let activeTimers = [];
     function clearAllTimers() { activeTimers.forEach(t => clearTimeout(t)); activeTimers = []; }
     function showPopupAlert(classItem) {
         const popup = document.createElement('div');
         popup.className = 'popup-alert';
-        popup.innerHTML = `<i class="fas fa-bell"></i> <strong>📚 Class Reminder!</strong><br>${classItem.title} (${classItem.code})<br>⏰ ${classItem.time} | 🏫 ${classItem.room}<br>👨‍🏫 ${classItem.teacher}`;
+        popup.innerHTML = `<i class="fas fa-bell"></i> <strong>📚 Class in 15 min!</strong><br>${classItem.title} (${classItem.code})<br>⏰ ${classItem.time} | 🏫 ${classItem.room}<br>👨‍🏫 ${classItem.teacher}`;
         document.body.appendChild(popup);
         setTimeout(() => popup.remove(), 10000);
         if (Notification.permission === "granted") new Notification(`🔔 ${classItem.title} starts in 15 min`, { body: `${classItem.time} | Room: ${classItem.room}` });
@@ -354,301 +344,184 @@
             }
         } catch(e) {}
     }
-    function scheduleAllNotifications(batch) { clearAllTimers(); classData.filter(c=>c.batch===batch).forEach(c=>scheduleClassNotification(c)); }
+    function scheduleAllNotificationsForBatch(batch) { 
+        clearAllTimers(); 
+        classData.filter(c=>c.batch===batch).forEach(c=>scheduleClassNotification(c)); 
+    }
     function requestNotificationPermission() {
-        if (Notification.permission === "granted") showToast("✅ Notifications active!");
-        else if (Notification.permission !== "denied") Notification.requestPermission().then(perm => { if(perm==="granted") showToast("🔔 Enabled!"); });
-        else showToast("⚠️ Allow in browser settings.");
+        if (Notification.permission === "granted") showToast("✅ Notifications enabled!");
+        else if (Notification.permission !== "denied") Notification.requestPermission().then(perm => { if(perm==="granted") showToast("🔔 Notifications active!"); });
+        else showToast("⚠️ Please allow notifications in browser settings.");
     }
     function showToast(msg) { let t=document.createElement('div'); t.className='toast'; t.innerHTML=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),3000); }
-    
-    // Refresh Student Panel (called after any data change)
-    function refreshStudentPanel() {
-        let studentDashboard = document.getElementById('studentDashboard');
-        if (studentDashboard && studentDashboard.style.display === 'block') {
-            let currentBatch = document.getElementById('studentBatchDisplay').innerText;
-            if (currentBatch && currentBatch !== '--') {
-                updateStudentView(currentBatch);
-            }
-        }
+
+    // ========== Helper Functions ==========
+    function refreshAllPanels() { 
+        if(window.currentStudentBatch) updateStudentView(window.currentStudentBatch); 
+        if(window.currentTeacherName) renderTeacherClasses(window.currentTeacherName); 
+        updateAdminTable(); 
+        populateTeacherDropdown();
     }
-    
-    // Update Admin Table
-    function updateAdminTable() {
-        let tbody = document.getElementById('adminTableBody');
-        if(!tbody) return;
-        tbody.innerHTML = '';
-        classData.forEach((c, idx) => {
-            let row = tbody.insertRow();
-            row.insertCell(0).innerText = c.batch;
-            row.insertCell(1).innerText = c.day;
-            row.insertCell(2).innerText = c.time;
-            row.insertCell(3).innerText = c.code;
-            row.insertCell(4).innerText = c.title.length>12?c.title.substring(0,12)+'..':c.title;
-            row.insertCell(5).innerText = c.teacher.length>10?c.teacher.substring(0,10)+'..':c.teacher;
-            row.insertCell(6).innerText = c.room;
-            row.insertCell(7).innerText = c.type;
-            row.insertCell(8).innerText = c.credit;
-            row.insertCell(9).innerText = c.duration;
-            let actionCell = row.insertCell(10);
-            let editBtn = document.createElement('button'); 
-            editBtn.innerText = '✏️ Edit'; 
-            editBtn.className = 'edit-btn';
-            let delBtn = document.createElement('button'); 
-            delBtn.innerText = '🗑️ Delete'; 
-            delBtn.className = 'delete-btn';
-            
-            // Delete handler
-            delBtn.onclick = function() {
-                if(confirm('Delete this class? Student panel will update instantly.')) {
-                    classData.splice(idx, 1);
-                    saveData();
-                    updateAdminTable();
-                    refreshStudentPanel();
-                    showToast('🗑️ Class deleted & synced to student panel');
-                }
-            };
-            
-            // Edit handler - full edit modal
-            editBtn.onclick = function() {
-                openEditModal(idx);
-            };
-            
-            actionCell.appendChild(editBtn);
-            actionCell.appendChild(delBtn);
-        });
-        document.getElementById('totalClasses').innerHTML = classData.length;
+    function addToGCalForClass(c) {
+        let s = c.time.split('-')[0].trim(), e = c.time.split('-')[1].trim();
+        let today = new Date(); let dayMap={'MON':1,'TUE':2,'WED':3,'THU':4,'SAT':6};
+        let d = new Date(today); d.setDate(today.getDate()+((dayMap[c.day]-today.getDay()+7)%7));
+        let f = t => { let h=parseInt(t.match(/\d+/)[0]), m=parseInt(t.match(/:(\d+)/)?.[1]||0), pm=t.toLowerCase().includes('pm')&&h!==12; if(pm) h+=12; if(t.toLowerCase().includes('am')&&h===12) h=0; return `${h.toString().padStart(2,'0')}${m.toString().padStart(2,'0')}00`; };
+        let url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(c.code+' - '+c.title)}&dates=${d.getFullYear()}${(d.getMonth()+1).toString().padStart(2,'0')}${d.getDate().toString().padStart(2,'0')}T${f(s)}/${d.getFullYear()}${(d.getMonth()+1).toString().padStart(2,'0')}${d.getDate().toString().padStart(2,'0')}T${f(e)}&details=${encodeURIComponent('Teacher: '+c.teacher+'\nRoom: '+c.room+'\nBatch: '+c.batch)}&location=${encodeURIComponent(c.room)}`;
+        window.open(url,'_blank'); showToast(`📅 ${c.title} added`);
     }
-    
-    // Full Edit Modal
-    function openEditModal(index) {
-        let c = classData[index];
-        let modalDiv = document.createElement('div');
-        modalDiv.className = 'modal-overlay';
-        modalDiv.innerHTML = `
-            <div class="edit-modal">
-                <h3>✏️ Edit Class - All Fields</h3>
-                <label>Batch:</label><input type="text" id="editBatch" value="${c.batch}" placeholder="85A">
-                <label>Day:</label><select id="editDay"><option ${c.day==='MON'?'selected':''}>MON</option><option ${c.day==='TUE'?'selected':''}>TUE</option><option ${c.day==='WED'?'selected':''}>WED</option><option ${c.day==='THU'?'selected':''}>THU</option><option ${c.day==='SAT'?'selected':''}>SAT</option></select>
-                <label>Time:</label><input type="text" id="editTime" value="${c.time}" placeholder="09:30am-11:10am">
-                <label>Course Code:</label><input type="text" id="editCode" value="${c.code}">
-                <label>Course Title:</label><input type="text" id="editTitle" value="${c.title}">
-                <label>Teacher:</label><input type="text" id="editTeacher" value="${c.teacher}">
-                <label>Room:</label><input type="text" id="editRoom" value="${c.room}">
-                <label>Type:</label><select id="editType"><option ${c.type==='Theory'?'selected':''}>Theory</option><option ${c.type==='Lab'?'selected':''}>Lab</option></select>
-                <label>Credit:</label><input type="number" id="editCredit" value="${c.credit}" step="1">
-                <label>Duration:</label><input type="text" id="editDuration" value="${c.duration}" placeholder="100 min">
-                <div style="text-align:center; margin-top:15px;">
-                    <button class="modal-save" id="modalSaveBtn">💾 Save Changes</button>
-                    <button class="modal-cancel" id="modalCancelBtn">Cancel</button>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(modalDiv);
-        
-        document.getElementById('modalSaveBtn').onclick = () => {
-            let newBatch = document.getElementById('editBatch').value.trim().toUpperCase();
-            let newDay = document.getElementById('editDay').value;
-            let newTime = document.getElementById('editTime').value.trim();
-            let newCode = document.getElementById('editCode').value.trim();
-            let newTitle = document.getElementById('editTitle').value.trim();
-            let newTeacher = document.getElementById('editTeacher').value.trim();
-            let newRoom = document.getElementById('editRoom').value.trim();
-            let newType = document.getElementById('editType').value;
-            let newCredit = parseInt(document.getElementById('editCredit').value);
-            let newDuration = document.getElementById('editDuration').value.trim();
-            
-            if(newBatch && newTime && newCode) {
-                classData[index] = {
-                    batch: newBatch, day: newDay, time: newTime, code: newCode,
-                    title: newTitle, teacher: newTeacher, room: newRoom,
-                    type: newType, credit: newCredit, duration: newDuration || "100 min"
-                };
-                saveData();
-                updateAdminTable();
-                refreshStudentPanel();
-                showToast('✅ Class updated & synced to student panel');
-            } else {
-                showToast('❌ Batch, Time, Code are required');
-            }
-            document.body.removeChild(modalDiv);
-        };
-        document.getElementById('modalCancelBtn').onclick = () => document.body.removeChild(modalDiv);
-    }
-    
-    // Add New Class
-    function addNewClass() {
-        let batch = document.getElementById('newBatch').value.trim().toUpperCase();
-        if(!batch) { showToast("Enter Batch (85A-96A)"); return; }
-        let newClass = { 
-            batch: batch, 
-            day: document.getElementById('newDay').value, 
-            time: document.getElementById('newTime').value, 
-            code: document.getElementById('newCode').value, 
-            title: document.getElementById('newTitle').value, 
-            teacher: document.getElementById('newTeacher').value, 
-            room: document.getElementById('newRoom').value, 
-            type: document.getElementById('newType').value, 
-            credit: parseInt(document.getElementById('newCredit').value) || 3, 
-            duration: document.getElementById('newDuration').value || "100 min" 
-        };
-        classData.push(newClass);
-        saveData();
-        updateAdminTable();
-        refreshStudentPanel();
-        showToast('✅ Class added & synced to student panel');
-        // Clear form
-        document.getElementById('newBatch').value = '';
-        document.getElementById('newCode').value = '';
-        document.getElementById('newTitle').value = '';
-        document.getElementById('newTeacher').value = '';
-        document.getElementById('newRoom').value = '';
-    }
-    
-    function resetDefault() { 
-        if(confirm('Reset to original master data? Student panel will update.')) {
-            classData = JSON.parse(JSON.stringify(originalMasterData));
-            saveData();
-            updateAdminTable();
-            refreshStudentPanel();
-            showToast('Reset complete');
-        } 
-    }
-    
-    function exportData() { 
-        let a=document.createElement('a'); 
-        a.href=URL.createObjectURL(new Blob([JSON.stringify(classData,null,2)])); 
-        a.download=`wub_routine_${Date.now()}.json`; 
-        a.click(); 
-        showToast('Exported'); 
-    }
-    
-    // Student Functions
+
+    // ========== STUDENT SECTION ==========
+    let currentStudentBatch = null;
     function getClasses(batch,day){ return classData.filter(c=>c.batch===batch && c.day===day); }
     function getAll(batch){ return classData.filter(c=>c.batch===batch); }
-    function uniqueCourses(batch){ let m=new Map(); getAll(batch).forEach(c=>{ if(!m.has(c.code)) m.set(c.code,{title:c.title,credit:c.credit,type:c.type}); }); return Array.from(m.values()); }
+    function uniqueCourses(batch){ let m=new Map(); getAll(batch).forEach(c=>{ if(!m.has(c.code)) m.set(c.code,{title:c.title,credit:c.credit}); }); return Array.from(m.values()); }
     function totalCred(batch){ return uniqueCourses(batch).reduce((s,c)=>s+c.credit,0); }
-    function renderSum(batch){ 
-        document.getElementById('creditSummaryList').innerHTML = uniqueCourses(batch).map(c=>`<div class="credit-item"><span>${c.title}</span><span class="credit-badge">${c.credit} Cr</span></div>`).join(''); 
-    }
-    
+    function renderSum(batch){ document.getElementById('creditSummaryList').innerHTML = uniqueCourses(batch).map(c=>`<div class="credit-item"><span>${c.title}</span><span class="credit-badge">${c.credit} Cr</span></div>`).join(''); }
     function renderView(batch,day){
         let container=document.getElementById('studentClassList');
         let classes=getClasses(batch,day);
         if(!classes.length){ container.innerHTML='<div class="no-class">📭 No class on '+day+'</div>'; return; }
         classes.sort((a,b)=>a.time.localeCompare(b.time));
         container.innerHTML=classes.map(c=>`<div class="class-item ${c.type==='Lab'?'lab':''}" data-code='${c.code}'><div class="time-badge">${c.time}<span class="duration-chip">${c.duration}</span></div><div class="details"><div class="course-code">${c.code}</div><div class="title">${c.title} (${c.credit} Cr)</div><div class="teacher"><i class="fas fa-chalkboard-user"></i> ${c.teacher}</div></div><div class="room">${c.room}</div></div>`).join('');
-        document.querySelectorAll('.class-item').forEach(el=>{ 
-            let code=el.dataset.code; 
-            let obj=classes.find(c=>c.code===code); 
-            if(obj) el.addEventListener('click',()=>addToGCal(obj)); 
-        });
+        document.querySelectorAll('#studentClassList .class-item').forEach(el=>{ let code=el.dataset.code; let obj=classes.find(c=>c.code===code); if(obj) el.addEventListener('click',()=>addToGCalForClass(obj)); });
     }
-    
-    function addToGCal(c){
-        let s=c.time.split('-')[0].trim(), e=c.time.split('-')[1].trim();
-        let today=new Date(); 
-        let dayMap={'MON':1,'TUE':2,'WED':3,'THU':4,'SAT':6};
-        let d=new Date(today); 
-        d.setDate(today.getDate()+((dayMap[c.day]-today.getDay()+7)%7));
-        let f=t=>{ 
-            let h=parseInt(t.match(/\d+/)[0]), m=parseInt(t.match(/:(\d+)/)?.[1]||0), 
-            pm=t.toLowerCase().includes('pm')&&h!==12; 
-            if(pm) h+=12; 
-            if(t.toLowerCase().includes('am')&&h===12) h=0; 
-            return `${h.toString().padStart(2,'0')}${m.toString().padStart(2,'0')}00`; 
-        };
-        let url=`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(c.code+' - '+c.title)}&dates=${d.getFullYear()}${(d.getMonth()+1).toString().padStart(2,'0')}${d.getDate().toString().padStart(2,'0')}T${f(s)}/${d.getFullYear()}${(d.getMonth()+1).toString().padStart(2,'0')}${d.getDate().toString().padStart(2,'0')}T${f(e)}&details=${encodeURIComponent('Teacher: '+c.teacher+'\nRoom: '+c.room)}&location=${encodeURIComponent(c.room)}`;
-        window.open(url,'_blank'); 
-        showToast(`📅 ${c.title}`);
-    }
-    
-    function addTodaysClasses(){ 
-        let tab=document.querySelector('#studentDayTabs .day-tab.active'); 
-        if(!tab){ showToast('Select day'); return; } 
-        let day=tab.innerText, batch=document.getElementById('studentBatchDisplay').innerText; 
-        let cls=getClasses(batch,day); 
-        if(!cls.length){ showToast('No classes'); return; } 
-        cls.forEach(c=>addToGCal(c)); 
-        showToast(`Adding ${cls.length} classes`); 
-    }
-    
     function updateStudentView(batch){ 
+        currentStudentBatch=batch; 
         renderSum(batch); 
         let days=['MON','TUE','WED','THU','SAT']; 
-        let active=days.filter(d=>getClasses(batch,d).length>0); 
+        let active=days.filter(d=>getClasses(batch,d).length); 
         let tabs=document.getElementById('studentDayTabs'); 
         tabs.innerHTML=''; 
-        active.forEach(day=>{ 
-            let tab=document.createElement('div'); 
-            tab.className='day-tab'; 
-            tab.innerText=day; 
-            if(day===active[0]) tab.classList.add('active'); 
-            tab.onclick=()=>{ 
-                document.querySelectorAll('#studentDayTabs .day-tab').forEach(t=>t.classList.remove('active')); 
-                tab.classList.add('active'); 
-                renderView(batch,day); 
-            }; 
-            tabs.appendChild(tab); 
-        }); 
-        if(active.length) renderView(batch,active[0]); 
-        scheduleAllNotifications(batch); 
+        active.forEach(day=>{ let tab=document.createElement('div'); tab.className='day-tab'; tab.innerText=day; if(day===active[0]) tab.classList.add('active'); tab.onclick=()=>{ document.querySelectorAll('#studentDayTabs .day-tab').forEach(t=>t.classList.remove('active')); tab.classList.add('active'); renderView(batch,day); }; tabs.appendChild(tab); }); 
+        if(active.length) renderView(batch,active[0]);
+        // AUTO-SCHEDULE NOTIFICATIONS for this batch
+        scheduleAllNotificationsForBatch(batch);
+        showToast(`✅ Notifications scheduled for all your ${getAll(batch).length} classes`);
     }
-    
-    function initStudent(batch){ 
-        document.getElementById('studentDashboard').style.display='block'; 
-        document.getElementById('studentLoginCard').style.display='none'; 
-        document.getElementById('studentBatchDisplay').innerText=batch; 
-        document.getElementById('studentCreditDisplay').innerHTML=`⭐ ${totalCred(batch)} Cr`; 
-        updateStudentView(batch); 
-        showToast(`✅ ${batch} loaded | Admin changes auto-sync`); 
+    function studentLogin(){ let b=document.getElementById('studentBatch').value.trim().toUpperCase(); if(!/^[8-9][0-9]A$/.test(b)){ showToast('Invalid batch (85A-96A)'); return; } document.getElementById('studentDashboard').style.display='block'; document.getElementById('studentLoginCard').style.display='none'; document.getElementById('studentBatchDisplay').innerText=b; document.getElementById('studentCreditDisplay').innerHTML=`⭐ ${totalCred(b)} Cr`; updateStudentView(b); }
+    function studentLogout(){ document.getElementById('studentDashboard').style.display='none'; document.getElementById('studentLoginCard').style.display='block'; clearAllTimers(); currentStudentBatch=null; }
+
+    // ========== TEACHER SECTION ==========
+    let currentTeacherName = null;
+    function populateTeacherDropdown() {
+        let teachers = [...new Set(classData.map(c => c.teacher).filter(t => t && t.trim() !== ""))].sort();
+        let select = document.getElementById('teacherNameSelect');
+        select.innerHTML = '<option value="">-- Select Teacher Name --</option>';
+        teachers.forEach(t => { let opt = document.createElement('option'); opt.value = t; opt.textContent = t; select.appendChild(opt); });
     }
-    
-    function studentLogin(){ 
-        let b=document.getElementById('studentBatch').value.trim().toUpperCase(); 
-        if(!/^[8-9][0-9]A$/.test(b)){ showToast('Invalid batch (85A-96A)'); return; } 
-        initStudent(b); 
+    function getTeacherClasses(teacherName) { return classData.filter(c => c.teacher.toLowerCase().trim() === teacherName.toLowerCase().trim()); }
+    function renderTeacherClasses(teacherName){
+        let all = getTeacherClasses(teacherName);
+        document.getElementById('teacherClassesCount').innerHTML = `📖 ${all.length} classes (all batches)`;
+        let days = ['MON','TUE','WED','THU','SAT'];
+        let tabsDiv = document.getElementById('teacherDayTabs');
+        tabsDiv.innerHTML = '';
+        let container = document.getElementById('teacherClassList');
+        let activeDays = days.filter(day => all.filter(c=>c.day===day).length > 0);
+        if(activeDays.length === 0) { container.innerHTML='<div class="no-class">📭 No classes assigned for this teacher.</div>'; return; }
+        activeDays.forEach(day => {
+            let tab = document.createElement('div'); tab.className='day-tab'; tab.innerText=day;
+            if(day === activeDays[0]) tab.classList.add('active');
+            tab.onclick = () => {
+                document.querySelectorAll('#teacherDayTabs .day-tab').forEach(t=>t.classList.remove('active'));
+                tab.classList.add('active');
+                let dayClasses = all.filter(c=>c.day===day).sort((a,b)=>a.time.localeCompare(b.time));
+                container.innerHTML = dayClasses.map(c=>`<div class="class-item ${c.type==='Lab'?'lab':''}" data-code="${c.code}"><div class="time-badge">${c.time}<span class="duration-chip">${c.duration}</span></div><div class="details"><div class="course-code">${c.code}</div><div class="title">${c.title} (${c.credit} Cr)</div><div class="batch-badge"><i class="fas fa-users"></i> Batch: ${c.batch}</div></div><div class="room">${c.room}</div></div>`).join('');
+                document.querySelectorAll('#teacherClassList .class-item').forEach(el => { let code = el.dataset.code; let cls = dayClasses.find(cc=>cc.code===code); if(cls) el.addEventListener('click',()=>addToGCalForClass(cls)); });
+            };
+            tabsDiv.appendChild(tab);
+        });
+        let firstDay = activeDays[0];
+        let firstClasses = all.filter(c=>c.day===firstDay).sort((a,b)=>a.time.localeCompare(b.time));
+        container.innerHTML = firstClasses.map(c=>`<div class="class-item ${c.type==='Lab'?'lab':''}" data-code="${c.code}"><div class="time-badge">${c.time}<span class="duration-chip">${c.duration}</span></div><div class="details"><div class="course-code">${c.code}</div><div class="title">${c.title} (${c.credit} Cr)</div><div class="batch-badge"><i class="fas fa-users"></i> Batch: ${c.batch}</div></div><div class="room">${c.room}</div></div>`).join('');
+        document.querySelectorAll('#teacherClassList .class-item').forEach(el=>{ let code=el.dataset.code; let cls=firstClasses.find(cc=>cc.code===code); if(cls) el.addEventListener('click',()=>addToGCalForClass(cls)); });
     }
-    
-    function studentLogout(){ 
-        document.getElementById('studentDashboard').style.display='none'; 
-        document.getElementById('studentLoginCard').style.display='block'; 
-        clearAllTimers(); 
+    function teacherLogin(){
+        let name = document.getElementById('teacherNameSelect').value;
+        if(!name){ showToast("Please select a teacher name"); return; }
+        let existing = getTeacherClasses(name);
+        if(existing.length === 0){ showToast(`⚠️ No classes found for "${name}".`); return; }
+        currentTeacherName = name;
+        document.getElementById('teacherLoginCard').style.display = 'none';
+        document.getElementById('teacherDashboard').style.display = 'block';
+        document.getElementById('teacherNameDisplay').innerHTML = name;
+        renderTeacherClasses(name);
+        showToast(`👋 Welcome ${name}, ${existing.length} classes loaded.`);
     }
-    
-    // Admin Auth
+    function teacherLogout(){ document.getElementById('teacherDashboard').style.display = 'none'; document.getElementById('teacherLoginCard').style.display = 'block'; currentTeacherName = null; }
+    function teacherAddTodayClasses(){
+        if(!currentTeacherName) return;
+        let activeTab = document.querySelector('#teacherDayTabs .day-tab.active');
+        if(!activeTab){ showToast("Select a day first"); return; }
+        let day = activeTab.innerText;
+        let classesToday = getTeacherClasses(currentTeacherName).filter(c=>c.day===day);
+        if(classesToday.length === 0){ showToast("No classes on "+day); return; }
+        classesToday.forEach(c=>addToGCalForClass(c));
+        showToast(`📅 Added ${classesToday.length} classes to Google Calendar`);
+    }
+
+    // ========== ADMIN SECTION ==========
+    function updateAdminTable(){
+        let tbody = document.getElementById('adminTableBody'); if(!tbody) return;
+        tbody.innerHTML = '';
+        classData.forEach((c, idx) => {
+            let row = tbody.insertRow();
+            row.insertCell(0).innerText = c.batch; row.insertCell(1).innerText = c.day; row.insertCell(2).innerText = c.time;
+            row.insertCell(3).innerText = c.code; row.insertCell(4).innerText = c.title.length>12?c.title.slice(0,12)+'..':c.title;
+            row.insertCell(5).innerText = c.teacher.length>10?c.teacher.slice(0,10)+'..':c.teacher;
+            row.insertCell(6).innerText = c.room; row.insertCell(7).innerText = c.type; row.insertCell(8).innerText = c.credit;
+            row.insertCell(9).innerText = c.duration;
+            let actionCell = row.insertCell(10);
+            let editBtn = document.createElement('button'); editBtn.innerText='✏️ Edit'; editBtn.className='edit-btn';
+            let delBtn = document.createElement('button'); delBtn.innerText='🗑️ Delete'; delBtn.className='delete-btn';
+            delBtn.onclick = () => { if(confirm('Delete class? Student/Teacher panels will update instantly.')){ classData.splice(idx,1); saveData(); updateAdminTable(); refreshAllPanels(); showToast('Deleted & synced'); } };
+            editBtn.onclick = () => openEditModal(idx);
+            actionCell.appendChild(editBtn); actionCell.appendChild(delBtn);
+        });
+        document.getElementById('totalClasses').innerHTML = classData.length;
+    }
+    function openEditModal(idx){
+        let c = classData[idx];
+        let modalDiv = document.createElement('div'); modalDiv.className='modal-overlay';
+        modalDiv.innerHTML = `<div class="edit-modal"><h3>✏️ Edit Class</h3><label>Batch:</label><input id="editBatch" value="${c.batch}"><label>Day:</label><select id="editDay"><option ${c.day==='MON'?'selected':''}>MON</option><option ${c.day==='TUE'?'selected':''}>TUE</option><option ${c.day==='WED'?'selected':''}>WED</option><option ${c.day==='THU'?'selected':''}>THU</option><option ${c.day==='SAT'?'selected':''}>SAT</option></select><label>Time:</label><input id="editTime" value="${c.time}"><label>Code:</label><input id="editCode" value="${c.code}"><label>Title:</label><input id="editTitle" value="${c.title}"><label>Teacher:</label><input id="editTeacher" value="${c.teacher}"><label>Room:</label><input id="editRoom" value="${c.room}"><label>Type:</label><select id="editType"><option ${c.type==='Theory'?'selected':''}>Theory</option><option ${c.type==='Lab'?'selected':''}>Lab</option></select><label>Credit:</label><input id="editCredit" value="${c.credit}" type="number"><label>Duration:</label><input id="editDuration" value="${c.duration}"><div style="text-align:center;"><button id="modalSaveBtn" style="background:#10b981;">Save</button><button id="modalCancelBtn">Cancel</button></div></div>`;
+        document.body.appendChild(modalDiv);
+        document.getElementById('modalSaveBtn').onclick = () => {
+            classData[idx] = { batch:document.getElementById('editBatch').value.trim().toUpperCase(), day:document.getElementById('editDay').value, time:document.getElementById('editTime').value, code:document.getElementById('editCode').value, title:document.getElementById('editTitle').value, teacher:document.getElementById('editTeacher').value, room:document.getElementById('editRoom').value, type:document.getElementById('editType').value, credit:parseInt(document.getElementById('editCredit').value)||3, duration:document.getElementById('editDuration').value||"100 min" };
+            saveData(); updateAdminTable(); refreshAllPanels(); showToast('Updated'); document.body.removeChild(modalDiv);
+        };
+        document.getElementById('modalCancelBtn').onclick = () => document.body.removeChild(modalDiv);
+    }
+    function addNewClass(){
+        let newClass = { batch:document.getElementById('newBatch').value.trim().toUpperCase(), day:document.getElementById('newDay').value, time:document.getElementById('newTime').value, code:document.getElementById('newCode').value, title:document.getElementById('newTitle').value, teacher:document.getElementById('newTeacher').value, room:document.getElementById('newRoom').value, type:document.getElementById('newType').value, credit:parseInt(document.getElementById('newCredit').value)||3, duration:document.getElementById('newDuration').value||"100 min" };
+        if(!newClass.batch || !newClass.time) { showToast("Batch & Time required"); return; }
+        classData.push(newClass); saveData(); updateAdminTable(); refreshAllPanels(); showToast('Added');
+    }
+    function resetDefault(){ if(confirm('Reset to original data? Student notifications will refresh.')){ classData = JSON.parse(JSON.stringify(originalMasterData)); saveData(); updateAdminTable(); refreshAllPanels(); showToast('Reset complete'); } }
+    function exportData(){ let a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(classData,null,2)])); a.download=`wub_routine.json`; a.click(); showToast('Exported'); }
     const VALID_EMAIL="sharif.uddin@eee.wub.edu.bd", VALID_PASS="Sr@123580Sr@";
-    function adminLogin(){ 
-        let e=document.getElementById('adminEmail').value.trim(), p=document.getElementById('adminPassword').value; 
-        if(e===VALID_EMAIL && p===VALID_PASS){ 
-            document.getElementById('adminLoginCard').style.display='none'; 
-            document.getElementById('adminDashboard').style.display='block'; 
-            updateAdminTable(); 
-            showToast('Admin Access - Delete/Edit/Add working, auto-sync to student'); 
-        } else showToast('Access Denied'); 
-    }
-    function adminLogout(){ 
-        document.getElementById('adminLoginCard').style.display='block'; 
-        document.getElementById('adminDashboard').style.display='none'; 
-    }
-    
+    function adminLogin(){ let e=document.getElementById('adminEmail').value.trim(), p=document.getElementById('adminPassword').value; if(e===VALID_EMAIL && p===VALID_PASS){ document.getElementById('adminLoginCard').style.display='none'; document.getElementById('adminDashboard').style.display='block'; updateAdminTable(); } else showToast('Access Denied'); }
+    function adminLogout(){ document.getElementById('adminLoginCard').style.display='block'; document.getElementById('adminDashboard').style.display='none'; }
+
     // Event Listeners
-    document.getElementById('studentLoginBtn').onclick=studentLogin;
-    document.getElementById('studentLogoutBtn').onclick=studentLogout;
-    document.getElementById('adminLoginBtn').onclick=adminLogin;
-    document.getElementById('adminLogoutBtn').onclick=adminLogout;
-    document.getElementById('exportFullBtn').onclick=exportData;
-    document.getElementById('resetDefaultBtn').onclick=resetDefault;
-    document.getElementById('addToCalendarBtn').onclick=addTodaysClasses;
-    document.getElementById('addClassBtn').onclick=addNewClass;
+    document.getElementById('studentLoginBtn').onclick=studentLogin; document.getElementById('studentLogoutBtn').onclick=studentLogout;
+    document.getElementById('teacherLoginBtn').onclick=teacherLogin; document.getElementById('teacherLogoutBtn').onclick=teacherLogout;
+    document.getElementById('teacherAddTodayBtn').onclick=teacherAddTodayClasses;
+    document.getElementById('adminLoginBtn').onclick=adminLogin; document.getElementById('adminLogoutBtn').onclick=adminLogout;
+    document.getElementById('addClassBtn').onclick=addNewClass; document.getElementById('exportFullBtn').onclick=exportData;
+    document.getElementById('resetDefaultBtn').onclick=resetDefault; 
+    document.getElementById('addToCalendarBtn').onclick=function(){ let tab=document.querySelector('#studentDayTabs .day-tab.active'); if(tab && currentStudentBatch){ let cls=getClasses(currentStudentBatch,tab.innerText); cls.forEach(c=>addToGCalForClass(c)); showToast(`Added ${cls.length} classes`); } else showToast("Select day"); };
     
     document.querySelectorAll('.mode-btn').forEach(btn=>btn.onclick=()=>{
         document.getElementById('studentPanel').classList.toggle('active', btn.dataset.mode==='student');
+        document.getElementById('teacherPanel').classList.toggle('active', btn.dataset.mode==='teacher');
         document.getElementById('adminPanel').classList.toggle('active', btn.dataset.mode==='admin');
+        if(btn.dataset.mode==='teacher') populateTeacherDropdown();
     });
     
-    updateAdminTable();
+    updateAdminTable(); populateTeacherDropdown();
     if('Notification' in window && Notification.permission==='default') Notification.requestPermission();
+    window.refreshAllPanels = refreshAllPanels;
 </script>
 </body>
 </html>
