@@ -12,7 +12,7 @@
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
         body{background:#eef2ff;padding:12px;}
-        .container{max-width:750px;margin:0 auto;}
+        .container{max-width:800px;margin:0 auto;}
         .header{background:linear-gradient(135deg,#0f2b3d,#1b4a6e);color:white;padding:18px;border-radius:24px;margin-bottom:18px;text-align:center;}
         .header h1{font-size:1.3rem;}
         .header p{font-size:0.7rem;opacity:0.9;}
@@ -45,6 +45,7 @@
         .class-item{background:#f8fafc;border-left:4px solid #1f6392;padding:12px 15px;border-radius:16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;cursor:pointer;}
         .class-item.lab{border-left-color:#f59e0b;background:#fffbeb;}
         .time-badge{font-weight:700;font-size:0.7rem;background:#e2e8f0;padding:4px 10px;border-radius:30px;}
+        .duration-chip{background:#e2e8f0;padding:2px 8px;border-radius:20px;font-size:0.6rem;margin-left:5px;}
         .course-code{font-weight:800;font-size:0.8rem;}
         .title{font-size:0.75rem;color:#334155;}
         .teacher{font-size:0.7rem;color:#5588b1;}
@@ -189,6 +190,7 @@
                     <input type="text" id="newRoom" placeholder="Room" style="width:60px;">
                     <select id="newType"><option>Theory</option><option>Lab</option></select>
                     <input type="number" id="newCredit" placeholder="Credit" value="3" style="width:55px;">
+                    <input type="text" id="newDuration" placeholder="Duration" value="100 min" style="width:70px;">
                     <button id="addClassBtn" class="btn-success">➕ Add</button>
                 </div>
                 
@@ -196,7 +198,7 @@
                 <div style="overflow-x:auto;">
                     <table class="data-table">
                         <thead>
-                            <tr><th>Batch</th><th>Day</th><th>Time</th><th>Code</th><th>Course</th><th>Teacher</th><th>Room</th><th>Actions</th></tr>
+                            <tr><th>Batch</th><th>Day</th><th>Time</th><th>Code</th><th>Course</th><th>Teacher</th><th>Room</th><th>Duration</th><th>Actions</th></tr>
                         </thead>
                         <tbody id="adminTableBody"></tbody>
                     </table>
@@ -209,7 +211,7 @@
 <div class="sync-status" id="syncStatus"><i class="fas fa-cloud-upload-alt"></i> Connecting...</div>
 
 <script>
-    // ==================== FIREBASE CONFIGURATION (YOUR CONFIG) ====================
+    // ==================== FIREBASE CONFIGURATION ====================
     const firebaseConfig = {
         apiKey: "AIzaSyCifCntx1TnJ_nWqNUWrzysSn3WOg27MD68",
         authDomain: "wub-eee-routine.firebaseapp.com",
@@ -224,7 +226,7 @@
     const ADMIN_EMAIL = 'sharif.uddin@eee.wub.edu.bd';
     const ADMIN_PASS = 'Sr@123580Sr@';
     
-    // ===================== COMPLETE MASTER DATA (85A-96A) ==================
+    // ==================== COMPLETE MASTER DATA WITH DURATION ====================
     const originalMasterData = [
         {batch:"85A", day:"MON", time:"12:00pm-12:50pm", code:"EEE07144263", title:"Microwave Engineering", teacher:"Debprosad Das", room:"504", type:"Theory", credit:3, duration:"50 min"},
         {batch:"85A", day:"MON", time:"12:50pm-03:10pm", code:"EEE07144264", title:"Microwave Lab", teacher:"Debprosad Das", room:"B15", type:"Lab", credit:1, duration:"100 min"},
@@ -378,7 +380,6 @@
             
             updateSyncStatus('syncing', 'Connecting to cloud...');
             
-            // Real-time listener
             unsubscribeListener = classesCollection.onSnapshot((snapshot) => {
                 const newData = [];
                 snapshot.forEach(doc => {
@@ -532,8 +533,8 @@
         }
         classes.sort((a,b) => a.time.localeCompare(b.time));
         container.innerHTML = classes.map(c => `
-            <div class="class-item ${c.type === 'Lab' ? 'lab' : ''}" onclick="addToCalendar('${c.title}', '${c.time}', '${c.teacher}', '${c.room}')">
-                <div class="time-badge">${c.time}</div>
+            <div class="class-item ${c.type === 'Lab' ? 'lab' : ''}" onclick="addToCalendar('${c.title}', '${c.time}', '${c.teacher}', '${c.room}', '${c.duration}')">
+                <div class="time-badge">${c.time} <span class="duration-chip">${c.duration || '100 min'}</span></div>
                 <div style="flex:2">
                     <div class="course-code">${c.code}</div>
                     <div class="title">${c.title} (${c.credit} Cr)</div>
@@ -544,7 +545,7 @@
         `).join('');
     }
     
-    window.addToCalendar = function(title, time, teacher, room) {
+    window.addToCalendar = function(title, time, teacher, room, duration) {
         const startTime = time.split('-')[0].trim();
         const endTime = time.split('-')[1].trim();
         const today = new Date();
@@ -553,7 +554,7 @@
         const date = String(today.getDate()).padStart(2,'0');
         const startUrl = `${year}${month}${date}T${startTime.replace(/[^0-9]/g, '')}`;
         const endUrl = `${year}${month}${date}T${endTime.replace(/[^0-9]/g, '')}`;
-        const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${startUrl}/${endUrl}&details=${encodeURIComponent('Teacher: '+teacher)}&location=${encodeURIComponent(room)}`;
+        const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${startUrl}/${endUrl}&details=${encodeURIComponent('Teacher: '+teacher+'\nDuration: '+duration)}&location=${encodeURIComponent(room)}`;
         window.open(url, '_blank');
         showToast('📅 Adding to Google Calendar');
     };
@@ -564,7 +565,7 @@
         const day = activeDay.innerText;
         const classes = getClassesByBatchAndDay(currentStudentBatch, day);
         classes.forEach(c => {
-            addToCalendar(c.title, c.time, c.teacher, c.room);
+            addToCalendar(c.title, c.time, c.teacher, c.room, c.duration);
         });
         showToast(`Adding ${classes.length} classes to calendar`);
     }
@@ -626,7 +627,7 @@
         classes.sort((a,b) => a.day.localeCompare(b.day) || a.time.localeCompare(b.time));
         container.innerHTML = classes.map(c => `
             <div class="class-item ${c.type === 'Lab' ? 'lab' : ''}">
-                <div class="time-badge">${c.time}</div>
+                <div class="time-badge">${c.time} <span class="duration-chip">${c.duration || '100 min'}</span></div>
                 <div style="flex:2">
                     <div class="course-code">${c.code}</div>
                     <div class="title">${c.title} (${c.credit} Cr)</div>
@@ -669,7 +670,8 @@
             row.insertCell(4).innerHTML = c.title.substring(0,20);
             row.insertCell(5).innerHTML = c.teacher.substring(0,15);
             row.insertCell(6).innerHTML = c.room;
-            const actionCell = row.insertCell(7);
+            row.insertCell(7).innerHTML = c.duration || '100 min';
+            const actionCell = row.insertCell(8);
             actionCell.innerHTML = `
                 <button class="edit-btn" onclick="editClass(${idx})">✏️ Edit</button>
                 <button class="delete-btn" onclick="deleteClass(${idx})">🗑️ Delete</button>
@@ -702,6 +704,7 @@
                     <option ${c.type==='Lab'?'selected':''}>Lab</option>
                 </select>
                 <input type="number" id="editCredit" value="${c.credit}" placeholder="Credit">
+                <input type="text" id="editDuration" value="${c.duration || '100 min'}" placeholder="Duration">
                 <div style="text-align:center; margin-top:15px;">
                     <button class="btn-success" id="saveEditBtn">Save</button>
                     <button class="btn-danger" id="cancelEditBtn">Cancel</button>
@@ -720,7 +723,8 @@
                 teacher: document.getElementById('editTeacher').value,
                 room: document.getElementById('editRoom').value,
                 type: document.getElementById('editType').value,
-                credit: parseInt(document.getElementById('editCredit').value) || 3
+                credit: parseInt(document.getElementById('editCredit').value) || 3,
+                duration: document.getElementById('editDuration').value || '100 min'
             };
             await saveToFirebase(classData);
             renderAdminTable();
@@ -753,7 +757,8 @@
             teacher: document.getElementById('newTeacher').value,
             room: document.getElementById('newRoom').value,
             type: document.getElementById('newType').value,
-            credit: parseInt(document.getElementById('newCredit').value) || 3
+            credit: parseInt(document.getElementById('newCredit').value) || 3,
+            duration: document.getElementById('newDuration').value || '100 min'
         };
         if (!newClass.batch || !newClass.code) {
             showToast('Batch and Code are required', true);
@@ -771,6 +776,7 @@
         document.getElementById('newTitle').value = '';
         document.getElementById('newTeacher').value = '';
         document.getElementById('newRoom').value = '';
+        document.getElementById('newDuration').value = '100 min';
     }
     
     async function resetToDefault() {
