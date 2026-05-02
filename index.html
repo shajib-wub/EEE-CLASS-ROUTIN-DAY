@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>WUB EEE | Complete Routine | Real-time Sync</title>
+    <title>WUB EEE | Real-time Sync | All Devices</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
         body{background:#eef2ff;padding:12px;}
@@ -64,7 +67,9 @@
         .toast{position:fixed;bottom:20px;left:20px;right:20px;background:#1e293b;color:white;padding:12px;border-radius:50px;text-align:center;z-index:2000;animation:slideIn 0.3s ease;font-size:0.8rem;}
         @keyframes slideIn{from{transform:translateY(100%);opacity:0;}to{transform:translateY(0);opacity:1;}}
         
-        .sync-status{position:fixed;bottom:10px;right:10px;padding:4px 12px;border-radius:20px;font-size:0.6rem;z-index:1000;cursor:pointer;background:#10b981;color:white;}
+        .sync-status{position:fixed;bottom:10px;right:10px;padding:4px 12px;border-radius:20px;font-size:0.6rem;z-index:1000;background:#10b981;color:white;}
+        .sync-status.syncing{background:#f59e0b;animation:pulse 1s infinite;}
+        @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.6;}}
         
         .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10001;display:flex;align-items:center;justify-content:center;}
         .edit-modal{background:white;border-radius:24px;padding:20px;width:90%;max-width:500px;max-height:80vh;overflow-y:auto;}
@@ -80,14 +85,14 @@
         .filter-bar{display:flex;gap:8px;margin-bottom:15px;}
         .filter-bar input,.filter-bar select{flex:1;margin:0;padding:8px 12px;}
         
-        .info-banner{background:#e0f2fe;padding:10px;border-radius:16px;margin-bottom:15px;font-size:0.7rem;text-align:center;}
+        .info-banner{background:#e0f2fe;padding:10px;border-radius:12px;margin-bottom:15px;font-size:0.7rem;text-align:center;}
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header">
         <h1><i class="fas fa-microchip"></i> WUB - EEE</h1>
-        <p>Real-time Sync | Admin changes instantly reflect on all devices</p>
+        <p>Real-time Sync | Changes appear instantly on ALL devices</p>
     </div>
     
     <div class="mode-selector">
@@ -123,9 +128,7 @@
         <div class="card login-card" id="teacherLoginCard">
             <i class="fas fa-chalkboard-user" style="font-size: 2rem; color: #10b981;"></i>
             <h3>👨‍🏫 Select Your Name</h3>
-            <select id="teacherSelect">
-                <option value="">-- Select Teacher --</option>
-            </select>
+            <select id="teacherSelect"></select>
             <button id="teacherLoginBtn" class="btn-success">Enter</button>
         </div>
         <div id="teacherDashboard" style="display:none;">
@@ -133,9 +136,6 @@
                 <div class="batch-header">
                     <span class="batch-name"><i class="fas fa-chalkboard-user"></i> <span id="teacherNameShow"></span></span>
                     <button id="teacherLogoutBtn" class="btn-danger">Exit</button>
-                </div>
-                <div class="info-banner">
-                    <i class="fas fa-sync-alt"></i> Live updates from Admin
                 </div>
                 <div class="stats">
                     <div class="stat-card"><span id="teacherClassCount">0</span><br><small>Total Classes</small></div>
@@ -175,7 +175,7 @@
                 </div>
                 
                 <div class="info-banner" style="background:#e6f7ec;">
-                    <i class="fas fa-globe"></i> <strong>Auto-save Active!</strong> Changes sync to all open tabs/devices (refresh other devices to see updates)
+                    <i class="fas fa-globe"></i> <strong>Cloud Sync Active!</strong> Changes appear instantly on ALL devices.
                 </div>
                 
                 <h4>➕ Add New Class</h4>
@@ -202,19 +202,29 @@
                     </table>
                 </div>
                 <button id="resetDataBtn" class="btn-warning" style="width:100%; margin-top:15px;">⟳ Reset to Default</button>
-                <button id="forceRefreshBtn" class="btn-success" style="width:100%; margin-top:10px;"><i class="fas fa-sync-alt"></i> Refresh All Views</button>
             </div>
         </div>
     </div>
 </div>
-<div class="sync-status" id="syncStatus"><i class="fas fa-check-circle"></i> Live Sync Active</div>
+<div class="sync-status" id="syncStatus"><i class="fas fa-cloud-upload-alt"></i> Connecting...</div>
 
 <script>
-    // ==================== ADMIN CREDENTIALS ====================
+    // ==================== FIREBASE CONFIGURATION (YOUR CONFIG) ====================
+    const firebaseConfig = {
+        apiKey: "AIzaSyCifCntx1TnJ_nWqNUWrzysSn3WOg27MD68",
+        authDomain: "wub-eee-routine.firebaseapp.com",
+        projectId: "wub-eee-routine",
+        storageBucket: "wub-eee-routine.firebasestorage.app",
+        messagingSenderId: "1078324337852",
+        appId: "1:1078324337852:web:8e722ca18c332e293384b9",
+        measurementId: "G-7F4Q8V6ZND"
+    };
+    
+    // Admin credentials
     const ADMIN_EMAIL = 'sharif.uddin@eee.wub.edu.bd';
     const ADMIN_PASS = 'Sr@123580Sr@';
     
-    // ==================== COMPLETE ORIGINAL DATA ====================
+    // ==================== ORIGINAL MASTER DATA (COMPLETE) ====================
     const originalMasterData = [
         {batch:"85A", day:"MON", time:"12:00pm-12:50pm", code:"EEE07144263", title:"Microwave Engineering", teacher:"Debprosad Das", room:"504", type:"Theory", credit:3},
         {batch:"85A", day:"MON", time:"12:50pm-03:10pm", code:"EEE07144264", title:"Microwave Lab", teacher:"Debprosad Das", room:"B15", type:"Lab", credit:1},
@@ -331,12 +341,14 @@
     ];
     
     // Global variables
+    let db;
+    let classesCollection;
+    let unsubscribeListener;
     let classData = [];
     let currentStudentBatch = null;
     let currentTeacher = null;
     let adminLoggedIn = false;
     
-    // Helper functions
     function showToast(msg, isError = false) {
         let t = document.createElement('div');
         t.className = 'toast';
@@ -346,48 +358,105 @@
         setTimeout(() => t.remove(), 3000);
     }
     
-    // Load/Save data from localStorage
-    function loadData() {
-        const saved = localStorage.getItem('wub_eee_data');
-        if (saved && saved !== 'undefined') {
-            try {
-                classData = JSON.parse(saved);
-                if (!classData || classData.length === 0) {
-                    classData = JSON.parse(JSON.stringify(originalMasterData));
+    function updateSyncStatus(status, msg) {
+        const el = document.getElementById('syncStatus');
+        if (status === 'syncing') {
+            el.className = 'sync-status syncing';
+            el.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> ' + msg;
+        } else {
+            el.className = 'sync-status';
+            el.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> ' + msg;
+        }
+    }
+    
+    // Initialize Firebase
+    async function initFirebase() {
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+            classesCollection = db.collection('wub_classes');
+            
+            updateSyncStatus('syncing', 'Connecting to cloud...');
+            
+            // Real-time listener
+            unsubscribeListener = classesCollection.onSnapshot((snapshot) => {
+                const newData = [];
+                snapshot.forEach(doc => {
+                    newData.push({ id: doc.id, ...doc.data() });
+                });
+                
+                if (newData.length > 0) {
+                    classData = newData;
+                } else {
+                    seedInitialData();
                 }
-            } catch(e) {
-                classData = JSON.parse(JSON.stringify(originalMasterData));
-            }
+                
+                refreshAllViews();
+                updateSyncStatus('connected', 'Cloud Connected');
+            }, (error) => {
+                console.error('Firestore error:', error);
+                updateSyncStatus('connected', 'Using local cache');
+                loadFromLocal();
+            });
+            
+        } catch(e) {
+            console.error('Firebase init error:', e);
+            updateSyncStatus('connected', 'Local Mode');
+            loadFromLocal();
+        }
+    }
+    
+    async function seedInitialData() {
+        updateSyncStatus('syncing', 'Setting up data...');
+        for (let item of originalMasterData) {
+            await classesCollection.add(item);
+        }
+        showToast('✅ Initial data loaded to cloud');
+    }
+    
+    function loadFromLocal() {
+        const saved = localStorage.getItem('wub_firebase_cache');
+        if (saved) {
+            classData = JSON.parse(saved);
         } else {
             classData = JSON.parse(JSON.stringify(originalMasterData));
         }
         refreshAllViews();
     }
     
-    function saveData() {
-        localStorage.setItem('wub_eee_data', JSON.stringify(classData));
-        // Trigger storage event for cross-tab sync
-        window.dispatchEvent(new StorageEvent('storage', {
-            key: 'wub_eee_data',
-            newValue: JSON.stringify(classData)
-        }));
-        refreshAllViews();
-        showToast('✅ Changes saved and synced');
-    }
-    
-    // Listen for changes from other tabs
-    window.addEventListener('storage', (e) => {
-        if (e.key === 'wub_eee_data' && e.newValue) {
-            try {
-                const newData = JSON.parse(e.newValue);
-                if (JSON.stringify(newData) !== JSON.stringify(classData)) {
-                    classData = newData;
-                    refreshAllViews();
-                    showToast('🔄 Data updated from another tab/device');
-                }
-            } catch(e) {}
+    async function saveToFirebase(updatedData) {
+        if (!db) {
+            localStorage.setItem('wub_firebase_cache', JSON.stringify(updatedData));
+            refreshAllViews();
+            showToast('✅ Saved locally');
+            return;
         }
-    });
+        
+        updateSyncStatus('syncing', 'Saving...');
+        
+        try {
+            const snapshot = await classesCollection.get();
+            const batch = db.batch();
+            
+            snapshot.docs.forEach(doc => {
+                batch.delete(doc.ref);
+            });
+            
+            updatedData.forEach(item => {
+                const newDoc = classesCollection.doc();
+                batch.set(newDoc, item);
+            });
+            
+            await batch.commit();
+            updateSyncStatus('connected', 'Cloud Connected');
+            showToast('✅ Saved to cloud - All devices updated!');
+        } catch(e) {
+            console.error('Save error:', e);
+            localStorage.setItem('wub_firebase_cache', JSON.stringify(updatedData));
+            updateSyncStatus('connected', 'Saved locally');
+            showToast('⚠️ Saved locally only', true);
+        }
+    }
     
     function refreshAllViews() {
         if (adminLoggedIn) renderAdminTable();
@@ -406,7 +475,7 @@
         return Array.from(teachers).sort();
     }
     
-    // ============= Student Functions =============
+    // Student Functions
     function getClassesByBatchAndDay(batch, day) {
         return classData.filter(c => c.batch === batch && c.day === day);
     }
@@ -519,7 +588,7 @@
         document.getElementById('studentLoginCard').style.display = 'block';
     }
     
-    // ============= Teacher Functions =============
+    // Teacher Functions
     function updateTeacherSelect() {
         const teachers = getAllTeachers();
         const select = document.getElementById('teacherSelect');
@@ -587,7 +656,7 @@
         document.getElementById('teacherLoginCard').style.display = 'block';
     }
     
-    // ============= Admin Functions =============
+    // Admin Functions
     function renderAdminTable() {
         const tbody = document.getElementById('adminTableBody');
         tbody.innerHTML = '';
@@ -641,7 +710,7 @@
         `;
         document.body.appendChild(modal);
         
-        document.getElementById('saveEditBtn').onclick = () => {
+        document.getElementById('saveEditBtn').onclick = async () => {
             classData[idx] = {
                 batch: document.getElementById('editBatch').value.toUpperCase(),
                 day: document.getElementById('editDay').value,
@@ -653,28 +722,28 @@
                 type: document.getElementById('editType').value,
                 credit: parseInt(document.getElementById('editCredit').value) || 3
             };
-            saveData();
+            await saveToFirebase(classData);
             renderAdminTable();
             if (currentStudentBatch) renderStudentView(currentStudentBatch);
             if (currentTeacher) loadTeacherClasses();
-            showToast('✅ Class updated');
+            showToast('✅ Class updated - All devices synced!');
             modal.remove();
         };
         document.getElementById('cancelEditBtn').onclick = () => modal.remove();
     };
     
-    window.deleteClass = function(idx) {
-        if (confirm('Delete this class?')) {
+    window.deleteClass = async function(idx) {
+        if (confirm('Delete this class? This will sync to ALL devices.')) {
             classData.splice(idx, 1);
-            saveData();
+            await saveToFirebase(classData);
             renderAdminTable();
             if (currentStudentBatch) renderStudentView(currentStudentBatch);
             if (currentTeacher) loadTeacherClasses();
-            showToast('✅ Class deleted');
+            showToast('✅ Class deleted - All devices updated');
         }
     };
     
-    function addNewClass() {
+    async function addNewClass() {
         const newClass = {
             batch: document.getElementById('newBatch').value.trim().toUpperCase(),
             day: document.getElementById('newDay').value,
@@ -691,11 +760,11 @@
             return;
         }
         classData.push(newClass);
-        saveData();
+        await saveToFirebase(classData);
         renderAdminTable();
         if (currentStudentBatch) renderStudentView(currentStudentBatch);
         if (currentTeacher) loadTeacherClasses();
-        showToast('✅ New class added');
+        showToast('✅ New class added - Synced to cloud!');
         
         document.getElementById('newBatch').value = '';
         document.getElementById('newCode').value = '';
@@ -704,20 +773,15 @@
         document.getElementById('newRoom').value = '';
     }
     
-    function resetToDefault() {
-        if (confirm('Reset all data to original? This will sync to all devices.')) {
+    async function resetToDefault() {
+        if (confirm('Reset all data to original? This will sync to ALL devices.')) {
             classData = JSON.parse(JSON.stringify(originalMasterData));
-            saveData();
+            await saveToFirebase(classData);
             renderAdminTable();
             if (currentStudentBatch) renderStudentView(currentStudentBatch);
             if (currentTeacher) loadTeacherClasses();
-            showToast('✅ Reset to default complete');
+            showToast('✅ Reset to default - All devices updated');
         }
-    }
-    
-    function forceRefresh() {
-        refreshAllViews();
-        showToast('✅ Views refreshed');
     }
     
     function adminLogin() {
@@ -740,7 +804,7 @@
         document.getElementById('adminLoginCard').style.display = 'block';
     }
     
-    // Initialize event listeners
+    // Initialize
     function init() {
         document.getElementById('studentLoginBtn').onclick = studentLogin;
         document.getElementById('studentLogoutBtn').onclick = studentLogout;
@@ -756,7 +820,6 @@
         document.getElementById('adminLogoutBtn').onclick = adminLogout;
         document.getElementById('addClassBtn').onclick = addNewClass;
         document.getElementById('resetDataBtn').onclick = resetToDefault;
-        document.getElementById('forceRefreshBtn').onclick = forceRefresh;
         
         document.querySelectorAll('.mode-btn').forEach(btn => {
             btn.onclick = () => {
@@ -768,7 +831,7 @@
             };
         });
         
-        loadData();
+        initFirebase();
     }
     
     init();
