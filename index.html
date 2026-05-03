@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
@@ -68,6 +68,14 @@
         .toast{position:fixed;bottom:20px;left:20px;right:20px;background:#1e293b;color:white;padding:12px;border-radius:50px;text-align:center;z-index:2000;animation:slideIn 0.3s ease;font-size:0.8rem;}
         @keyframes slideIn{from{transform:translateY(100%);opacity:0;}to{transform:translateY(0);opacity:1;}}
         
+        /* Notification Popup Style */
+        .notification-popup{position:fixed;top:20px;right:20px;left:20px;max-width:400px;margin:0 auto;background:linear-gradient(135deg,#1f6392,#0e4a6e);color:white;padding:16px;border-radius:20px;box-shadow:0 10px 40px rgba(0,0,0,0.2);z-index:10000;animation:slideDown 0.4s ease;border-left:5px solid #f59e0b;cursor:pointer;}
+        .notification-popup .notif-title{font-weight:700;margin-bottom:5px;font-size:1rem;}
+        .notification-popup .notif-time{font-size:0.7rem;opacity:0.9;margin-top:8px;}
+        .notification-popup .notif-close{position:absolute;top:8px;right:12px;background:none;border:none;color:white;font-size:1.2rem;cursor:pointer;padding:0;}
+        .notification-popup .notif-icon{margin-right:10px;font-size:1.2rem;}
+        @keyframes slideDown{from{transform:translateY(-100%);opacity:0;}to{transform:translateY(0);opacity:1;}}
+        
         .sync-status{position:fixed;bottom:10px;right:10px;padding:4px 12px;border-radius:20px;font-size:0.6rem;z-index:1000;background:#10b981;color:white;}
         .sync-status.syncing{background:#f59e0b;animation:pulse 1s infinite;}
         @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.6;}}
@@ -75,6 +83,9 @@
         .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10001;display:flex;align-items:center;justify-content:center;}
         .edit-modal{background:white;border-radius:24px;padding:20px;width:90%;max-width:500px;max-height:80vh;overflow-y:auto;}
         .edit-modal input,.edit-modal select{width:100%;max-width:100%;margin:5px 0;}
+        
+        .notif-bell{display:inline-flex;align-items:center;gap:8px;background:#f1f5f9;padding:6px 12px;border-radius:30px;cursor:pointer;font-size:0.7rem;}
+        .notif-bell i{color:#f59e0b;}
         
         @media (max-width:600px){
             .admin-form input,.admin-form select{width:calc(50% - 4px);}
@@ -93,7 +104,7 @@
 <div class="container">
     <div class="header">
         <h1><i class="fas fa-microchip"></i> WUB - EEE</h1>
-        <p>Real-time Sync | Changes appear instantly on ALL devices</p>
+        <p>Real-time Sync | ক্লাস শুরুর ১৫ মিনিট আগে নোটিফিকেশন পাবেন</p>
     </div>
     
     <div class="mode-selector">
@@ -106,20 +117,25 @@
     <div id="studentPanel" class="panel active">
         <div class="card login-card" id="studentLoginCard">
             <i class="fas fa-user-graduate" style="font-size: 2rem; color: #1f6392;"></i>
-            <h3>📚 Select Your Batch</h3>
+            <h3>📚 আপনার ব্যাচ সিলেক্ট করুন</h3>
             <input type="text" id="studentBatchInput" placeholder="85A to 96A" value="96A">
-            <button id="studentLoginBtn">Show Routine</button>
+            <button id="studentLoginBtn">রুটিন দেখুন</button>
+            <div style="margin-top:10px;">
+                <div class="notif-bell" onclick="requestNotificationPermission()">
+                    <i class="fas fa-bell"></i> <span>🔔 নোটিফিকেশন চালু করুন</span>
+                </div>
+            </div>
         </div>
         <div id="studentDashboard" style="display:none;">
             <div class="card">
                 <div class="batch-header">
-                    <span class="batch-name"><i class="fas fa-id-card"></i> Batch: <span id="studentBatchShow"></span></span>
-                    <button id="studentLogoutBtn" class="btn-danger" style="padding:8px 20px;">Change</button>
+                    <span class="batch-name"><i class="fas fa-id-card"></i> ব্যাচ: <span id="studentBatchShow"></span></span>
+                    <button id="studentLogoutBtn" class="btn-danger" style="padding:8px 20px;">পরিবর্তন</button>
                 </div>
                 <div id="studentCreditCard" class="credit-card"></div>
                 <div id="studentDayTabs" class="day-tabs"></div>
                 <div id="studentClassList"></div>
-                <button id="studentCalendarBtn" style="background:#34a853; width:100%; margin-top:15px;"><i class="fab fa-google"></i> Add to Google Calendar</button>
+                <button id="studentCalendarBtn" style="background:#34a853; width:100%; margin-top:15px;"><i class="fab fa-google"></i> 📅 গুগল ক্যালেন্ডারে যোগ করুন</button>
             </div>
         </div>
     </div>
@@ -128,29 +144,34 @@
     <div id="teacherPanel" class="panel">
         <div class="card login-card" id="teacherLoginCard">
             <i class="fas fa-chalkboard-user" style="font-size: 2rem; color: #10b981;"></i>
-            <h3>👨‍🏫 Select Your Name</h3>
+            <h3>👨‍🏫 আপনার নাম সিলেক্ট করুন</h3>
             <select id="teacherSelect"></select>
-            <button id="teacherLoginBtn" class="btn-success">Enter</button>
+            <button id="teacherLoginBtn" class="btn-success">প্রবেশ</button>
+            <div style="margin-top:10px;">
+                <div class="notif-bell" onclick="requestNotificationPermission()">
+                    <i class="fas fa-bell"></i> <span>🔔 নোটিফিকেশন চালু করুন</span>
+                </div>
+            </div>
         </div>
         <div id="teacherDashboard" style="display:none;">
             <div class="card">
                 <div class="batch-header">
                     <span class="batch-name"><i class="fas fa-chalkboard-user"></i> <span id="teacherNameShow"></span></span>
-                    <button id="teacherLogoutBtn" class="btn-danger">Exit</button>
+                    <button id="teacherLogoutBtn" class="btn-danger">বের হন</button>
                 </div>
                 <div class="stats">
-                    <div class="stat-card"><span id="teacherClassCount">0</span><br><small>Total Classes</small></div>
-                    <div class="stat-card"><span id="teacherBatchCount">0</span><br><small>Batches</small></div>
+                    <div class="stat-card"><span id="teacherClassCount">0</span><br><small>মোট ক্লাস</small></div>
+                    <div class="stat-card"><span id="teacherBatchCount">0</span><br><small>ব্যাচ</small></div>
                 </div>
                 <div class="filter-bar">
-                    <input type="text" id="teacherBatchFilter" placeholder="Filter by Batch">
+                    <input type="text" id="teacherBatchFilter" placeholder="ব্যাচ ফিল্টার">
                     <select id="teacherDayFilter">
-                        <option value="">All Days</option>
-                        <option value="MON">Monday</option>
-                        <option value="TUE">Tuesday</option>
-                        <option value="WED">Wednesday</option>
-                        <option value="THU">Thursday</option>
-                        <option value="SAT">Saturday</option>
+                        <option value="">সব দিন</option>
+                        <option value="MON">সোমবার</option>
+                        <option value="TUE">মঙ্গলবার</option>
+                        <option value="WED">বুধবার</option>
+                        <option value="THU">বৃহস্পতিবার</option>
+                        <option value="SAT">শনিবার</option>
                     </select>
                     <button id="teacherRefreshBtn" class="btn-success" style="margin:0; padding:8px 16px;">🔄</button>
                 </div>
@@ -163,23 +184,23 @@
     <div id="adminPanel" class="panel">
         <div class="card login-card" id="adminLoginCard">
             <i class="fas fa-user-shield" style="font-size: 2rem; color:#dc2626;"></i>
-            <h3>🔐 Admin Login</h3>
+            <h3>🔐 এডমিন লগইন</h3>
             <input type="email" id="adminEmail" placeholder="Email">
             <input type="password" id="adminPass" placeholder="Password">
-            <button id="adminLoginBtn">Login</button>
+            <button id="adminLoginBtn">লগইন</button>
         </div>
         <div id="adminDashboard" style="display:none;">
             <div class="card">
                 <div class="batch-header">
-                    <h3><i class="fas fa-user-shield"></i> Admin Control Panel</h3>
-                    <button id="adminLogoutBtn" class="btn-danger">Logout</button>
+                    <h3><i class="fas fa-user-shield"></i> এডমিন প্যানেল</h3>
+                    <button id="adminLogoutBtn" class="btn-danger">লগআউট</button>
                 </div>
                 
                 <div class="info-banner" style="background:#e6f7ec;">
-                    <i class="fas fa-globe"></i> <strong>Cloud Sync Active!</strong> Changes appear instantly on ALL devices.
+                    <i class="fas fa-globe"></i> <strong>Cloud Sync Active!</strong> পরিবর্তন সাথে সাথে সব ডিভাইসে আপডেট হবে।
                 </div>
                 
-                <h4>➕ Add New Class</h4>
+                <h4>➕ নতুন ক্লাস যোগ করুন</h4>
                 <div class="admin-form">
                     <input type="text" id="newBatch" placeholder="Batch" style="width:75px;">
                     <select id="newDay"><option>MON</option><option>TUE</option><option>WED</option><option>THU</option><option>SAT</option></select>
@@ -191,24 +212,24 @@
                     <select id="newType"><option>Theory</option><option>Lab</option></select>
                     <input type="number" id="newCredit" placeholder="Credit" value="3" style="width:55px;">
                     <input type="text" id="newDuration" placeholder="Duration" value="100 min" style="width:70px;">
-                    <button id="addClassBtn" class="btn-success">➕ Add</button>
+                    <button id="addClassBtn" class="btn-success">➕ যোগ করুন</button>
                 </div>
                 
-                <h4 style="margin-top:20px;">📋 All Classes</h4>
+                <h4 style="margin-top:20px;">📋 সব ক্লাস</h4>
                 <div style="overflow-x:auto;">
                     <table class="data-table">
                         <thead>
-                            <tr><th>Batch</th><th>Day</th><th>Time</th><th>Code</th><th>Course</th><th>Teacher</th><th>Room</th><th>Duration</th><th>Actions</th></tr>
+                            <tr><th>ব্যাচ</th><th>দিন</th><th>সময়</th><th>কোড</th><th>কোর্স</th><th>শিক্ষক</th><th>রুম</th><th>সময়কাল</th><th>অ্যাকশন</th></tr>
                         </thead>
                         <tbody id="adminTableBody"></tbody>
                     </table>
                 </div>
-                <button id="resetDataBtn" class="btn-warning" style="width:100%; margin-top:15px;">⟳ Reset to Default</button>
+                <button id="resetDataBtn" class="btn-warning" style="width:100%; margin-top:15px;">⟳ ডিফল্ট রিসেট</button>
             </div>
         </div>
     </div>
 </div>
-<div class="sync-status" id="syncStatus"><i class="fas fa-cloud-upload-alt"></i> Connecting...</div>
+<div class="sync-status" id="syncStatus"><i class="fas fa-cloud-upload-alt"></i> কানেক্ট হচ্ছে...</div>
 
 <script>
     // ==================== FIREBASE CONFIGURATION ====================
@@ -226,7 +247,7 @@
     const ADMIN_EMAIL = 'sharif.uddin@eee.wub.edu.bd';
     const ADMIN_PASS = 'Sr@123580Sr@';
     
-    // ==================== COMPLETE MASTER DATA WITH DURATION ====================
+    // ==================== ORIGINAL MASTER DATA WITH DURATION ====================
     const originalMasterData = [
         {batch:"85A", day:"MON", time:"12:00pm-12:50pm", code:"EEE07144263", title:"Microwave Engineering", teacher:"Debprosad Das", room:"504", type:"Theory", credit:3, duration:"50 min"},
         {batch:"85A", day:"MON", time:"12:50pm-03:10pm", code:"EEE07144264", title:"Microwave Lab", teacher:"Debprosad Das", room:"B15", type:"Lab", credit:1, duration:"100 min"},
@@ -351,6 +372,154 @@
     let currentTeacher = null;
     let adminLoggedIn = false;
     
+    // Notification timers storage
+    let notificationTimers = [];
+    
+    // ==================== NOTIFICATION FUNCTIONS ====================
+    function requestNotificationPermission() {
+        if (Notification.permission === "granted") {
+            showToast('🔔 নোটিফিকেশন ইতিমধ্যে অন আছে!');
+        } else if (Notification.permission !== "denied") {
+            Notification.requestPermission().then(perm => {
+                if (perm === "granted") {
+                    showToast('✅ নোটিফিকেশন অন করা হয়েছে! ক্লাসের ১৫ মিনিট আগে reminder পাবেন।');
+                    // Reschedule notifications after permission granted
+                    if (currentStudentBatch) scheduleAllNotifications(currentStudentBatch);
+                    if (currentTeacher) scheduleTeacherNotifications(currentTeacher);
+                } else {
+                    showToast('⚠️ নোটিফিকেশন অন করেনি। ম্যানুয়ালি ব্রাউজার সেটিংস থেকে অন করুন।', true);
+                }
+            });
+        } else {
+            showToast('⚠️ নোটিফিকেশন ব্লক করা আছে। ব্রাউজার সেটিংস থেকে অন করুন।', true);
+        }
+    }
+    
+    function showNotificationPopup(classItem) {
+        // Create popup notification
+        const popup = document.createElement('div');
+        popup.className = 'notification-popup';
+        popup.innerHTML = `
+            <button class="notif-close" onclick="this.parentElement.remove()">✕</button>
+            <div>
+                <i class="fas fa-bell notif-icon"></i>
+                <span class="notif-title">🔔 ক্লাস শুরু হতে ১৫ মিনিট বাকি!</span>
+            </div>
+            <div style="margin-top:8px;">
+                <strong>📚 ${classItem.title}</strong><br>
+                <span>📖 কোড: ${classItem.code}</span><br>
+                <span>⏰ সময়: ${classItem.time}</span><br>
+                <span>👨‍🏫 শিক্ষক: ${classItem.teacher}</span><br>
+                <span>🏫 রুম: ${classItem.room}</span>
+            </div>
+            <div class="notif-time">
+                <i class="fas fa-clock"></i> ${new Date().toLocaleTimeString()}
+            </div>
+        `;
+        document.body.appendChild(popup);
+        
+        // Auto remove after 10 seconds
+        setTimeout(() => {
+            if (popup.parentElement) popup.remove();
+        }, 10000);
+        
+        // Also show browser notification if permitted
+        if (Notification.permission === "granted") {
+            new Notification(`🔔 ${classItem.title}`, {
+                body: `${classItem.time} | রুম: ${classItem.room} | শিক্ষক: ${classItem.teacher}`,
+                icon: "https://img.icons8.com/color/48/000000/classroom.png",
+                tag: classItem.code
+            });
+        }
+        
+        // Play sound
+        try {
+            const audio = new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3');
+            audio.volume = 0.5;
+            audio.play().catch(e => console.log('Sound play failed'));
+        } catch(e) {}
+    }
+    
+    function calculateNotificationTime(classItem) {
+        try {
+            const timeStr = classItem.time.split('-')[0].trim();
+            let hour = parseInt(timeStr.match(/\d+/)[0]);
+            let minute = parseInt(timeStr.match(/:(\d+)/)?.[1] || 0);
+            const isPM = timeStr.toLowerCase().includes('pm') && hour !== 12;
+            const isAM = timeStr.toLowerCase().includes('am');
+            
+            if (isPM) hour += 12;
+            if (isAM && hour === 12) hour = 0;
+            
+            const dayMap = { 'MON': 1, 'TUE': 2, 'WED': 3, 'THU': 4, 'SAT': 6 };
+            const now = new Date();
+            let targetDay = dayMap[classItem.day];
+            let classDate = new Date(now);
+            classDate.setHours(hour, minute, 0, 0);
+            
+            let daysUntil = (targetDay - now.getDay() + 7) % 7;
+            if (daysUntil === 0 && classDate <= now) daysUntil = 7;
+            classDate.setDate(now.getDate() + daysUntil);
+            
+            const timeUntil = classDate.getTime() - now.getTime();
+            const notifyTime = timeUntil - (15 * 60 * 1000); // 15 minutes before
+            
+            return { notifyTime, classDate };
+        } catch(e) {
+            console.error('Time calculation error:', e);
+            return null;
+        }
+    }
+    
+    function scheduleNotification(classItem) {
+        const result = calculateNotificationTime(classItem);
+        if (!result) return null;
+        
+        const { notifyTime, classDate } = result;
+        
+        if (notifyTime > 0 && notifyTime < 14 * 24 * 60 * 60 * 1000) {
+            const timerId = setTimeout(() => {
+                showNotificationPopup(classItem);
+            }, notifyTime);
+            return timerId;
+        }
+        return null;
+    }
+    
+    function clearAllNotifications() {
+        notificationTimers.forEach(timer => clearTimeout(timer));
+        notificationTimers = [];
+    }
+    
+    function scheduleAllNotifications(batch) {
+        clearAllNotifications();
+        const batchClasses = classData.filter(c => c.batch === batch);
+        batchClasses.forEach(classItem => {
+            const timerId = scheduleNotification(classItem);
+            if (timerId) notificationTimers.push(timerId);
+        });
+        console.log(`📅 ${batchClasses.length} টি ক্লাসের জন্য নোটিফিকেশন সেট করা হয়েছে`);
+    }
+    
+    function scheduleTeacherNotifications(teacherName) {
+        clearAllNotifications();
+        const teacherClasses = classData.filter(c => c.teacher === teacherName);
+        teacherClasses.forEach(classItem => {
+            const timerId = scheduleNotification(classItem);
+            if (timerId) notificationTimers.push(timerId);
+        });
+        console.log(`👨‍🏫 ${teacherName} এর ${teacherClasses.length} টি ক্লাসের জন্য নোটিফিকেশন সেট করা হয়েছে`);
+    }
+    
+    function scheduleNotificationsForCurrentUser() {
+        if (currentStudentBatch) {
+            scheduleAllNotifications(currentStudentBatch);
+        } else if (currentTeacher) {
+            scheduleTeacherNotifications(currentTeacher);
+        }
+    }
+    
+    // ==================== FIREBASE FUNCTIONS ====================
     function showToast(msg, isError = false) {
         let t = document.createElement('div');
         t.className = 'toast';
@@ -371,7 +540,6 @@
         }
     }
     
-    // Initialize Firebase
     async function initFirebase() {
         try {
             firebase.initializeApp(firebaseConfig);
@@ -393,6 +561,10 @@
                 }
                 
                 refreshAllViews();
+                
+                // Reschedule notifications when data changes
+                scheduleNotificationsForCurrentUser();
+                
                 updateSyncStatus('connected', 'Cloud Connected');
             }, (error) => {
                 console.error('Firestore error:', error);
@@ -423,6 +595,7 @@
             classData = JSON.parse(JSON.stringify(originalMasterData));
         }
         refreshAllViews();
+        scheduleNotificationsForCurrentUser();
     }
     
     async function saveToFirebase(updatedData) {
@@ -476,7 +649,7 @@
         return Array.from(teachers).sort();
     }
     
-    // Student Functions
+    // ==================== STUDENT FUNCTIONS ====================
     function getClassesByBatchAndDay(batch, day) {
         return classData.filter(c => c.batch === batch && c.day === day);
     }
@@ -580,16 +753,27 @@
         document.getElementById('studentDashboard').style.display = 'block';
         document.getElementById('studentLoginCard').style.display = 'none';
         renderStudentView(batch);
-        showToast(`✅ ${batch} loaded`);
+        
+        // Schedule notifications for this batch
+        scheduleAllNotifications(batch);
+        
+        showToast(`✅ ${batch} loaded | ক্লাসের ১৫মিনিট আগে নোটিফিকেশন পাবেন`);
+        
+        // Request notification permission if not already granted
+        if (Notification.permission === "default") {
+            setTimeout(() => requestNotificationPermission(), 1000);
+        }
     }
     
     function studentLogout() {
         currentStudentBatch = null;
         document.getElementById('studentDashboard').style.display = 'none';
         document.getElementById('studentLoginCard').style.display = 'block';
+        // Don't clear notifications - they will continue
+        // clearAllNotifications(); // Commented so notifications continue
     }
     
-    // Teacher Functions
+    // ==================== TEACHER FUNCTIONS ====================
     function updateTeacherSelect() {
         const teachers = getAllTeachers();
         const select = document.getElementById('teacherSelect');
@@ -648,16 +832,27 @@
         document.getElementById('teacherDashboard').style.display = 'block';
         document.getElementById('teacherLoginCard').style.display = 'none';
         loadTeacherClasses();
-        showToast(`👨‍🏫 Welcome ${teacher}`);
+        
+        // Schedule notifications for this teacher
+        scheduleTeacherNotifications(teacher);
+        
+        showToast(`👨‍🏫 Welcome ${teacher} | ক্লাসের ১৫মিনিট আগে নোটিফিকেশন পাবেন`);
+        
+        // Request notification permission if not already granted
+        if (Notification.permission === "default") {
+            setTimeout(() => requestNotificationPermission(), 1000);
+        }
     }
     
     function teacherLogout() {
         currentTeacher = null;
         document.getElementById('teacherDashboard').style.display = 'none';
         document.getElementById('teacherLoginCard').style.display = 'block';
+        // Don't clear notifications - they will continue
+        // clearAllNotifications(); // Commented so notifications continue
     }
     
-    // Admin Functions
+    // ==================== ADMIN FUNCTIONS ====================
     function renderAdminTable() {
         const tbody = document.getElementById('adminTableBody');
         tbody.innerHTML = '';
@@ -730,6 +925,8 @@
             renderAdminTable();
             if (currentStudentBatch) renderStudentView(currentStudentBatch);
             if (currentTeacher) loadTeacherClasses();
+            // Reschedule notifications for current user
+            scheduleNotificationsForCurrentUser();
             showToast('✅ Class updated - All devices synced!');
             modal.remove();
         };
@@ -743,6 +940,7 @@
             renderAdminTable();
             if (currentStudentBatch) renderStudentView(currentStudentBatch);
             if (currentTeacher) loadTeacherClasses();
+            scheduleNotificationsForCurrentUser();
             showToast('✅ Class deleted - All devices updated');
         }
     };
@@ -769,6 +967,7 @@
         renderAdminTable();
         if (currentStudentBatch) renderStudentView(currentStudentBatch);
         if (currentTeacher) loadTeacherClasses();
+        scheduleNotificationsForCurrentUser();
         showToast('✅ New class added - Synced to cloud!');
         
         document.getElementById('newBatch').value = '';
@@ -786,6 +985,7 @@
             renderAdminTable();
             if (currentStudentBatch) renderStudentView(currentStudentBatch);
             if (currentTeacher) loadTeacherClasses();
+            scheduleNotificationsForCurrentUser();
             showToast('✅ Reset to default - All devices updated');
         }
     }
@@ -810,7 +1010,7 @@
         document.getElementById('adminLoginCard').style.display = 'block';
     }
     
-    // Initialize
+    // ==================== INITIALIZATION ====================
     function init() {
         document.getElementById('studentLoginBtn').onclick = studentLogin;
         document.getElementById('studentLogoutBtn').onclick = studentLogout;
