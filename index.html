@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>WUB EEE | Real-time Sync | All Devices</title>
+    <title>WUB EEE | Permanent Sync | Updated Routine</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Firebase SDK -->
@@ -68,29 +68,17 @@
         .toast{position:fixed;bottom:20px;left:20px;right:20px;background:#1e293b;color:white;padding:12px;border-radius:50px;text-align:center;z-index:2000;animation:slideIn 0.3s ease;font-size:0.8rem;}
         @keyframes slideIn{from{transform:translateY(100%);opacity:0;}to{transform:translateY(0);opacity:1;}}
         
-        /* Notification Popup Style */
-        .notification-popup{position:fixed;top:20px;right:20px;left:20px;max-width:400px;margin:0 auto;background:linear-gradient(135deg,#1f6392,#0e4a6e);color:white;padding:16px;border-radius:20px;box-shadow:0 10px 40px rgba(0,0,0,0.2);z-index:10000;animation:slideDown 0.4s ease;border-left:5px solid #f59e0b;cursor:pointer;}
-        .notification-popup .notif-title{font-weight:700;margin-bottom:5px;font-size:1rem;}
-        .notification-popup .notif-time{font-size:0.7rem;opacity:0.9;margin-top:8px;}
-        .notification-popup .notif-close{position:absolute;top:8px;right:12px;background:none;border:none;color:white;font-size:1.2rem;cursor:pointer;padding:0;}
-        .notification-popup .notif-icon{margin-right:10px;font-size:1.2rem;}
+        .notification-popup{position:fixed;top:20px;right:20px;left:20px;max-width:400px;margin:0 auto;background:linear-gradient(135deg,#1f6392,#0e4a6e);color:white;padding:16px;border-radius:20px;box-shadow:0 10px 40px rgba(0,0,0,0.2);z-index:10000;animation:slideDown 0.4s ease;border-left:5px solid #f59e0b;}
+        .notification-popup .notif-close{position:absolute;top:8px;right:12px;background:none;border:none;color:white;font-size:1.2rem;cursor:pointer;}
         @keyframes slideDown{from{transform:translateY(-100%);opacity:0;}to{transform:translateY(0);opacity:1;}}
         
         .sync-status{position:fixed;bottom:10px;right:10px;padding:4px 12px;border-radius:20px;font-size:0.6rem;z-index:1000;background:#10b981;color:white;}
         .sync-status.syncing{background:#f59e0b;animation:pulse 1s infinite;}
-        @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.6;}}
+        @keyframes pulse{0%,100%{opacity:0.6;}50%{opacity:1;}}
         
         .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10001;display:flex;align-items:center;justify-content:center;}
         .edit-modal{background:white;border-radius:24px;padding:20px;width:90%;max-width:500px;max-height:80vh;overflow-y:auto;}
         .edit-modal input,.edit-modal select{width:100%;max-width:100%;margin:5px 0;}
-        
-        .notif-bell{display:inline-flex;align-items:center;gap:8px;background:#f1f5f9;padding:6px 12px;border-radius:30px;cursor:pointer;font-size:0.7rem;}
-        .notif-bell i{color:#f59e0b;}
-        
-        @media (max-width:600px){
-            .admin-form input,.admin-form select{width:calc(50% - 4px);}
-            .class-item{flex-direction:column;align-items:flex-start;}
-        }
         
         .stats{display:flex;gap:10px;margin-bottom:15px;}
         .stat-card{flex:1;background:#10b98120;padding:10px;border-radius:16px;text-align:center;}
@@ -98,19 +86,24 @@
         .filter-bar input,.filter-bar select{flex:1;margin:0;padding:8px 12px;}
         
         .info-banner{background:#e0f2fe;padding:10px;border-radius:12px;margin-bottom:15px;font-size:0.7rem;text-align:center;}
+        .notif-bell{display:inline-flex;align-items:center;gap:8px;background:#f1f5f9;padding:6px 12px;border-radius:30px;cursor:pointer;font-size:0.7rem;}
+        @media (max-width:600px){
+            .admin-form input,.admin-form select{width:calc(50% - 4px);}
+            .class-item{flex-direction:column;align-items:flex-start;}
+        }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header">
         <h1><i class="fas fa-microchip"></i> WUB - EEE</h1>
-        <p>Real-time Sync | ক্লাস শুরুর ১৫ মিনিট আগে নোটিফিকেশন পাবেন</p>
+        <p>🔒 সম্পূর্ণ আপডেটেড রুটিন | Permanent Sync | একবার এডিট/ডিলিট করলে চিরকালের জন্য সেভ থাকে</p>
     </div>
     
     <div class="mode-selector">
         <div class="mode-btn active" data-mode="student">🎓 Student</div>
-        <div class="mode-btn teacher" data-mode="teacher">👨‍🏫 Teacher</div>
-        <div class="mode-btn admin" data-mode="admin">👑 Admin</div>
+        <div class="mode-btn" data-mode="teacher">👨‍🏫 Teacher</div>
+        <div class="mode-btn" data-mode="admin">👑 Admin</div>
     </div>
 
     <!-- Student Panel -->
@@ -120,11 +113,6 @@
             <h3>📚 আপনার ব্যাচ সিলেক্ট করুন</h3>
             <input type="text" id="studentBatchInput" placeholder="85A to 96A" value="96A">
             <button id="studentLoginBtn">রুটিন দেখুন</button>
-            <div style="margin-top:10px;">
-                <div class="notif-bell" onclick="requestNotificationPermission()">
-                    <i class="fas fa-bell"></i> <span>🔔 নোটিফিকেশন চালু করুন</span>
-                </div>
-            </div>
         </div>
         <div id="studentDashboard" style="display:none;">
             <div class="card">
@@ -147,11 +135,6 @@
             <h3>👨‍🏫 আপনার নাম সিলেক্ট করুন</h3>
             <select id="teacherSelect"></select>
             <button id="teacherLoginBtn" class="btn-success">প্রবেশ</button>
-            <div style="margin-top:10px;">
-                <div class="notif-bell" onclick="requestNotificationPermission()">
-                    <i class="fas fa-bell"></i> <span>🔔 নোটিফিকেশন চালু করুন</span>
-                </div>
-            </div>
         </div>
         <div id="teacherDashboard" style="display:none;">
             <div class="card">
@@ -192,12 +175,12 @@
         <div id="adminDashboard" style="display:none;">
             <div class="card">
                 <div class="batch-header">
-                    <h3><i class="fas fa-user-shield"></i> এডমিন প্যানেল</h3>
+                    <h3><i class="fas fa-user-shield"></i> এডমিন প্যানেল - Permanent Edit/Delete</h3>
                     <button id="adminLogoutBtn" class="btn-danger">লগআউট</button>
                 </div>
                 
-                <div class="info-banner" style="background:#e6f7ec;">
-                    <i class="fas fa-globe"></i> <strong>Cloud Sync Active!</strong> পরিবর্তন সাথে সাথে সব ডিভাইসে আপডেট হবে।
+                <div class="info-banner" style="background:#dc262620; border:1px solid #dc2626;">
+                    <i class="fas fa-trash-alt"></i> <strong>⚠️ গুরুত্বপূর্ণ:</strong> এডিট বা ডিলিট করলেই তা স্থায়ীভাবে সেভ হবে। পুরনো ডাটা আর ফিরবে না!
                 </div>
                 
                 <h4>➕ নতুন ক্লাস যোগ করুন</h4>
@@ -211,11 +194,11 @@
                     <input type="text" id="newRoom" placeholder="Room" style="width:60px;">
                     <select id="newType"><option>Theory</option><option>Lab</option></select>
                     <input type="number" id="newCredit" placeholder="Credit" value="3" style="width:55px;">
-                    <input type="text" id="newDuration" placeholder="Duration" value="100 min" style="width:70px;">
+                    <input type="text" id="newDuration" placeholder="Duration" value="50 min" style="width:70px;">
                     <button id="addClassBtn" class="btn-success">➕ যোগ করুন</button>
                 </div>
                 
-                <h4 style="margin-top:20px;">📋 সব ক্লাস</h4>
+                <h4 style="margin-top:20px;">📋 সব ক্লাস (Permanent Data)</h4>
                 <div style="overflow-x:auto;">
                     <table class="data-table">
                         <thead>
@@ -224,7 +207,7 @@
                         <tbody id="adminTableBody"></tbody>
                     </table>
                 </div>
-                <button id="resetDataBtn" class="btn-warning" style="width:100%; margin-top:15px;">⟳ ডিফল্ট রিসেট</button>
+                <button id="resetDataBtn" class="btn-warning" style="width:100%; margin-top:15px;">⟳ ডিফল্ট রিসেট (সাবধান!)</button>
             </div>
         </div>
     </div>
@@ -232,346 +215,56 @@
 <div class="sync-status" id="syncStatus"><i class="fas fa-cloud-upload-alt"></i> কানেক্ট হচ্ছে...</div>
 
 <script>
-    // ==================== FIREBASE CONFIGURATION ====================
+    // Firebase Configuration
     const firebaseConfig = {
         apiKey: "AIzaSyCifCntx1TnJ_nWqNUWrzysSn3WOg27MD68",
         authDomain: "wub-eee-routine.firebaseapp.com",
         projectId: "wub-eee-routine",
         storageBucket: "wub-eee-routine.firebasestorage.app",
         messagingSenderId: "1078324337852",
-        appId: "1:1078324337852:web:8e722ca18c332e293384b9",
-        measurementId: "G-7F4Q8V6ZND"
+        appId: "1:1078324337852:web:8e722ca18c332e293384b9"
     };
     
-    // Admin credentials
     const ADMIN_EMAIL = 'sharif.uddin@eee.wub.edu.bd';
     const ADMIN_PASS = 'Sr@123580Sr@';
     
-    // Function to calculate duration based on time
-    function calculateDuration(timeStr) {
-        if (!timeStr) return "100 min";
-        const parts = timeStr.split('-');
-        if (parts.length !== 2) return "100 min";
-        
-        const start = parts[0].trim();
-        const end = parts[1].trim();
-        
-        // Helper to convert time to minutes
-        function timeToMinutes(t) {
-            let hour = parseInt(t.match(/\d+/)[0]);
-            let minute = parseInt(t.match(/:(\d+)/)?.[1] || 0);
-            const isPM = t.toLowerCase().includes('pm') && hour !== 12;
-            const isAM = t.toLowerCase().includes('am');
-            
-            if (isPM) hour += 12;
-            if (isAM && hour === 12) hour = 0;
-            
-            return hour * 60 + minute;
-        }
-        
-        const startMinutes = timeToMinutes(start);
-        const endMinutes = timeToMinutes(end);
-        let durationMinutes = endMinutes - startMinutes;
-        
-        if (durationMinutes <= 0) durationMinutes = 100;
-        
-        if (durationMinutes === 50) return "50 min";
-        if (durationMinutes === 100) return "100 min";
-        return durationMinutes + " min";
-    }
-    
-    // ==================== ORIGINAL MASTER DATA WITH CORRECT DURATION ====================
+    // ==================== COMPLETE MASTER DATA (UPDATED WITH ALL PROVIDED BATCHES) ====================
     const originalMasterData = [
-        // 85A Batch
-        {batch:"85A", day:"MON", time:"12:00pm-12:50pm", code:"EEE07144263", title:"Microwave Engineering", teacher:"Debprosad Das", room:"504", type:"Theory", credit:3, duration: calculateDuration("12:00pm-12:50pm")},
-        {batch:"85A", day:"MON", time:"12:50pm-03:10pm", code:"EEE07144264", title:"Microwave Lab", teacher:"Debprosad Das", room:"B15", type:"Lab", credit:1, duration: calculateDuration("12:50pm-03:10pm")},
-        {batch:"85A", day:"THU", time:"02:20pm-04:00pm", code:"EEE07144263", title:"Microwave Engineering", teacher:"Debprosad Das", room:"507", type:"Theory", credit:3, duration: calculateDuration("02:20pm-04:00pm")},
-        
-        // 86A Batch
-        {batch:"86A", day:"SAT", time:"09:30am-11:10am", code:"EEE07134253", title:"Power Plants Engineering", teacher:"Dr. Md. Riyad Tanshen", room:"507", type:"Theory", credit:3, duration: calculateDuration("09:30am-11:10am")},
-        {batch:"86A", day:"SAT", time:"11:10am-12:00pm", code:"EEE07144271", title:"Optical Fibre Communication", teacher:"Dr. M. Quamruzzaman", room:"507", type:"Theory", credit:3, duration: calculateDuration("11:10am-12:00pm")},
-        {batch:"86A", day:"MON", time:"10:20am-12:00pm", code:"EEE07144271", title:"Optical Fibre Communication", teacher:"Dr. M. Quamruzzaman", room:"504", type:"Theory", credit:3, duration: calculateDuration("10:20am-12:00pm")},
-        {batch:"86A", day:"MON", time:"12:50pm-03:10pm", code:"EEE07144264", title:"Microwave Lab", teacher:"Debprosad Das", room:"B15", type:"Lab", credit:1, duration: calculateDuration("12:50pm-03:10pm")},
-        {batch:"86A", day:"THU", time:"12:00pm-12:50pm", code:"EEE07134253", title:"Power Plants Engineering", teacher:"Dr. Md. Riyad Tanshen", room:"507", type:"Theory", credit:3, duration: calculateDuration("12:00pm-12:50pm")},
-        
-        // 87A Batch
-        {batch:"87A", day:"SAT", time:"09:30am-11:10am", code:"EEE07134141", title:"Power System Operation & Control", teacher:"Md. Istianatur Rahman", room:"B14", type:"Theory", credit:3, duration: calculateDuration("09:30am-11:10am")},
-        {batch:"87A", day:"SAT", time:"11:10am-12:00pm", code:"EEE07144271", title:"Optical Fibre Communication", teacher:"Dr. M. Quamruzzaman", room:"507", type:"Theory", credit:3, duration: calculateDuration("11:10am-12:00pm")},
-        {batch:"87A", day:"SAT", time:"02:20pm-04:00pm", code:"EEE07134142", title:"Power System Operation & Control Lab", teacher:"Md. Istianatur Rahman", room:"B14/B15", type:"Lab", credit:1, duration: calculateDuration("02:20pm-04:00pm")},
-        {batch:"87A", day:"MON", time:"10:20am-12:00pm", code:"EEE07144271", title:"Optical Fibre Communication", teacher:"Dr. M. Quamruzzaman", room:"504", type:"Theory", credit:3, duration: calculateDuration("10:20am-12:00pm")},
-        {batch:"87A", day:"MON", time:"12:00pm-12:50pm", code:"EEE07144263", title:"Microwave Engineering", teacher:"Debprosad Das", room:"504", type:"Theory", credit:3, duration: calculateDuration("12:00pm-12:50pm")},
-        {batch:"87A", day:"MON", time:"12:50pm-03:10pm", code:"EEE07144264", title:"Microwave Lab", teacher:"Debprosad Das", room:"B15", type:"Lab", credit:1, duration: calculateDuration("12:50pm-03:10pm")},
-        {batch:"87A", day:"MON", time:"03:10pm-04:00pm", code:"EEE07134141", title:"Power System Operation & Control", teacher:"Md. Istianatur Rahman", room:"504", type:"Theory", credit:3, duration: calculateDuration("03:10pm-04:00pm")},
-        {batch:"87A", day:"THU", time:"02:20pm-04:00pm", code:"EEE07144263", title:"Microwave Engineering", teacher:"Debprosad Das", room:"507", type:"Theory", credit:3, duration: calculateDuration("02:20pm-04:00pm")},
-        
-        // 88A Batch
-        {batch:"88A", day:"SAT", time:"09:30am-11:10am", code:"EEE07134141", title:"Power System Operation & Control", teacher:"Md. Istianatur Rahman", room:"B14", type:"Theory", credit:3, duration: calculateDuration("09:30am-11:10am")},
-        {batch:"88A", day:"SAT", time:"11:10am-12:00pm", code:"EEE07144271", title:"Optical Fibre Communication", teacher:"Dr. M. Quamruzzaman", room:"507", type:"Theory", credit:3, duration: calculateDuration("11:10am-12:00pm")},
-        {batch:"88A", day:"SAT", time:"12:00pm-01:40pm", code:"EEE07143229", title:"Control System", teacher:"Md. Istianatur Rahman", room:"B14", type:"Theory", credit:3, duration: calculateDuration("12:00pm-01:40pm")},
-        {batch:"88A", day:"SAT", time:"02:20pm-04:00pm", code:"EEE07134142", title:"Power System Operation & Control Lab", teacher:"Md. Istianatur Rahman", room:"B14", type:"Lab", credit:1, duration: calculateDuration("02:20pm-04:00pm")},
-        {batch:"88A", day:"MON", time:"10:20am-12:00pm", code:"EEE07144271", title:"Optical Fibre Communication", teacher:"Dr. M. Quamruzzaman", room:"504", type:"Theory", credit:3, duration: calculateDuration("10:20am-12:00pm")},
-        {batch:"88A", day:"MON", time:"02:20pm-03:10pm", code:"EEE07143229", title:"Control System", teacher:"Md. Istianatur Rahman", room:"504", type:"Theory", credit:3, duration: calculateDuration("02:20pm-03:10pm")},
-        {batch:"88A", day:"MON", time:"03:10pm-04:00pm", code:"EEE07134141", title:"Power System Operation & Control", teacher:"Md. Istianatur Rahman", room:"504", type:"Theory", credit:3, duration: calculateDuration("03:10pm-04:00pm")},
-        {batch:"88A", day:"TUE", time:"12:00pm-01:40pm", code:"EEE07143230", title:"Control System Lab", teacher:"Md. Istianatur Rahman", room:"B14", type:"Lab", credit:1, duration: calculateDuration("12:00pm-01:40pm")},
-        
-        // 89A Batch
-        {batch:"89A", day:"SAT", time:"08:40am-09:30am", code:"EEE07183119", title:"Instrumentation & Measurement", teacher:"Md. Abdu Rabbir Rasul", room:"507", type:"Theory", credit:3, duration: calculateDuration("08:40am-09:30am")},
-        {batch:"89A", day:"SAT", time:"11:10am-12:50pm", code:"EEE07183120", title:"Instrumentation & Measurement Lab", teacher:"Md. Abdu Rabbir Rasul", room:"B16", type:"Lab", credit:1, duration: calculateDuration("11:10am-12:50pm")},
-        {batch:"89A", day:"SAT", time:"12:00pm-01:40pm", code:"EEE07143229", title:"Control System", teacher:"Md. Istianatur Rahman", room:"B14", type:"Theory", credit:3, duration: calculateDuration("12:00pm-01:40pm")},
-        {batch:"89A", day:"SAT", time:"02:20pm-04:00pm", code:"EEE07143228", title:"Microprocessor Lab", teacher:"Nayeem Hasan Mallick", room:"B17", type:"Lab", credit:1, duration: calculateDuration("02:20pm-04:00pm")},
-        {batch:"89A", day:"MON", time:"02:20pm-03:10pm", code:"EEE07143229", title:"Control System", teacher:"Md. Istianatur Rahman", room:"504", type:"Theory", credit:3, duration: calculateDuration("02:20pm-03:10pm")},
-        {batch:"89A", day:"TUE", time:"12:00pm-01:40pm", code:"EEE07143230", title:"Control System Lab", teacher:"Md. Istianatur Rahman", room:"B14", type:"Lab", credit:1, duration: calculateDuration("12:00pm-01:40pm")},
-        {batch:"89A", day:"TUE", time:"02:20pm-04:00pm", code:"EEE07143227", title:"Microprocessor & Interfacing", teacher:"Nayeem Hasan Mallick", room:"B14", type:"Theory", credit:3, duration: calculateDuration("02:20pm-04:00pm")},
-        {batch:"89A", day:"WED", time:"08:40am-09:30am", code:"EEE07143227", title:"Microprocessor & Interfacing", teacher:"Nayeem Hasan Mallick", room:"B14", type:"Theory", credit:3, duration: calculateDuration("08:40am-09:30am")},
-        {batch:"89A", day:"WED", time:"02:20pm-03:10pm", code:"MGT", title:"Engineering Management", teacher:"Dr. Sharif Hosen", room:"B14", type:"Theory", credit:3, duration: calculateDuration("02:20pm-03:10pm")},
-        {batch:"89A", day:"THU", time:"12:50pm-01:40pm", code:"EEE07183119", title:"Instrumentation & Measurement", teacher:"Md. Abdu Rabbir Rasul", room:"B14", type:"Theory", credit:3, duration: calculateDuration("12:50pm-01:40pm")},
-        {batch:"89A", day:"THU", time:"02:20pm-03:10pm", code:"EEE07183119", title:"Instrumentation & Measurement", teacher:"Md. Abdu Rabbir Rasul", room:"B14", type:"Theory", credit:3, duration: calculateDuration("02:20pm-03:10pm")},
-        {batch:"89A", day:"THU", time:"03:10pm-05:00pm", code:"MGT", title:"Engineering Management", teacher:"Dr. Sharif Hosen", room:"B14", type:"Theory", credit:3, duration: calculateDuration("03:10pm-05:00pm")},
-        
-        // 90A Batch
-        {batch:"90A", day:"SAT", time:"08:40am-09:30am", code:"EEE07183119", title:"Instrumentation & Measurement", teacher:"Md. Abdu Rabbir Rasul", room:"507", type:"Theory", credit:3, duration: calculateDuration("08:40am-09:30am")},
-        {batch:"90A", day:"SAT", time:"10:20am-12:50pm", code:"EEE07183120", title:"Instrumentation & Measurement Lab", teacher:"Md. Abdu Rabbir Rasul", room:"B16", type:"Lab", credit:1, duration: calculateDuration("10:20am-12:50pm")},
-        {batch:"90A", day:"SAT", time:"12:00pm-01:40pm", code:"EEE07143229", title:"Control System", teacher:"Md. Istianatur Rahman", room:"B14", type:"Theory", credit:3, duration: calculateDuration("12:00pm-01:40pm")},
-        {batch:"90A", day:"SAT", time:"02:20pm-04:00pm", code:"EEE07143228", title:"Microprocessor Lab", teacher:"Nayeem Hasan Mallick", room:"B17", type:"Lab", credit:1, duration: calculateDuration("02:20pm-04:00pm")},
-        {batch:"90A", day:"MON", time:"02:20pm-03:10pm", code:"EEE07143229", title:"Control System", teacher:"Md. Istianatur Rahman", room:"504", type:"Theory", credit:3, duration: calculateDuration("02:20pm-03:10pm")},
-        {batch:"90A", day:"TUE", time:"10:20am-12:00pm", code:"MAT-FTLT", title:"Fourier & Laplace Transformation", teacher:"Saddam", room:"B14", type:"Theory", credit:3, duration: calculateDuration("10:20am-12:00pm")},
-        {batch:"90A", day:"TUE", time:"12:00pm-01:40pm", code:"EEE07143230", title:"Control System Lab", teacher:"Md. Istianatur Rahman", room:"B14", type:"Lab", credit:1, duration: calculateDuration("12:00pm-01:40pm")},
-        {batch:"90A", day:"TUE", time:"02:20pm-04:00pm", code:"EEE07143227", title:"Microprocessor & Interfacing", teacher:"Nayeem Hasan Mallick", room:"B14", type:"Theory", credit:3, duration: calculateDuration("02:20pm-04:00pm")},
-        {batch:"90A", day:"WED", time:"08:40am-09:30am", code:"EEE07143227", title:"Microprocessor & Interfacing", teacher:"Nayeem Hasan Mallick", room:"B14", type:"Theory", credit:3, duration: calculateDuration("08:40am-09:30am")},
-        {batch:"90A", day:"WED", time:"02:20pm-03:10pm", code:"MGT", title:"Engineering Management", teacher:"Dr. Sharif Hosen", room:"B14", type:"Theory", credit:3, duration: calculateDuration("02:20pm-03:10pm")},
-        {batch:"90A", day:"THU", time:"11:10am-12:00pm", code:"MAT-FTLT", title:"Fourier & Laplace Transformation", teacher:"Saddam", room:"B14", type:"Theory", credit:3, duration: calculateDuration("11:10am-12:00pm")},
-        {batch:"90A", day:"THU", time:"12:50pm-01:40pm", code:"EEE07183119", title:"Instrumentation & Measurement", teacher:"Md. Abdu Rabbir Rasul", room:"B14", type:"Theory", credit:3, duration: calculateDuration("12:50pm-01:40pm")},
-        {batch:"90A", day:"THU", time:"02:20pm-03:10pm", code:"EEE07183119", title:"Instrumentation & Measurement", teacher:"Md. Abdu Rabbir Rasul", room:"B14", type:"Theory", credit:3, duration: calculateDuration("02:20pm-03:10pm")},
-        {batch:"90A", day:"THU", time:"03:10pm-05:00pm", code:"MGT", title:"Engineering Management", teacher:"Dr. Sharif Hosen", room:"B14", type:"Theory", credit:3, duration: calculateDuration("03:10pm-05:00pm")},
-        
-        // 91A Batch
-        {batch:"91A", day:"MON", time:"08:40am-10:20am", code:"EEE07142217", title:"Digital Electronics", teacher:"Nayeem Hasan Mallick", room:"504", type:"Theory", credit:3, duration: calculateDuration("08:40am-10:20am")},
-        {batch:"91A", day:"MON", time:"10:20am-12:00pm", code:"EEE07142218", title:"Digital Electronics Lab", teacher:"Nayeem Hasan Mallick", room:"B17", type:"Lab", credit:1, duration: calculateDuration("10:20am-12:00pm")},
-        {batch:"91A", day:"MON", time:"12:50pm-01:40pm", code:"EEE07133124", title:"Power System I", teacher:"Dr. Md. Mohsin", room:"507", type:"Theory", credit:3, duration: calculateDuration("12:50pm-01:40pm")},
-        {batch:"91A", day:"SAT", time:"08:40am-09:30am", code:"EEE07142217", title:"Digital Electronics", teacher:"Nayeem Hasan Mallick", room:"B14", type:"Theory", credit:3, duration: calculateDuration("08:40am-09:30am")},
-        {batch:"91A", day:"SAT", time:"09:30am-11:10am", code:"EEE07133125", title:"Power System I Lab", teacher:"Dr. Md. Mohsin", room:"B16", type:"Lab", credit:1, duration: calculateDuration("09:30am-11:10am")},
-        {batch:"91A", day:"TUE", time:"10:20am-12:00pm", code:"MAT-MVA", title:"Matrix & Vector Analysis", teacher:"Suman Kar", room:"507", type:"Theory", credit:3, duration: calculateDuration("10:20am-12:00pm")},
-        {batch:"91A", day:"WED", time:"09:30am-10:20am", code:"MAT-MVA", title:"Matrix & Vector Analysis", teacher:"Suman Kar", room:"507", type:"Theory", credit:3, duration: calculateDuration("09:30am-10:20am")},
-        {batch:"91A", day:"WED", time:"11:10am-12:50pm", code:"EEE07133124", title:"Power System I", teacher:"Dr. Md. Mohsin", room:"B14", type:"Theory", credit:3, duration: calculateDuration("11:10am-12:50pm")},
-        {batch:"91A", day:"WED", time:"02:20pm-03:10pm", code:"MGT", title:"Engineering Management", teacher:"Dr. Sharif Hosen", room:"B14", type:"Theory", credit:3, duration: calculateDuration("02:20pm-03:10pm")},
-        {batch:"91A", day:"THU", time:"03:10pm-05:00pm", code:"MGT", title:"Engineering Management", teacher:"Dr. Sharif Hosen", room:"B14", type:"Theory", credit:3, duration: calculateDuration("03:10pm-05:00pm")},
-        
-        // 92A Batch
-        {batch:"92A", day:"MON", time:"08:40am-10:20am", code:"EEE07142217", title:"Digital Electronics", teacher:"Nayeem Hasan Mallick", room:"504", type:"Theory", credit:3, duration: calculateDuration("08:40am-10:20am")},
-        {batch:"92A", day:"MON", time:"10:20am-12:00pm", code:"EEE07142218", title:"Digital Electronics Lab", teacher:"Nayeem Hasan Mallick", room:"B17", type:"Lab", credit:1, duration: calculateDuration("10:20am-12:00pm")},
-        {batch:"92A", day:"MON", time:"12:50pm-01:40pm", code:"EEE07133124", title:"Power System I", teacher:"Dr. Md. Mohsin", room:"504", type:"Theory", credit:3, duration: calculateDuration("12:50pm-01:40pm")},
-        {batch:"92A", day:"MON", time:"03:10pm-04:00pm", code:"CSE-INTRO", title:"Intro to Programming", teacher:"Nazmus Sakib", room:"B14", type:"Theory", credit:3, duration: calculateDuration("03:10pm-04:00pm")},
-        {batch:"92A", day:"SAT", time:"08:40am-09:30am", code:"EEE07142217", title:"Digital Electronics", teacher:"Nayeem Hasan Mallick", room:"B14", type:"Theory", credit:3, duration: calculateDuration("08:40am-09:30am")},
-        {batch:"92A", day:"SAT", time:"09:30am-11:10am", code:"EEE07133125", title:"Power System I Lab", teacher:"Dr. Md. Mohsin", room:"B16", type:"Lab", credit:1, duration: calculateDuration("09:30am-11:10am")},
-        {batch:"92A", day:"TUE", time:"08:40am-10:20am", code:"CSE-INTRO", title:"Intro to Programming", teacher:"Nazmus Sakib", room:"B14", type:"Theory", credit:3, duration: calculateDuration("08:40am-10:20am")},
-        {batch:"92A", day:"TUE", time:"10:20am-12:00pm", code:"MAT-MVA", title:"Matrix & Vector Analysis", teacher:"Suman Kar", room:"507", type:"Theory", credit:3, duration: calculateDuration("10:20am-12:00pm")},
-        {batch:"92A", day:"WED", time:"09:30am-10:20am", code:"MAT-MVA", title:"Matrix & Vector Analysis", teacher:"Suman Kar", room:"507", type:"Theory", credit:3, duration: calculateDuration("09:30am-10:20am")},
-        {batch:"92A", day:"WED", time:"11:10am-12:50pm", code:"EEE07133124", title:"Power System I", teacher:"Dr. Md. Mohsin", room:"B14", type:"Theory", credit:3, duration: calculateDuration("11:10am-12:50pm")},
-        {batch:"92A", day:"THU", time:"02:20pm-04:00pm", code:"CSE-INTRO-LAB", title:"Intro to Programming Lab", teacher:"Nazmus Sakib", room:"Computer Lab", type:"Lab", credit:1, duration: calculateDuration("02:20pm-04:00pm")},
-        
-        // 93A Batch
-        {batch:"93A", day:"MON", time:"08:40am-09:30am", code:"EEE07132109", title:"Electrical Machine I", teacher:"Farhana Latif", room:"B14", type:"Theory", credit:3, duration: calculateDuration("08:40am-09:30am")},
-        {batch:"93A", day:"MON", time:"12:00pm-01:40pm", code:"EEE07132110", title:"Electrical Machine I Lab", teacher:"Md. Sharif Uddin Shajib", room:"B16", type:"Lab", credit:1, duration: calculateDuration("12:00pm-01:40pm")},
-        {batch:"93A", day:"MON", time:"03:10pm-04:00pm", code:"CSE-INTRO", title:"Intro to Programming", teacher:"Nazmus Sakib", room:"B14", type:"Theory", credit:3, duration: calculateDuration("03:10pm-04:00pm")},
-        {batch:"93A", day:"SAT", time:"11:10am-12:00pm", code:"EEE07142107", title:"Electronics II", teacher:"Abdullah Ibna Karim", room:"B14", type:"Theory", credit:3, duration: calculateDuration("11:10am-12:00pm")},
-        {batch:"93A", day:"TUE", time:"08:40am-10:20am", code:"CSE-INTRO", title:"Intro to Programming", teacher:"Nazmus Sakib", room:"B14", type:"Theory", credit:3, duration: calculateDuration("08:40am-10:20am")},
-        {batch:"93A", day:"TUE", time:"02:20pm-04:00pm", code:"STAT", title:"Statistics", teacher:"Jotsona Akter", room:"507", type:"Theory", credit:3, duration: calculateDuration("02:20pm-04:00pm")},
-        {batch:"93A", day:"WED", time:"12:00pm-01:40pm", code:"EEE07132109", title:"Electrical Machine I", teacher:"Farhana Latif", room:"507", type:"Theory", credit:3, duration: calculateDuration("12:00pm-01:40pm")},
-        {batch:"93A", day:"THU", time:"08:40am-10:20am", code:"EEE07142107", title:"Electronics II", teacher:"Abdullah Ibna Karim", room:"B14", type:"Theory", credit:3, duration: calculateDuration("08:40am-10:20am")},
-        {batch:"93A", day:"THU", time:"10:20am-12:00pm", code:"EEE07142108", title:"Electronics II Lab", teacher:"Abdullah Ibna Karim", room:"B17", type:"Lab", credit:1, duration: calculateDuration("10:20am-12:00pm")},
-        {batch:"93A", day:"THU", time:"02:20pm-04:00pm", code:"CSE-INTRO-LAB", title:"Intro to Programming Lab", teacher:"Nazmus Sakib", room:"Computer Lab", type:"Lab", credit:1, duration: calculateDuration("02:20pm-04:00pm")},
-        
-        // 94A Batch
-        {batch:"94A", day:"MON", time:"08:40am-09:30am", code:"EEE07132109", title:"Electrical Machine I", teacher:"Farhana Latif", room:"B14", type:"Theory", credit:3, duration: calculateDuration("08:40am-09:30am")},
-        {batch:"94A", day:"MON", time:"12:00pm-01:40pm", code:"EEE07132110", title:"Electrical Machine I Lab", teacher:"Md. Sharif Uddin Shajib", room:"B16", type:"Lab", credit:1, duration: calculateDuration("12:00pm-01:40pm")},
-        {batch:"94A", day:"TUE", time:"10:20am-12:00pm", code:"MAT-MVA", title:"Matrix & Vector Analysis", teacher:"Suman Kar", room:"507", type:"Theory", credit:3, duration: calculateDuration("10:20am-12:00pm")},
-        {batch:"94A", day:"TUE", time:"12:00pm-01:40pm", code:"CSE-FC", title:"Fundamentals of Computing", teacher:"Nusrat Jahan", room:"507", type:"Theory", credit:3, duration: calculateDuration("12:00pm-01:40pm")},
-        {batch:"94A", day:"TUE", time:"02:20pm-04:00pm", code:"STAT", title:"Statistics", teacher:"Jotsona Akter", room:"507", type:"Theory", credit:3, duration: calculateDuration("02:20pm-04:00pm")},
-        {batch:"94A", day:"WED", time:"08:40am-09:30am", code:"CSE-FC", title:"Fundamentals of Computing", teacher:"Nusrat Jahan", room:"507", type:"Theory", credit:3, duration: calculateDuration("08:40am-09:30am")},
-        {batch:"94A", day:"WED", time:"09:30am-10:20am", code:"MAT-MVA", title:"Matrix & Vector Analysis", teacher:"Suman Kar", room:"507", type:"Theory", credit:3, duration: calculateDuration("09:30am-10:20am")},
-        {batch:"94A", day:"WED", time:"09:30am-11:10am", code:"CSE-FC-LAB", title:"Fundamentals of Computing Lab", teacher:"Nusrat Jahan", room:"Computer Lab", type:"Lab", credit:1, duration: calculateDuration("09:30am-11:10am")},
-        {batch:"94A", day:"WED", time:"12:00pm-01:40pm", code:"EEE07132109", title:"Electrical Machine I", teacher:"Farhana Latif", room:"507", type:"Theory", credit:3, duration: calculateDuration("12:00pm-01:40pm")},
-        {batch:"94A", day:"WED", time:"02:20pm-04:00pm", code:"PHY-II", title:"Physics II", teacher:"Mithun Khan", room:"507", type:"Theory", credit:2, duration: calculateDuration("02:20pm-04:00pm")},
-        
-        // 95A Batch
-        {batch:"95A", day:"MON", time:"08:40am-09:30am", code:"ENG02311101", title:"English Language", teacher:"Sumona Sharmin", room:"314", type:"Theory", credit:3, duration: calculateDuration("08:40am-09:30am")},
-        {batch:"95A", day:"MON", time:"10:20am-12:00pm", code:"EEE07131204", title:"Electrical Circuit II Lab", teacher:"Farhana Latif", room:"B19", type:"Lab", credit:1, duration: calculateDuration("10:20am-12:00pm")},
-        {batch:"95A", day:"MON", time:"12:00pm-01:40pm", code:"EEE07131203", title:"Electrical Circuit II", teacher:"Farhana Latif", room:"B14", type:"Theory", credit:3, duration: calculateDuration("12:00pm-01:40pm")},
-        {batch:"95A", day:"SAT", time:"12:00pm-12:50pm", code:"CHM05311101", title:"Chemistry", teacher:"Ibrahim Khalil", room:"507", type:"Theory", credit:3, duration: calculateDuration("12:00pm-12:50pm")},
-        {batch:"95A", day:"SAT", time:"02:20pm-04:00pm", code:"ACC", title:"Accounting", teacher:"Helaluddin Ahmed", room:"507", type:"Theory", credit:2, duration: calculateDuration("02:20pm-04:00pm")},
-        {batch:"95A", day:"TUE", time:"08:40am-09:30am", code:"CHM05311101", title:"Chemistry", teacher:"Ibrahim Khalil", room:"507", type:"Theory", credit:3, duration: calculateDuration("08:40am-09:30am")},
-        {batch:"95A", day:"TUE", time:"12:00pm-01:40pm", code:"CHM-LAB", title:"Chemistry Lab", teacher:"Ibrahim Khalil", room:"Tin 14/15", type:"Lab", credit:1, duration: calculateDuration("12:00pm-01:40pm")},
-        {batch:"95A", day:"WED", time:"09:30am-10:20am", code:"ENG02311101", title:"English Language", teacher:"Sumona Sharmin", room:"314", type:"Theory", credit:3, duration: calculateDuration("09:30am-10:20am")},
-        {batch:"95A", day:"WED", time:"10:20am-11:10am", code:"EEE07131203", title:"Electrical Circuit II", teacher:"Farhana Latif", room:"507", type:"Theory", credit:3, duration: calculateDuration("10:20am-11:10am")},
-        {batch:"95A", day:"WED", time:"02:20pm-04:00pm", code:"PHY-II", title:"Physics II", teacher:"Mithun Khan", room:"507", type:"Theory", credit:2, duration: calculateDuration("02:20pm-04:00pm")},
-        {batch:"95A", day:"THU", time:"09:30am-10:20am", code:"CHM05311101", title:"Chemistry", teacher:"Ibrahim Khalil", room:"507", type:"Theory", credit:3, duration: calculateDuration("09:30am-10:20am")},
-        {batch:"95A", day:"THU", time:"12:00pm-01:40pm", code:"BAN", title:"Bengali Language", teacher:"Sadia Sultana", room:"507", type:"Theory", credit:2, duration: calculateDuration("12:00pm-01:40pm")},
-        
-        // 96A Batch
-        {batch:"96A", day:"MON", time:"09:30am-10:20am", code:"ENG02311101", title:"Functional English", teacher:"Sumona Sharmin", room:"B14", type:"Theory", credit:3, duration: calculateDuration("09:30am-10:20am")},
-        {batch:"96A", day:"MON", time:"10:20am-12:00pm", code:"EEE07131101", title:"Electrical Circuit I", teacher:"Dr. Md. Mohsin", room:"B14", type:"Theory", credit:3, duration: calculateDuration("10:20am-12:00pm")},
-        {batch:"96A", day:"SAT", time:"02:20pm-04:00pm", code:"ACC", title:"Accounting", teacher:"Helaluddin Ahmed", room:"507", type:"Theory", credit:2, duration: calculateDuration("02:20pm-04:00pm")},
-        {batch:"96A", day:"TUE", time:"09:30am-10:20am", code:"EEE07131101", title:"Electrical Circuit I", teacher:"Dr. Md. Mohsin", room:"507", type:"Theory", credit:3, duration: calculateDuration("09:30am-10:20am")},
-        {batch:"96A", day:"TUE", time:"10:20am-12:00pm", code:"EEE07131102", title:"Electrical Circuit I Lab", teacher:"Dr. Md. Mohsin", room:"B19", type:"Lab", credit:1, duration: calculateDuration("10:20am-12:00pm")},
-        {batch:"96A", day:"WED", time:"09:30am-11:10am", code:"ENG02311101", title:"Functional English", teacher:"Sumona Sharmin", room:"B14", type:"Theory", credit:3, duration: calculateDuration("09:30am-11:10am")},
-        {batch:"96A", day:"WED", time:"03:10pm-04:00pm", code:"MAT-DIC", title:"Calculus", teacher:"Md Toriqul Islam", room:"B14", type:"Theory", credit:3, duration: calculateDuration("03:10pm-04:00pm")},
-        {batch:"96A", day:"THU", time:"10:20am-12:00pm", code:"MAT-DIC", title:"Calculus", teacher:"Md Toriqul Islam", room:"507", type:"Theory", credit:3, duration: calculateDuration("10:20am-12:00pm")},
-        {batch:"96A", day:"THU", time:"12:00pm-01:40pm", code:"BAN", title:"Bengali Language", teacher:"Sadia Sultana", room:"507", type:"Theory", credit:2, duration: calculateDuration("12:00pm-01:40pm")}
+        // Batch 85A
+        ...(function(){ const b=[]; b.push({batch:"85A", day:"MON", time:"12:00pm-12:50pm", code:"EEE07144263", title:"Microwave Engineering", teacher:"Debprosad Das", room:"504", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"85A", day:"MON", time:"12:50pm-01:40pm", code:"EEE07144264", title:"Microwave Lab", teacher:"Debprosad Das", room:"B15", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"85A", day:"MON", time:"02:20pm-03:10pm", code:"EEE07144264", title:"Microwave Lab", teacher:"Debprosad Das", room:"B15", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"85A", day:"THU", time:"02:20pm-03:10pm", code:"EEE07144263", title:"Microwave Engineering", teacher:"Debprosad Das", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"85A", day:"THU", time:"03:10pm-04:00pm", code:"EEE07144263", title:"Microwave Engineering", teacher:"Debprosad Das", room:"507", type:"Theory", credit:3, duration:"50 min"}); return b; })(),
+        // Batch 86A
+        ...(function(){ const b=[]; b.push({batch:"86A", day:"MON", time:"10:20am-11:10am", code:"EEE07144271", title:"Optical Fibre Communication", teacher:"Dr. M. Quamruzzaman", room:"504", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"86A", day:"MON", time:"11:10am-12:00pm", code:"EEE07144271", title:"Optical Fibre Communication", teacher:"Dr. M. Quamruzzaman", room:"504", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"86A", day:"MON", time:"12:00pm-12:50pm", code:"EEE07144263", title:"Microwave Engineering", teacher:"Debprosad Das", room:"504", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"86A", day:"MON", time:"12:50pm-01:40pm", code:"EEE07144264", title:"Microwave Lab", teacher:"Debprosad Das", room:"B15", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"86A", day:"MON", time:"02:20pm-03:10pm", code:"EEE07144264", title:"Microwave Lab", teacher:"Debprosad Das", room:"B15", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"86A", day:"SAT", time:"09:30am-10:20am", code:"EEE07134253", title:"Power Plants Engineering", teacher:"Dr. Md. Riyad Tanshen", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"86A", day:"SAT", time:"10:20am-11:10am", code:"EEE07134253", title:"Power Plants Engineering", teacher:"Dr. Md. Riyad Tanshen", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"86A", day:"SAT", time:"11:10am-12:00pm", code:"EEE07144271", title:"Optical Fibre Communication", teacher:"Dr. M. Quamruzzaman", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"86A", day:"THU", time:"12:00pm-12:50pm", code:"EEE07134253", title:"Power Plants Engineering", teacher:"Dr. Md. Riyad Tanshen", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"86A", day:"THU", time:"02:20pm-03:10pm", code:"EEE07144263", title:"Microwave Engineering", teacher:"Debprosad Das", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"86A", day:"THU", time:"03:10pm-04:00pm", code:"EEE07144263", title:"Microwave Engineering", teacher:"Debprosad Das", room:"507", type:"Theory", credit:3, duration:"50 min"}); return b; })(),
+        // Batch 87A
+        ...(function(){ const b=[]; b.push({batch:"87A", day:"MON", time:"10:20am-11:10am", code:"EEE07144271", title:"Optical Fibre Communication", teacher:"Dr. M. Quamruzzaman", room:"504", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"87A", day:"MON", time:"11:10am-12:00pm", code:"EEE07144271", title:"Optical Fibre Communication", teacher:"Dr. M. Quamruzzaman", room:"504", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"87A", day:"MON", time:"12:00pm-12:50pm", code:"EEE07144263", title:"Microwave Engineering", teacher:"Debprosad Das", room:"504", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"87A", day:"MON", time:"12:50pm-01:40pm", code:"EEE07144264", title:"Microwave Lab", teacher:"Debprosad Das", room:"B15", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"87A", day:"MON", time:"02:20pm-03:10pm", code:"EEE07144264", title:"Microwave Lab", teacher:"Debprosad Das", room:"B15", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"87A", day:"MON", time:"03:10pm-04:00pm", code:"EEE07134142", title:"Power System Operation & Control", teacher:"Md. Istianatur Rahman", room:"504", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"87A", day:"SAT", time:"09:30am-10:20am", code:"EEE07134141", title:"Power System Operation & Control", teacher:"Md. Istianatur Rahman", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"87A", day:"SAT", time:"10:20am-11:10am", code:"EEE07134141", title:"Power System Operation & Control", teacher:"Md. Istianatur Rahman", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"87A", day:"SAT", time:"11:10am-12:00pm", code:"EEE07144271", title:"Optical Fibre Communication", teacher:"Dr. M. Quamruzzaman", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"87A", day:"SAT", time:"02:20pm-03:10pm", code:"EEE07134142", title:"Power System Operation & Control Lab", teacher:"Md. Istianatur Rahman", room:"B14", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"87A", day:"SAT", time:"03:10pm-04:00pm", code:"EEE07134142", title:"Power System Operation & Control Lab", teacher:"Md. Istianatur Rahman", room:"B14", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"87A", day:"THU", time:"02:20pm-03:10pm", code:"EEE07144263", title:"Microwave Engineering", teacher:"Debprosad Das", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"87A", day:"THU", time:"03:10pm-04:00pm", code:"EEE07144263", title:"Microwave Engineering", teacher:"Debprosad Das", room:"507", type:"Theory", credit:3, duration:"50 min"}); return b; })(),
+        // Batch 88A
+        ...(function(){ const b=[]; b.push({batch:"88A", day:"MON", time:"10:20am-11:10am", code:"EEE07144271", title:"Optical Fibre Communication", teacher:"Dr. M. Quamruzzaman", room:"504", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"88A", day:"MON", time:"11:10am-12:00pm", code:"EEE07144271", title:"Optical Fibre Communication", teacher:"Dr. M. Quamruzzaman", room:"504", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"88A", day:"MON", time:"02:20pm-03:10pm", code:"EEE07143229", title:"Control System", teacher:"Md. Istianatur Rahman", room:"504", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"88A", day:"MON", time:"03:10pm-04:00pm", code:"EEE07134142", title:"Power System Operation & Control", teacher:"Md. Istianatur Rahman", room:"504", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"88A", day:"SAT", time:"09:30am-10:20am", code:"EEE07134141", title:"Power System Operation & Control", teacher:"Md. Istianatur Rahman", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"88A", day:"SAT", time:"10:20am-11:10am", code:"EEE07134141", title:"Power System Operation & Control", teacher:"Md. Istianatur Rahman", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"88A", day:"SAT", time:"11:10am-12:00pm", code:"EEE07144271", title:"Optical Fibre Communication", teacher:"Dr. M. Quamruzzaman", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"88A", day:"SAT", time:"12:00pm-12:50pm", code:"EEE07143229", title:"Control System", teacher:"Md. Istianatur Rahman", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"88A", day:"SAT", time:"12:50pm-01:40pm", code:"EEE07143229", title:"Control System", teacher:"Md. Istianatur Rahman", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"88A", day:"SAT", time:"02:20pm-03:10pm", code:"EEE07134142", title:"Power System Operation & Control Lab", teacher:"Md. Istianatur Rahman", room:"B14", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"88A", day:"SAT", time:"03:10pm-04:00pm", code:"EEE07134142", title:"Power System Operation & Control Lab", teacher:"Md. Istianatur Rahman", room:"B14", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"88A", day:"TUE", time:"08:40am-09:30am", code:"EEE07143229", title:"Control System", teacher:"Md. Istianatur Rahman", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"88A", day:"TUE", time:"12:00pm-12:50pm", code:"EEE07143230", title:"Control System Lab", teacher:"Md. Istianatur Rahman", room:"B14", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"88A", day:"TUE", time:"12:50pm-01:40pm", code:"EEE07143230", title:"Control System Lab", teacher:"Md. Istianatur Rahman", room:"B14", type:"Lab", credit:1, duration:"50 min"}); return b; })(),
+        // Batch 89A
+        ...(function(){ const b=[]; b.push({batch:"89A", day:"MON", time:"02:20pm-03:10pm", code:"EEE07143229", title:"Control System", teacher:"Md. Istianatur Rahman", room:"504", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"89A", day:"SAT", time:"08:40am-09:30am", code:"EEE07183119", title:"Instrumentation & Measurement", teacher:"Md. Abdu Rabbir Rasul", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"89A", day:"SAT", time:"09:30am-10:20am", code:"EEE07143228", title:"Microprocessor Lab", teacher:"Nayeem Hasan Mallick", room:"B17", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"89A", day:"SAT", time:"10:20am-11:10am", code:"EEE07143228", title:"Microprocessor Lab", teacher:"Nayeem Hasan Mallick", room:"B17", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"89A", day:"SAT", time:"11:10am-12:00pm", code:"EEE07183120", title:"Instrumentation & Measurement Lab", teacher:"Md. Abdu Rabbir Rasul", room:"B15", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"89A", day:"SAT", time:"12:00pm-12:50pm", code:"EEE07143229", title:"Control System", teacher:"Md. Istianatur Rahman", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"89A", day:"SAT", time:"12:00pm-12:50pm", code:"EEE07183120", title:"Instrumentation & Measurement Lab", teacher:"Md. Abdu Rabbir Rasul", room:"B15", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"89A", day:"SAT", time:"12:50pm-01:40pm", code:"EEE07143229", title:"Control System", teacher:"Md. Istianatur Rahman", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"89A", day:"THU", time:"12:50pm-01:40pm", code:"EEE07183119", title:"Instrumentation & Measurement", teacher:"Md. Abdu Rabbir Rasul", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"89A", day:"THU", time:"02:20pm-03:10pm", code:"EEE07183119", title:"Instrumentation & Measurement", teacher:"Md. Abdu Rabbir Rasul", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"89A", day:"THU", time:"03:10pm-05:00pm", code:"MGT", title:"Engineering Management", teacher:"Dr. Sharif Hosen", room:"B14", type:"Theory", credit:3, duration:"100 min"}); b.push({batch:"89A", day:"THU", time:"04:10pm-05:00pm", code:"MGT", title:"Engineering Management", teacher:"Dr. Sharif Hosen", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"89A", day:"TUE", time:"08:40am-09:30am", code:"EEE07143229", title:"Control System", teacher:"Md. Istianatur Rahman", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"89A", day:"TUE", time:"12:00pm-12:50pm", code:"EEE07143230", title:"Control System Lab", teacher:"Md. Istianatur Rahman", room:"B14", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"89A", day:"TUE", time:"12:50pm-01:40pm", code:"EEE07143230", title:"Control System Lab", teacher:"Md. Istianatur Rahman", room:"B14", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"89A", day:"TUE", time:"02:20pm-03:10pm", code:"EEE07143227", title:"Microprocessor & Interfacing", teacher:"Nayeem Hasan Mallick", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"89A", day:"TUE", time:"03:10pm-04:00pm", code:"EEE07143227", title:"Microprocessor & Interfacing", teacher:"Nayeem Hasan Mallick", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"89A", day:"WED", time:"08:40am-09:30am", code:"EEE07143227", title:"Microprocessor & Interfacing", teacher:"Nayeem Hasan Mallick", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"89A", day:"WED", time:"02:20pm-03:10pm", code:"MGT", title:"Engineering Management", teacher:"Dr. Sharif Hosen", room:"B14", type:"Theory", credit:3, duration:"50 min"}); return b; })(),
+        // Batch 90A
+        ...(function(){ const b=[]; b.push({batch:"90A", day:"MON", time:"02:20pm-03:10pm", code:"EEE07143229", title:"Control System", teacher:"Md. Istianatur Rahman", room:"504", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"90A", day:"MON", time:"03:10pm-04:00pm", code:"EEE07134142", title:"Power System Operation & Control", teacher:"Md. Istianatur Rahman", room:"504", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"90A", day:"SAT", time:"08:40am-09:30am", code:"EEE07183119", title:"Instrumentation & Measurement", teacher:"Md. Abdu Rabbir Rasul", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"90A", day:"SAT", time:"09:30am-10:20am", code:"EEE07143228", title:"Microprocessor Lab", teacher:"Nayeem Hasan Mallick", room:"B17", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"90A", day:"SAT", time:"10:20am-11:10am", code:"EEE07143228", title:"Microprocessor Lab", teacher:"Nayeem Hasan Mallick", room:"B17", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"90A", day:"SAT", time:"11:10am-12:00pm", code:"EEE07183120", title:"Instrumentation & Measurement Lab", teacher:"Md. Abdu Rabbir Rasul", room:"B15", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"90A", day:"SAT", time:"12:00pm-12:50pm", code:"EEE07143229", title:"Control System", teacher:"Md. Istianatur Rahman", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"90A", day:"SAT", time:"12:00pm-12:50pm", code:"EEE07183120", title:"Instrumentation & Measurement Lab", teacher:"Md. Abdu Rabbir Rasul", room:"B15", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"90A", day:"SAT", time:"12:50pm-01:40pm", code:"EEE07143229", title:"Control System", teacher:"Md. Istianatur Rahman", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"90A", day:"THU", time:"11:10am-12:00pm", code:"MAT-FTLT", title:"Fourier Transformation & Laplace", teacher:"Saddam", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"90A", day:"THU", time:"12:50pm-01:40pm", code:"EEE07183119", title:"Instrumentation & Measurement", teacher:"Md. Abdu Rabbir Rasul", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"90A", day:"THU", time:"02:20pm-03:10pm", code:"EEE07183119", title:"Instrumentation & Measurement", teacher:"Md. Abdu Rabbir Rasul", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"90A", day:"THU", time:"03:10pm-05:00pm", code:"MGT", title:"Engineering Management", teacher:"Dr. Sharif Hosen", room:"B14", type:"Theory", credit:3, duration:"100 min"}); b.push({batch:"90A", day:"THU", time:"04:10pm-05:00pm", code:"MGT", title:"Engineering Management", teacher:"Dr. Sharif Hosen", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"90A", day:"TUE", time:"08:40am-09:30am", code:"EEE07143229", title:"Control System", teacher:"Md. Istianatur Rahman", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"90A", day:"TUE", time:"10:20am-11:10am", code:"MAT-FTLT", title:"Fourier Transformation & Laplace Transformation", teacher:"Saddam", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"90A", day:"TUE", time:"11:10am-12:00pm", code:"MAT-FTLT", title:"Fourier Transformation & Laplace Transformation", teacher:"Saddam", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"90A", day:"TUE", time:"12:00pm-12:50pm", code:"EEE07143230", title:"Control System Lab", teacher:"Md. Istianatur Rahman", room:"B14", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"90A", day:"TUE", time:"12:50pm-01:40pm", code:"EEE07143230", title:"Control System Lab", teacher:"Md. Istianatur Rahman", room:"B14", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"90A", day:"TUE", time:"02:20pm-03:10pm", code:"EEE07143227", title:"Microprocessor & Interfacing", teacher:"Nayeem Hasan Mallick", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"90A", day:"TUE", time:"03:10pm-04:00pm", code:"EEE07143227", title:"Microprocessor & Interfacing", teacher:"Nayeem Hasan Mallick", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"90A", day:"WED", time:"08:40am-09:30am", code:"EEE07143227", title:"Microprocessor & Interfacing", teacher:"Nayeem Hasan Mallick", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"90A", day:"WED", time:"02:20pm-03:10pm", code:"MGT", title:"Engineering Management", teacher:"Dr. Sharif Hosen", room:"B14", type:"Theory", credit:3, duration:"50 min"}); return b; })(),
+        // Batch 91A
+        ...(function(){ const b=[]; b.push({batch:"91A", day:"MON", time:"08:40am-09:30am", code:"EEE07142217", title:"Digital Electronics", teacher:"Nayeem Hasan Mallick", room:"504", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"91A", day:"MON", time:"09:30am-10:20am", code:"EEE07142217", title:"Digital Electronics", teacher:"Nayeem Hasan Mallick", room:"504", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"91A", day:"MON", time:"10:20am-11:10am", code:"EEE07142218", title:"Digital Electronics Lab", teacher:"Nayeem Hasan Mallick", room:"B17", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"91A", day:"MON", time:"11:10am-12:00pm", code:"EEE07142218", title:"Digital Electronics Lab", teacher:"Nayeem Hasan Mallick", room:"B17", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"91A", day:"MON", time:"12:50pm-01:40pm", code:"EEE07133124", title:"Power System I", teacher:"Dr. Md. Mohsin", room:"504", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"91A", day:"SAT", time:"08:40am-09:30am", code:"EEE07142217", title:"Digital Electronics", teacher:"Nayeem Hasan Mallick", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"91A", day:"SAT", time:"09:30am-10:20am", code:"EEE07133124", title:"Power System I Lab", teacher:"Dr. Md. Mohsin", room:"B16", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"91A", day:"SAT", time:"10:20am-11:10am", code:"EEE07133124", title:"Power System I Lab", teacher:"Dr. Md. Mohsin", room:"B16", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"91A", day:"THU", time:"03:10pm-05:00pm", code:"MGT", title:"Engineering Management", teacher:"Dr. Sharif Hosen", room:"B14", type:"Theory", credit:3, duration:"100 min"}); b.push({batch:"91A", day:"THU", time:"04:10pm-05:00pm", code:"MGT", title:"Engineering Management", teacher:"Dr. Sharif Hosen", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"91A", day:"TUE", time:"10:20am-11:10am", code:"MAT-MVA", title:"Matrix & Vector Analysis", teacher:"Suman Kar", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"91A", day:"TUE", time:"11:10am-12:00pm", code:"MAT-MVA", title:"Matrix & Vector Analysis", teacher:"Suman Kar", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"91A", day:"WED", time:"09:30am-10:20am", code:"MAT-MVA", title:"Matrix & Vector Analysis", teacher:"Suman Kar", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"91A", day:"WED", time:"11:10am-12:00pm", code:"EEE07133124", title:"Power System I", teacher:"Dr. Md. Mohsin", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"91A", day:"WED", time:"12:00pm-12:50pm", code:"EEE07133124", title:"Power System I", teacher:"Dr. Md. Mohsin", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"91A", day:"WED", time:"02:20pm-03:10pm", code:"MGT", title:"Engineering Management", teacher:"Dr. Sharif Hosen", room:"B14", type:"Theory", credit:3, duration:"50 min"}); return b; })(),
+        // Batch 92A
+        ...(function(){ const b=[]; b.push({batch:"92A", day:"MON", time:"08:40am-09:30am", code:"EEE07142217", title:"Digital Electronics", teacher:"Nayeem Hasan Mallick", room:"504", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"92A", day:"MON", time:"09:30am-10:20am", code:"EEE07142217", title:"Digital Electronics", teacher:"Nayeem Hasan Mallick", room:"504", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"92A", day:"MON", time:"10:20am-11:10am", code:"EEE07142218", title:"Digital Electronics Lab", teacher:"Nayeem Hasan Mallick", room:"B17", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"92A", day:"MON", time:"11:10am-12:00pm", code:"EEE07142218", title:"Digital Electronics Lab", teacher:"Nayeem Hasan Mallick", room:"B17", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"92A", day:"MON", time:"12:50pm-01:40pm", code:"EEE07133124", title:"Power System I", teacher:"Dr. Md. Mohsin", room:"504", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"92A", day:"SAT", time:"08:40am-09:30am", code:"EEE07142217", title:"Digital Electronics", teacher:"Nayeem Hasan Mallick", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"92A", day:"SAT", time:"09:30am-10:20am", code:"EEE07133124", title:"Power System I Lab", teacher:"Dr. Md. Mohsin", room:"B16", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"92A", day:"SAT", time:"10:20am-11:10am", code:"EEE07133124", title:"Power System I Lab", teacher:"Dr. Md. Mohsin", room:"B16", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"92A", day:"SAT", time:"12:50pm-01:40pm", code:"CSE-INTRO", title:"Introduction to Programming", teacher:"Nusrat Jahan", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"92A", day:"SAT", time:"02:20pm-03:10pm", code:"CSE-INTRO-LAB", title:"Introduction to Programming Lab", teacher:"Nazmus Sakib", room:"203", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"92A", day:"SAT", time:"03:10pm-04:00pm", code:"CSE-INTRO-LAB", title:"Introduction to Programming Lab", teacher:"Nazmus Sakib", room:"203", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"92A", day:"TUE", time:"08:40am-09:30am", code:"CSE-INTRO", title:"Introduction to Programming", teacher:"Nusrat Jahan", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"92A", day:"TUE", time:"09:30am-10:20am", code:"CSE-INTRO", title:"Introduction to Programming", teacher:"Nusrat Jahan", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"92A", day:"TUE", time:"10:20am-11:10am", code:"MAT-MVA", title:"Matrix & Vector Analysis", teacher:"Suman Kar", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"92A", day:"TUE", time:"11:10am-12:00pm", code:"MAT-MVA", title:"Matrix & Vector Analysis", teacher:"Suman Kar", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"92A", day:"WED", time:"09:30am-10:20am", code:"MAT-MVA", title:"Matrix & Vector Analysis", teacher:"Suman Kar", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"92A", day:"WED", time:"11:10am-12:00pm", code:"EEE07133124", title:"Power System I", teacher:"Dr. Md. Mohsin", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"92A", day:"WED", time:"12:00pm-12:50pm", code:"EEE07133124", title:"Power System I", teacher:"Dr. Md. Mohsin", room:"B14", type:"Theory", credit:3, duration:"50 min"}); return b; })(),
+        // Batch 93A
+        ...(function(){ const b=[]; b.push({batch:"93A", day:"MON", time:"08:40am-09:30am", code:"EEE07132109", title:"Electrical Machine I", teacher:"Farhana Latif", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"93A", day:"MON", time:"12:00pm-12:50pm", code:"EEE07132110", title:"Electrical Machine I Lab", teacher:"Md. Sharif Uddin Shajib", room:"B16", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"93A", day:"MON", time:"12:50pm-01:40pm", code:"EEE07132110", title:"Electrical Machine I Lab", teacher:"Md. Sharif Uddin Shajib", room:"B16", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"93A", day:"MON", time:"02:20pm-03:10pm", code:"MAT05424113", title:"Statistics", teacher:"Jotsona Akter", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"93A", day:"SAT", time:"11:10am-12:00pm", code:"EEE07142107", title:"Electronics II", teacher:"Abdullah Ibna Karim", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"93A", day:"SAT", time:"12:50pm-01:40pm", code:"CSE-INTRO", title:"Introduction to Programming", teacher:"Nusrat Jahan", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"93A", day:"SAT", time:"02:20pm-03:10pm", code:"CSE-INTRO-LAB", title:"Introduction to Programming Lab", teacher:"Nazmus Sakib", room:"203", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"93A", day:"SAT", time:"03:10pm-04:00pm", code:"CSE-INTRO-LAB", title:"Introduction to Programming Lab", teacher:"Nazmus Sakib", room:"203", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"93A", day:"THU", time:"08:40am-09:30am", code:"EEE07142107", title:"Electronics II", teacher:"Abdullah Ibna Karim", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"93A", day:"THU", time:"09:30am-10:20am", code:"EEE07142107", title:"Electronics II", teacher:"Abdullah Ibna Karim", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"93A", day:"THU", time:"10:20am-11:10am", code:"EEE07142108", title:"Electronics II Lab", teacher:"Abdullah Ibna Karim", room:"B17", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"93A", day:"THU", time:"11:10am-12:00pm", code:"EEE07142108", title:"Electronics II Lab", teacher:"Abdullah Ibna Karim", room:"B17", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"93A", day:"THU", time:"02:20pm-03:10pm", code:"EEE07132109", title:"Electrical Machine I", teacher:"Farhana Latif", room:"307", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"93A", day:"THU", time:"03:10pm-04:00pm", code:"EEE07132109", title:"Electrical Machine I", teacher:"Farhana Latif", room:"307", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"93A", day:"TUE", time:"08:40am-09:30am", code:"CSE-INTRO", title:"Introduction to Programming", teacher:"Nusrat Jahan", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"93A", day:"TUE", time:"09:30am-10:20am", code:"CSE-INTRO", title:"Introduction to Programming", teacher:"Nusrat Jahan", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"93A", day:"TUE", time:"02:20pm-03:10pm", code:"STAT", title:"Statistics", teacher:"Jotsona Akter", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"93A", day:"TUE", time:"03:10pm-04:00pm", code:"STAT", title:"Statistics", teacher:"Jotsona Akter", room:"507", type:"Theory", credit:3, duration:"50 min"}); return b; })(),
+        // Batch 94A
+        ...(function(){ const b=[]; b.push({batch:"94A", day:"MON", time:"08:40am-09:30am", code:"EEE07132109", title:"Electrical Machine I", teacher:"Farhana Latif", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"94A", day:"MON", time:"12:00pm-12:50pm", code:"EEE07132110", title:"Electrical Machine I Lab", teacher:"Md. Sharif Uddin Shajib", room:"B16", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"94A", day:"MON", time:"12:50pm-01:40pm", code:"EEE07132110", title:"Electrical Machine I Lab", teacher:"Md. Sharif Uddin Shajib", room:"B16", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"94A", day:"MON", time:"02:20pm-03:10pm", code:"MAT05424113", title:"Statistics", teacher:"Jotsona Akter", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"94A", day:"THU", time:"02:20pm-03:10pm", code:"EEE07132109", title:"Electrical Machine I", teacher:"Farhana Latif", room:"307", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"94A", day:"THU", time:"03:10pm-04:00pm", code:"EEE07132109", title:"Electrical Machine I", teacher:"Farhana Latif", room:"307", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"94A", day:"TUE", time:"10:20am-11:10am", code:"MAT-MVA", title:"Matrix & Vector Analysis", teacher:"Suman Kar", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"94A", day:"TUE", time:"11:10am-12:00pm", code:"MAT-MVA", title:"Matrix & Vector Analysis", teacher:"Suman Kar", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"94A", day:"TUE", time:"12:00pm-12:50pm", code:"CSE-FC", title:"Fundamental of Computing", teacher:"Nusrat Jahan", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"94A", day:"TUE", time:"12:50pm-01:40pm", code:"CSE-FC", title:"Fundamental of Computing", teacher:"Nusrat Jahan", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"94A", day:"TUE", time:"02:20pm-03:10pm", code:"STAT", title:"Statistics", teacher:"Jotsona Akter", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"94A", day:"TUE", time:"03:10pm-04:00pm", code:"STAT", title:"Statistics", teacher:"Jotsona Akter", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"94A", day:"WED", time:"08:40am-09:30am", code:"CSE-FC-LAB", title:"Fundamental of Computing Lab", teacher:"Nusrat Jahan", room:"507", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"94A", day:"WED", time:"09:30am-10:20am", code:"MAT-MVA", title:"Matrix & Vector Analysis", teacher:"Suman Kar", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"94A", day:"WED", time:"09:30am-10:20am", code:"CSE-FC-LAB", title:"Fundamental of Computing Lab", teacher:"Nusrat Jahan", room:"B15", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"94A", day:"WED", time:"10:20am-11:10am", code:"CSE-FC-LAB", title:"Fundamental of Computing Lab", teacher:"Nusrat Jahan", room:"B15", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"94A", day:"WED", time:"11:10am-12:00pm", code:"CSE-FC", title:"Fundamental of Computing", teacher:"Nusrat Jahan", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"94A", day:"WED", time:"02:20pm-03:10pm", code:"PHY-II", title:"Physics II", teacher:"Mithun Khan", room:"507", type:"Theory", credit:2, duration:"50 min"}); b.push({batch:"94A", day:"WED", time:"03:10pm-04:00pm", code:"PHY-II", title:"Physics II", teacher:"Mithun Khan", room:"507", type:"Theory", credit:2, duration:"50 min"}); return b; })(),
+        // Batch 95A
+        ...(function(){ const b=[]; b.push({batch:"95A", day:"MON", time:"08:40am-09:30am", code:"ENG02311101", title:"English Language", teacher:"Sumona Sharmin", room:"314", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"95A", day:"MON", time:"10:20am-11:10am", code:"EEE07131204", title:"Electrical Circuit II Lab", teacher:"Farhana Latif", room:"B19", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"95A", day:"MON", time:"11:10am-12:00pm", code:"EEE07131204", title:"Electrical Circuit II Lab", teacher:"Farhana Latif", room:"B19", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"95A", day:"MON", time:"12:00pm-12:50pm", code:"EEE07131203", title:"Electrical Circuit II", teacher:"Farhana Latif", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"95A", day:"MON", time:"12:50pm-01:40pm", code:"EEE07131203", title:"Electrical Circuit II", teacher:"Farhana Latif", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"95A", day:"SAT", time:"12:00pm-12:50pm", code:"CHM05311101", title:"Chemistry", teacher:"Ibrahim Khalil", room:"407", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"95A", day:"THU", time:"09:30am-10:20am", code:"CHM05311101", title:"Chemistry", teacher:"Ibrahim Khalil", room:"401", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"95A", day:"THU", time:"12:00pm-12:50pm", code:"BAN", title:"Bengali Language and Literature", teacher:"Sadia Sultana", room:"507", type:"Theory", credit:2, duration:"50 min"}); b.push({batch:"95A", day:"THU", time:"12:50pm-01:40pm", code:"BAN", title:"Bengali Language and Literature", teacher:"Sadia Sultana", room:"507", type:"Theory", credit:2, duration:"50 min"}); b.push({batch:"95A", day:"TUE", time:"08:40am-09:30am", code:"CHM05311101", title:"Chemistry", teacher:"Ibrahim Khalil", room:"406", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"95A", day:"TUE", time:"12:00pm-12:50pm", code:"CHM-LAB", title:"Chemistry Lab", teacher:"Ibrahim Khalil", room:"Science Lab", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"95A", day:"TUE", time:"12:50pm-01:40pm", code:"CHM-LAB", title:"Chemistry Lab", teacher:"Ibrahim Khalil", room:"Science Lab", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"95A", day:"WED", time:"09:30am-10:20am", code:"ENG02311101", title:"English Language", teacher:"Sumona Sharmin", room:"314", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"95A", day:"WED", time:"10:20am-11:10am", code:"EEE07131203", title:"Electrical Circuit II", teacher:"Farhana Latif", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"95A", day:"WED", time:"12:00pm-12:50pm", code:"ACC", title:"Accounting", teacher:"Helaluddin Ahmed", room:"507", type:"Theory", credit:2, duration:"50 min"}); b.push({batch:"95A", day:"WED", time:"12:50pm-01:40pm", code:"ACC", title:"Accounting", teacher:"Helaluddin Ahmed", room:"507", type:"Theory", credit:2, duration:"50 min"}); b.push({batch:"95A", day:"WED", time:"02:20pm-03:10pm", code:"PHY-II", title:"Physics II", teacher:"Mithun Khan", room:"507", type:"Theory", credit:2, duration:"50 min"}); b.push({batch:"95A", day:"WED", time:"03:10pm-04:00pm", code:"PHY-II", title:"Physics II", teacher:"Mithun Khan", room:"507", type:"Theory", credit:2, duration:"50 min"}); return b; })(),
+        // Batch 96A
+        ...(function(){ const b=[]; b.push({batch:"96A", day:"MON", time:"09:30am-10:20am", code:"ENG02311101", title:"Functional English", teacher:"Sumona Sharmin", room:"506", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"96A", day:"MON", time:"10:20am-11:10am", code:"EEE07131101", title:"Electrical Circuit I", teacher:"Dr. Md. Mohsin", room:"506", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"96A", day:"MON", time:"11:10am-12:00pm", code:"EEE07131101", title:"Electrical Circuit I", teacher:"Dr. Md. Mohsin", room:"506", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"96A", day:"THU", time:"12:00pm-12:50pm", code:"BAN", title:"Bengali Language and Literature", teacher:"Sadia Sultana", room:"507", type:"Theory", credit:2, duration:"50 min"}); b.push({batch:"96A", day:"THU", time:"12:50pm-01:40pm", code:"BAN", title:"Bengali Language and Literature", teacher:"Sadia Sultana", room:"507", type:"Theory", credit:2, duration:"50 min"}); b.push({batch:"96A", day:"THU", time:"02:20pm-04:00pm", code:"MAT-DIC", title:"Differential and Integral Calculus", teacher:"Md Toriqul Islam", room:"404", type:"Theory", credit:3, duration:"100 min"}); b.push({batch:"96A", day:"TUE", time:"09:30am-10:20am", code:"EEE07131101", title:"Electrical Circuit I", teacher:"Dr. Md. Mohsin", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"96A", day:"TUE", time:"10:20am-11:10am", code:"EEE07131102", title:"Electrical Circuit I Lab", teacher:"Dr. Md. Mohsin", room:"B19", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"96A", day:"TUE", time:"11:10am-12:00pm", code:"EEE07131102", title:"Electrical Circuit I Lab", teacher:"Dr. Md. Mohsin", room:"B19", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"96A", day:"WED", time:"09:30am-10:20am", code:"ENG02311101", title:"Functional English", teacher:"Sumona Sharmin", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"96A", day:"WED", time:"10:20am-11:10am", code:"ENG02311101", title:"Functional English", teacher:"Sumona Sharmin", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"96A", day:"WED", time:"12:00pm-12:50pm", code:"ACC", title:"Accounting", teacher:"Helaluddin Ahmed", room:"507", type:"Theory", credit:2, duration:"50 min"}); b.push({batch:"96A", day:"WED", time:"12:50pm-01:40pm", code:"ACC", title:"Accounting", teacher:"Helaluddin Ahmed", room:"507", type:"Theory", credit:2, duration:"50 min"}); b.push({batch:"96A", day:"WED", time:"03:10pm-04:00pm", code:"MAT-DIC", title:"Differential and Integral Calculus", teacher:"Md Toriqul Islam", room:"B14", type:"Theory", credit:3, duration:"50 min"}); return b; })()
     ];
     
     // Global variables
-    let db;
-    let classesCollection;
-    let unsubscribeListener;
+    let db, classesCollection, unsubscribeListener;
     let classData = [];
     let currentStudentBatch = null;
     let currentTeacher = null;
     let adminLoggedIn = false;
+    let isInitialLoad = true;
     
-    // Notification timers storage
-    let notificationTimers = [];
-    
-    // ==================== NOTIFICATION FUNCTIONS ====================
-    function requestNotificationPermission() {
-        if (Notification.permission === "granted") {
-            showToast('🔔 নোটিফিকেশন ইতিমধ্যে অন আছে!');
-        } else if (Notification.permission !== "denied") {
-            Notification.requestPermission().then(perm => {
-                if (perm === "granted") {
-                    showToast('✅ নোটিফিকেশন অন করা হয়েছে! ক্লাসের ১৫মিনিট আগে reminder পাবেন।');
-                    if (currentStudentBatch) scheduleAllNotifications(currentStudentBatch);
-                    if (currentTeacher) scheduleTeacherNotifications(currentTeacher);
-                } else {
-                    showToast('⚠️ নোটিফিকেশন অন করেনি। ম্যানুয়ালি ব্রাউজার সেটিংস থেকে অন করুন।', true);
-                }
-            });
-        } else {
-            showToast('⚠️ নোটিফিকেশন ব্লক করা আছে। ব্রাউজার সেটিংস থেকে অন করুন।', true);
-        }
-    }
-    
-    function showNotificationPopup(classItem) {
-        const popup = document.createElement('div');
-        popup.className = 'notification-popup';
-        popup.innerHTML = `
-            <button class="notif-close" onclick="this.parentElement.remove()">✕</button>
-            <div>
-                <i class="fas fa-bell notif-icon"></i>
-                <span class="notif-title">🔔 ক্লাস শুরু হতে ১৫ মিনিট বাকি!</span>
-            </div>
-            <div style="margin-top:8px;">
-                <strong>📚 ${classItem.title}</strong><br>
-                <span>📖 কোড: ${classItem.code}</span><br>
-                <span>⏰ সময়: ${classItem.time}</span><br>
-                <span>⏱️ সময়কাল: ${classItem.duration || '100 min'}</span><br>
-                <span>👨‍🏫 শিক্ষক: ${classItem.teacher}</span><br>
-                <span>🏫 রুম: ${classItem.room}</span>
-            </div>
-            <div class="notif-time">
-                <i class="fas fa-clock"></i> ${new Date().toLocaleTimeString()}
-            </div>
-        `;
-        document.body.appendChild(popup);
-        
-        setTimeout(() => {
-            if (popup.parentElement) popup.remove();
-        }, 10000);
-        
-        if (Notification.permission === "granted") {
-            new Notification(`🔔 ${classItem.title}`, {
-                body: `${classItem.time} (${classItem.duration}) | রুম: ${classItem.room} | শিক্ষক: ${classItem.teacher}`,
-                icon: "https://img.icons8.com/color/48/000000/classroom.png",
-                tag: classItem.code
-            });
-        }
-        
-        try {
-            const audio = new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3');
-            audio.volume = 0.5;
-            audio.play().catch(e => console.log('Sound play failed'));
-        } catch(e) {}
-    }
-    
-    function calculateNotificationTime(classItem) {
-        try {
-            const timeStr = classItem.time.split('-')[0].trim();
-            let hour = parseInt(timeStr.match(/\d+/)[0]);
-            let minute = parseInt(timeStr.match(/:(\d+)/)?.[1] || 0);
-            const isPM = timeStr.toLowerCase().includes('pm') && hour !== 12;
-            const isAM = timeStr.toLowerCase().includes('am');
-            
-            if (isPM) hour += 12;
-            if (isAM && hour === 12) hour = 0;
-            
-            const dayMap = { 'MON': 1, 'TUE': 2, 'WED': 3, 'THU': 4, 'SAT': 6 };
-            const now = new Date();
-            let targetDay = dayMap[classItem.day];
-            let classDate = new Date(now);
-            classDate.setHours(hour, minute, 0, 0);
-            
-            let daysUntil = (targetDay - now.getDay() + 7) % 7;
-            if (daysUntil === 0 && classDate <= now) daysUntil = 7;
-            classDate.setDate(now.getDate() + daysUntil);
-            
-            const timeUntil = classDate.getTime() - now.getTime();
-            const notifyTime = timeUntil - (15 * 60 * 1000);
-            
-            return { notifyTime, classDate };
-        } catch(e) {
-            console.error('Time calculation error:', e);
-            return null;
-        }
-    }
-    
-    function scheduleNotification(classItem) {
-        const result = calculateNotificationTime(classItem);
-        if (!result) return null;
-        
-        const { notifyTime, classDate } = result;
-        
-        if (notifyTime > 0 && notifyTime < 14 * 24 * 60 * 60 * 1000) {
-            const timerId = setTimeout(() => {
-                showNotificationPopup(classItem);
-            }, notifyTime);
-            return timerId;
-        }
-        return null;
-    }
-    
-    function clearAllNotifications() {
-        notificationTimers.forEach(timer => clearTimeout(timer));
-        notificationTimers = [];
-    }
-    
-    function scheduleAllNotifications(batch) {
-        clearAllNotifications();
-        const batchClasses = classData.filter(c => c.batch === batch);
-        batchClasses.forEach(classItem => {
-            const timerId = scheduleNotification(classItem);
-            if (timerId) notificationTimers.push(timerId);
-        });
-        console.log(`📅 ${batchClasses.length} টি ক্লাসের জন্য নোটিফিকেশন সেট করা হয়েছে`);
-    }
-    
-    function scheduleTeacherNotifications(teacherName) {
-        clearAllNotifications();
-        const teacherClasses = classData.filter(c => c.teacher === teacherName);
-        teacherClasses.forEach(classItem => {
-            const timerId = scheduleNotification(classItem);
-            if (timerId) notificationTimers.push(timerId);
-        });
-        console.log(`👨‍🏫 ${teacherName} এর ${teacherClasses.length} টি ক্লাসের জন্য নোটিফিকেশন সেট করা হয়েছে`);
-    }
-    
-    function scheduleNotificationsForCurrentUser() {
-        if (currentStudentBatch) {
-            scheduleAllNotifications(currentStudentBatch);
-        } else if (currentTeacher) {
-            scheduleTeacherNotifications(currentTeacher);
-        }
-    }
-    
-    // ==================== FIREBASE FUNCTIONS ====================
+    // Helper functions
     function showToast(msg, isError = false) {
         let t = document.createElement('div');
         t.className = 'toast';
@@ -592,93 +285,78 @@
         }
     }
     
+    async function loadInitialDataIfNeeded() {
+        const snapshot = await classesCollection.get();
+        if (snapshot.empty) {
+            updateSyncStatus('syncing', 'Loading updated routine...');
+            for (let item of originalMasterData) {
+                await classesCollection.add(item);
+            }
+            showToast('✅ সম্পূর্ণ আপডেটেড রুটিন ক্লাউডে লোড হয়েছে');
+        }
+    }
+    
     async function initFirebase() {
         try {
             firebase.initializeApp(firebaseConfig);
             db = firebase.firestore();
-            classesCollection = db.collection('wub_classes');
+            classesCollection = db.collection('wub_classes_permanent_v2');
             
-            updateSyncStatus('syncing', 'Connecting to cloud...');
+            updateSyncStatus('syncing', 'Connecting...');
+            await loadInitialDataIfNeeded();
             
             unsubscribeListener = classesCollection.onSnapshot((snapshot) => {
                 const newData = [];
-                snapshot.forEach(doc => {
-                    newData.push({ id: doc.id, ...doc.data() });
-                });
-                
-                if (newData.length > 0) {
-                    classData = newData;
-                } else {
-                    seedInitialData();
-                }
-                
+                snapshot.forEach(doc => { newData.push({ id: doc.id, ...doc.data() }); });
+                classData = newData;
+                localStorage.setItem('wub_permanent_data_v2', JSON.stringify(classData));
                 refreshAllViews();
-                scheduleNotificationsForCurrentUser();
-                
-                updateSyncStatus('connected', 'Cloud Connected');
+                updateSyncStatus('connected', `Live (${classData.length} classes)`);
+                if (!isInitialLoad) showToast('🔄 ডাটা আপডেট হয়েছে - অন্য ডিভাইস থেকে পরিবর্তন করা হয়েছে');
+                isInitialLoad = false;
             }, (error) => {
                 console.error('Firestore error:', error);
-                updateSyncStatus('connected', 'Using local cache');
-                loadFromLocal();
+                const saved = localStorage.getItem('wub_permanent_data_v2');
+                if (saved) classData = JSON.parse(saved);
+                else classData = JSON.parse(JSON.stringify(originalMasterData));
+                refreshAllViews();
+                updateSyncStatus('connected', 'Local Mode');
             });
-            
         } catch(e) {
-            console.error('Firebase init error:', e);
+            console.error('Init error:', e);
+            const saved = localStorage.getItem('wub_permanent_data_v2');
+            if (saved) classData = JSON.parse(saved);
+            else classData = JSON.parse(JSON.stringify(originalMasterData));
+            refreshAllViews();
             updateSyncStatus('connected', 'Local Mode');
-            loadFromLocal();
         }
-    }
-    
-    async function seedInitialData() {
-        updateSyncStatus('syncing', 'Setting up data...');
-        for (let item of originalMasterData) {
-            await classesCollection.add(item);
-        }
-        showToast('✅ Initial data loaded to cloud');
-    }
-    
-    function loadFromLocal() {
-        const saved = localStorage.getItem('wub_firebase_cache');
-        if (saved) {
-            classData = JSON.parse(saved);
-        } else {
-            classData = JSON.parse(JSON.stringify(originalMasterData));
-        }
-        refreshAllViews();
-        scheduleNotificationsForCurrentUser();
     }
     
     async function saveToFirebase(updatedData) {
         if (!db) {
-            localStorage.setItem('wub_firebase_cache', JSON.stringify(updatedData));
+            localStorage.setItem('wub_permanent_data_v2', JSON.stringify(updatedData));
             refreshAllViews();
             showToast('✅ Saved locally');
             return;
         }
         
-        updateSyncStatus('syncing', 'Saving...');
-        
+        updateSyncStatus('syncing', 'Saving permanently...');
         try {
             const snapshot = await classesCollection.get();
             const batch = db.batch();
-            
-            snapshot.docs.forEach(doc => {
-                batch.delete(doc.ref);
-            });
-            
+            snapshot.docs.forEach(doc => batch.delete(doc.ref));
             updatedData.forEach(item => {
-                const newDoc = classesCollection.doc();
-                batch.set(newDoc, item);
+                const newDocRef = classesCollection.doc();
+                batch.set(newDocRef, item);
             });
-            
             await batch.commit();
-            updateSyncStatus('connected', 'Cloud Connected');
-            showToast('✅ Saved to cloud - All devices updated!');
+            updateSyncStatus('connected', `Live (${updatedData.length} classes)`);
+            showToast('✅ পরিবর্তন স্থায়ীভাবে সেভ হয়েছে');
         } catch(e) {
             console.error('Save error:', e);
-            localStorage.setItem('wub_firebase_cache', JSON.stringify(updatedData));
+            localStorage.setItem('wub_permanent_data_v2', JSON.stringify(updatedData));
             updateSyncStatus('connected', 'Saved locally');
-            showToast('⚠️ Saved locally only', true);
+            showToast('⚠️ লোকালি সেভ হয়েছে', true);
         }
     }
     
@@ -691,15 +369,11 @@
     
     function getAllTeachers() {
         const teachers = new Set();
-        classData.forEach(c => {
-            if (c.teacher && c.teacher.trim()) {
-                teachers.add(c.teacher.trim());
-            }
-        });
+        classData.forEach(c => { if(c.teacher && c.teacher.trim()) teachers.add(c.teacher.trim()); });
         return Array.from(teachers).sort();
     }
     
-    // ==================== STUDENT FUNCTIONS ====================
+    // Student Functions
     function getClassesByBatchAndDay(batch, day) {
         return classData.filter(c => c.batch === batch && c.day === day);
     }
@@ -717,15 +391,12 @@
     function renderStudentView(batch) {
         const days = ['MON', 'TUE', 'WED', 'THU', 'SAT'];
         const activeDays = days.filter(d => getClassesByBatchAndDay(batch, d).length > 0);
-        
         const totalCr = getTotalCredits(batch);
         const uniqueCourses = [...new Map(classData.filter(c => c.batch === batch).map(c => [c.code, {title: c.title, credit: c.credit}]))];
         
         document.getElementById('studentCreditCard').innerHTML = `
             <strong><i class="fas fa-star"></i> Total Credits: ${totalCr}</strong>
-            <div class="credit-grid">
-                ${uniqueCourses.map(([code, info]) => `<div class="credit-item"><span>${info.title.substring(0,25)}</span><span class="credit-badge">${info.credit} Cr</span></div>`).join('')}
-            </div>
+            <div class="credit-grid">${uniqueCourses.map(([code, info]) => `<div class="credit-item"><span>${info.title.substring(0,25)}</span><span>${info.credit} Cr</span></div>`).join('')}</div>
         `;
         
         const tabsDiv = document.getElementById('studentDayTabs');
@@ -742,7 +413,6 @@
             };
             tabsDiv.appendChild(tab);
         });
-        
         if (activeDays.length) renderClassesList(batch, activeDays[0]);
         document.getElementById('studentBatchShow').innerHTML = batch;
     }
@@ -756,13 +426,9 @@
         }
         classes.sort((a,b) => a.time.localeCompare(b.time));
         container.innerHTML = classes.map(c => `
-            <div class="class-item ${c.type === 'Lab' ? 'lab' : ''}" onclick="addToCalendar('${c.title}', '${c.time}', '${c.teacher}', '${c.room}', '${c.duration}')">
-                <div class="time-badge">${c.time} <span class="duration-chip">${c.duration || '100 min'}</span></div>
-                <div style="flex:2">
-                    <div class="course-code">${c.code}</div>
-                    <div class="title">${c.title} (${c.credit} Cr)</div>
-                    <div class="teacher"><i class="fas fa-user"></i> ${c.teacher}</div>
-                </div>
+            <div class="class-item ${c.type === 'Lab' ? 'lab' : ''}" onclick="addToCalendar('${c.title.replace(/'/g, "\\'")}', '${c.time}', '${c.teacher.replace(/'/g, "\\'")}', '${c.room}', '${c.duration}')">
+                <div class="time-badge">${c.time} <span class="duration-chip">${c.duration || '50 min'}</span></div>
+                <div style="flex:2"><div class="course-code">${c.code}</div><div class="title">${c.title} (${c.credit} Cr)</div><div class="teacher"><i class="fas fa-user"></i> ${c.teacher}</div></div>
                 <div class="room">${c.room}</div>
             </div>
         `).join('');
@@ -775,8 +441,10 @@
         const year = today.getFullYear();
         const month = String(today.getMonth() + 1).padStart(2,'0');
         const date = String(today.getDate()).padStart(2,'0');
-        const startUrl = `${year}${month}${date}T${startTime.replace(/[^0-9]/g, '')}`;
-        const endUrl = `${year}${month}${date}T${endTime.replace(/[^0-9]/g, '')}`;
+        const startClean = startTime.replace(/[^0-9]/g, '');
+        const endClean = endTime.replace(/[^0-9]/g, '');
+        const startUrl = `${year}${month}${date}T${startClean}`;
+        const endUrl = `${year}${month}${date}T${endClean}`;
         const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${startUrl}/${endUrl}&details=${encodeURIComponent('Teacher: '+teacher+'\nDuration: '+duration)}&location=${encodeURIComponent(room)}`;
         window.open(url, '_blank');
         showToast('📅 Adding to Google Calendar');
@@ -787,30 +455,18 @@
         if (!activeDay) return;
         const day = activeDay.innerText;
         const classes = getClassesByBatchAndDay(currentStudentBatch, day);
-        classes.forEach(c => {
-            addToCalendar(c.title, c.time, c.teacher, c.room, c.duration);
-        });
-        showToast(`Adding ${classes.length} classes to calendar`);
+        classes.forEach(c => addToCalendar(c.title, c.time, c.teacher, c.room, c.duration));
+        showToast(`📅 ${classes.length}টি ক্লাস ক্যালেন্ডারে যোগ করা হচ্ছে`);
     }
     
     function studentLogin() {
         const batch = document.getElementById('studentBatchInput').value.trim().toUpperCase();
-        if (!batch.match(/^[8-9][0-9]A$/)) {
-            showToast('Enter valid batch (85A-96A)', true);
-            return;
-        }
+        if (!batch.match(/^[8-9][0-9]A$/)) { showToast('Enter valid batch (85A-96A)', true); return; }
         currentStudentBatch = batch;
         document.getElementById('studentDashboard').style.display = 'block';
         document.getElementById('studentLoginCard').style.display = 'none';
         renderStudentView(batch);
-        
-        scheduleAllNotifications(batch);
-        
-        showToast(`✅ ${batch} loaded | ক্লাসের ১৫মিনিট আগে নোটিফিকেশন পাবেন`);
-        
-        if (Notification.permission === "default") {
-            setTimeout(() => requestNotificationPermission(), 1000);
-        }
+        showToast(`✅ ${batch} লোড হয়েছে`);
     }
     
     function studentLogout() {
@@ -819,12 +475,11 @@
         document.getElementById('studentLoginCard').style.display = 'block';
     }
     
-    // ==================== TEACHER FUNCTIONS ====================
+    // Teacher Functions
     function updateTeacherSelect() {
-        const teachers = getAllTeachers();
         const select = document.getElementById('teacherSelect');
         select.innerHTML = '<option value="">-- Select Teacher --</option>';
-        teachers.forEach(t => {
+        getAllTeachers().forEach(t => {
             const option = document.createElement('option');
             option.value = t;
             option.textContent = t;
@@ -832,16 +487,11 @@
         });
     }
     
-    function getTeacherClasses(teacher) {
-        return classData.filter(c => c.teacher === teacher);
-    }
-    
     function loadTeacherClasses() {
         if (!currentTeacher) return;
-        let classes = getTeacherClasses(currentTeacher);
+        let classes = classData.filter(c => c.teacher === currentTeacher);
         const batchFilter = document.getElementById('teacherBatchFilter').value;
         const dayFilter = document.getElementById('teacherDayFilter').value;
-        
         if (batchFilter) classes = classes.filter(c => c.batch === batchFilter);
         if (dayFilter) classes = classes.filter(c => c.day === dayFilter);
         
@@ -850,19 +500,12 @@
         document.getElementById('teacherNameShow').innerHTML = currentTeacher;
         
         const container = document.getElementById('teacherClassList');
-        if (classes.length === 0) {
-            container.innerHTML = '<div class="class-item">📭 No classes found</div>';
-            return;
-        }
+        if (classes.length === 0) { container.innerHTML = '<div class="class-item">📭 No classes found</div>'; return; }
         classes.sort((a,b) => a.day.localeCompare(b.day) || a.time.localeCompare(b.time));
         container.innerHTML = classes.map(c => `
             <div class="class-item ${c.type === 'Lab' ? 'lab' : ''}">
-                <div class="time-badge">${c.time} <span class="duration-chip">${c.duration || '100 min'}</span></div>
-                <div style="flex:2">
-                    <div class="course-code">${c.code}</div>
-                    <div class="title">${c.title} (${c.credit} Cr)</div>
-                    <div><strong>Batch:</strong> ${c.batch} | <strong>Room:</strong> ${c.room}</div>
-                </div>
+                <div class="time-badge">${c.time} <span class="duration-chip">${c.duration || '50 min'}</span></div>
+                <div style="flex:2"><div class="course-code">${c.code}</div><div class="title">${c.title} (${c.credit} Cr)</div><div><strong>Batch:</strong> ${c.batch} | <strong>Room:</strong> ${c.room}</div></div>
                 <div class="room">${c.day}</div>
             </div>
         `).join('');
@@ -870,22 +513,12 @@
     
     function teacherLogin() {
         const teacher = document.getElementById('teacherSelect').value;
-        if (!teacher) {
-            showToast('Please select a teacher', true);
-            return;
-        }
+        if (!teacher) { showToast('Please select a teacher', true); return; }
         currentTeacher = teacher;
         document.getElementById('teacherDashboard').style.display = 'block';
         document.getElementById('teacherLoginCard').style.display = 'none';
         loadTeacherClasses();
-        
-        scheduleTeacherNotifications(teacher);
-        
-        showToast(`👨‍🏫 Welcome ${teacher} | ক্লাসের ১৫মিনিট আগে নোটিফিকেশন পাবেন`);
-        
-        if (Notification.permission === "default") {
-            setTimeout(() => requestNotificationPermission(), 1000);
-        }
+        showToast(`👨‍🏫 Welcome ${teacher}`);
     }
     
     function teacherLogout() {
@@ -894,7 +527,7 @@
         document.getElementById('teacherLoginCard').style.display = 'block';
     }
     
-    // ==================== ADMIN FUNCTIONS ====================
+    // Admin Functions - PERMANENT Edit/Delete
     function renderAdminTable() {
         const tbody = document.getElementById('adminTableBody');
         tbody.innerHTML = '';
@@ -907,12 +540,9 @@
             row.insertCell(4).innerHTML = c.title.substring(0,20);
             row.insertCell(5).innerHTML = c.teacher.substring(0,15);
             row.insertCell(6).innerHTML = c.room;
-            row.insertCell(7).innerHTML = c.duration || '100 min';
+            row.insertCell(7).innerHTML = c.duration || '50 min';
             const actionCell = row.insertCell(8);
-            actionCell.innerHTML = `
-                <button class="edit-btn" onclick="editClass(${idx})">✏️ Edit</button>
-                <button class="delete-btn" onclick="deleteClass(${idx})">🗑️ Delete</button>
-            `;
+            actionCell.innerHTML = `<button class="edit-btn" onclick="editClass(${idx})">✏️ Edit</button><button class="delete-btn" onclick="deleteClassPermanent(${idx})">🗑️ Delete</button>`;
         });
     }
     
@@ -920,34 +550,19 @@
         const c = classData[idx];
         const modal = document.createElement('div');
         modal.className = 'modal-overlay';
-        modal.innerHTML = `
-            <div class="edit-modal">
-                <h3>✏️ Edit Class</h3>
-                <input type="text" id="editBatch" value="${c.batch}" placeholder="Batch">
-                <select id="editDay">
-                    <option ${c.day==='MON'?'selected':''}>MON</option>
-                    <option ${c.day==='TUE'?'selected':''}>TUE</option>
-                    <option ${c.day==='WED'?'selected':''}>WED</option>
-                    <option ${c.day==='THU'?'selected':''}>THU</option>
-                    <option ${c.day==='SAT'?'selected':''}>SAT</option>
-                </select>
-                <input type="text" id="editTime" value="${c.time}" placeholder="Time">
-                <input type="text" id="editCode" value="${c.code}" placeholder="Code">
-                <input type="text" id="editTitle" value="${c.title}" placeholder="Title">
-                <input type="text" id="editTeacher" value="${c.teacher}" placeholder="Teacher">
-                <input type="text" id="editRoom" value="${c.room}" placeholder="Room">
-                <select id="editType">
-                    <option ${c.type==='Theory'?'selected':''}>Theory</option>
-                    <option ${c.type==='Lab'?'selected':''}>Lab</option>
-                </select>
-                <input type="number" id="editCredit" value="${c.credit}" placeholder="Credit">
-                <input type="text" id="editDuration" value="${c.duration || '100 min'}" placeholder="Duration (e.g., 50 min or 100 min)">
-                <div style="text-align:center; margin-top:15px;">
-                    <button class="btn-success" id="saveEditBtn">Save</button>
-                    <button class="btn-danger" id="cancelEditBtn">Cancel</button>
-                </div>
-            </div>
-        `;
+        modal.innerHTML = `<div class="edit-modal"><h3>✏️ Edit Class (Permanent)</h3>
+            <input type="text" id="editBatch" value="${c.batch}" placeholder="Batch">
+            <select id="editDay"><option ${c.day==='MON'?'selected':''}>MON</option><option ${c.day==='TUE'?'selected':''}>TUE</option><option ${c.day==='WED'?'selected':''}>WED</option><option ${c.day==='THU'?'selected':''}>THU</option><option ${c.day==='SAT'?'selected':''}>SAT</option></select>
+            <input type="text" id="editTime" value="${c.time}" placeholder="Time">
+            <input type="text" id="editCode" value="${c.code}" placeholder="Code">
+            <input type="text" id="editTitle" value="${c.title}" placeholder="Title">
+            <input type="text" id="editTeacher" value="${c.teacher}" placeholder="Teacher">
+            <input type="text" id="editRoom" value="${c.room}" placeholder="Room">
+            <select id="editType"><option ${c.type==='Theory'?'selected':''}>Theory</option><option ${c.type==='Lab'?'selected':''}>Lab</option></select>
+            <input type="number" id="editCredit" value="${c.credit}" placeholder="Credit">
+            <input type="text" id="editDuration" value="${c.duration || '50 min'}" placeholder="Duration">
+            <div style="text-align:center; margin-top:15px;"><button class="btn-success" id="saveEditBtn">Save Permanently</button><button class="btn-danger" id="cancelEditBtn">Cancel</button></div>
+        </div>`;
         document.body.appendChild(modal);
         
         document.getElementById('saveEditBtn').onclick = async () => {
@@ -961,74 +576,53 @@
                 room: document.getElementById('editRoom').value,
                 type: document.getElementById('editType').value,
                 credit: parseInt(document.getElementById('editCredit').value) || 3,
-                duration: document.getElementById('editDuration').value || calculateDuration(document.getElementById('editTime').value)
+                duration: document.getElementById('editDuration').value || '50 min'
             };
             await saveToFirebase(classData);
-            renderAdminTable();
-            if (currentStudentBatch) renderStudentView(currentStudentBatch);
-            if (currentTeacher) loadTeacherClasses();
-            scheduleNotificationsForCurrentUser();
-            showToast('✅ Class updated - All devices synced!');
+            showToast('✅ ক্লাস এডিট হয়েছে - স্থায়ীভাবে সেভ হয়েছে');
             modal.remove();
         };
         document.getElementById('cancelEditBtn').onclick = () => modal.remove();
     };
     
-    window.deleteClass = async function(idx) {
-        if (confirm('Delete this class? This will sync to ALL devices.')) {
+    window.deleteClassPermanent = async function(idx) {
+        if (confirm('⚠️ সতর্কতা: এই ক্লাস ডিলিট করলে তা স্থায়ীভাবে মুছে যাবে এবং আর ফিরবে না। আপনি কি নিশ্চিত?')) {
             classData.splice(idx, 1);
             await saveToFirebase(classData);
-            renderAdminTable();
-            if (currentStudentBatch) renderStudentView(currentStudentBatch);
-            if (currentTeacher) loadTeacherClasses();
-            scheduleNotificationsForCurrentUser();
-            showToast('✅ Class deleted - All devices updated');
+            showToast('🗑️ ক্লাস ডিলিট হয়েছে - স্থায়ীভাবে মুছে গেছে');
         }
     };
     
     async function addNewClass() {
-        const time = document.getElementById('newTime').value;
         const newClass = {
             batch: document.getElementById('newBatch').value.trim().toUpperCase(),
             day: document.getElementById('newDay').value,
-            time: time,
+            time: document.getElementById('newTime').value,
             code: document.getElementById('newCode').value,
             title: document.getElementById('newTitle').value,
             teacher: document.getElementById('newTeacher').value,
             room: document.getElementById('newRoom').value,
             type: document.getElementById('newType').value,
             credit: parseInt(document.getElementById('newCredit').value) || 3,
-            duration: document.getElementById('newDuration').value || calculateDuration(time)
+            duration: document.getElementById('newDuration').value || '50 min'
         };
-        if (!newClass.batch || !newClass.code) {
-            showToast('Batch and Code are required', true);
-            return;
-        }
+        if (!newClass.batch || !newClass.code) { showToast('Batch and Code are required', true); return; }
         classData.push(newClass);
         await saveToFirebase(classData);
-        renderAdminTable();
-        if (currentStudentBatch) renderStudentView(currentStudentBatch);
-        if (currentTeacher) loadTeacherClasses();
-        scheduleNotificationsForCurrentUser();
-        showToast('✅ New class added - Synced to cloud!');
+        showToast('✅ নতুন ক্লাস যোগ হয়েছে - স্থায়ীভাবে সেভ হয়েছে');
         
         document.getElementById('newBatch').value = '';
         document.getElementById('newCode').value = '';
         document.getElementById('newTitle').value = '';
         document.getElementById('newTeacher').value = '';
         document.getElementById('newRoom').value = '';
-        document.getElementById('newDuration').value = '100 min';
     }
     
     async function resetToDefault() {
-        if (confirm('Reset all data to original? This will sync to ALL devices.')) {
+        if (confirm('⚠️ সতর্কতা: সব ডাটা ডিফল্টে রিসেট হবে। আপনার করা সব পরিবর্তন মুছে যাবে। আপনি কি নিশ্চিত?')) {
             classData = JSON.parse(JSON.stringify(originalMasterData));
             await saveToFirebase(classData);
-            renderAdminTable();
-            if (currentStudentBatch) renderStudentView(currentStudentBatch);
-            if (currentTeacher) loadTeacherClasses();
-            scheduleNotificationsForCurrentUser();
-            showToast('✅ Reset to default - All devices updated');
+            showToast('⟳ ডিফল্ট ডাটা লোড হয়েছে');
         }
     }
     
@@ -1040,10 +634,8 @@
             document.getElementById('adminDashboard').style.display = 'block';
             document.getElementById('adminLoginCard').style.display = 'none';
             renderAdminTable();
-            showToast('👑 Admin login successful');
-        } else {
-            showToast('Invalid email or password', true);
-        }
+            showToast('👑 এডমিন লগইন সফল');
+        } else { showToast('ভুল ইমেইল বা পাসওয়ার্ড', true); }
     }
     
     function adminLogout() {
@@ -1052,18 +644,16 @@
         document.getElementById('adminLoginCard').style.display = 'block';
     }
     
-    // ==================== INITIALIZATION ====================
+    // Initialize everything
     function init() {
         document.getElementById('studentLoginBtn').onclick = studentLogin;
         document.getElementById('studentLogoutBtn').onclick = studentLogout;
         document.getElementById('studentCalendarBtn').onclick = addAllToCalendar;
-        
         document.getElementById('teacherLoginBtn').onclick = teacherLogin;
         document.getElementById('teacherLogoutBtn').onclick = teacherLogout;
         document.getElementById('teacherRefreshBtn').onclick = loadTeacherClasses;
         document.getElementById('teacherBatchFilter').oninput = loadTeacherClasses;
         document.getElementById('teacherDayFilter').onchange = loadTeacherClasses;
-        
         document.getElementById('adminLoginBtn').onclick = adminLogin;
         document.getElementById('adminLogoutBtn').onclick = adminLogout;
         document.getElementById('addClassBtn').onclick = addNewClass;
