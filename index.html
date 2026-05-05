@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>WUB EEE | Real-time Sync | Live Across All Devices</title>
+    <title>WUB EEE | Real-time Sync | Individual Updates</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Firebase SDK -->
@@ -105,7 +105,7 @@
 <div class="container">
     <div class="header">
         <h1><i class="fas fa-microchip"></i> WUB - EEE</h1>
-        <p>🔴 LIVE SYNC | Changes appear instantly on ALL devices</p>
+        <p>🔴 LIVE SYNC | Individual item updates only</p>
     </div>
     
     <div class="mode-selector">
@@ -198,7 +198,7 @@
                 </div>
                 
                 <div class="info-banner" style="background:#e6f7ec;">
-                    <i class="fas fa-globe"></i> <strong>🔴 REAL-TIME SYNC ACTIVE!</strong> Any change you make appears instantly on ALL connected devices.
+                    <i class="fas fa-globe"></i> <strong>🔴 REAL-TIME SYNC ACTIVE!</strong> Only the changed item is updated.
                 </div>
                 
                 <h4>➕ Add New Class</h4>
@@ -216,7 +216,7 @@
                     <button id="addClassBtn" class="btn-success">➕ Add</button>
                 </div>
                 
-                <h4 style="margin-top:20px;">📋 All Classes (Real-time updates)</h4>
+                <h4 style="margin-top:20px;">📋 All Classes (Click Edit/Delete to modify individual items)</h4>
                 <div style="overflow-x:auto;">
                     <table class="data-table">
                         <thead>
@@ -557,10 +557,9 @@
         else if (currentTeacher) scheduleTeacherNotifications(currentTeacher);
     }
     
-    // Firebase functions
+    // ==================== FIREBASE FUNCTIONS (INDIVIDUAL UPDATES) ====================
     async function initFirebase() {
         try {
-            // Initialize Firebase
             firebase.initializeApp(firebaseConfig);
             db = firebase.firestore();
             classesCollection = db.collection('wub_classes');
@@ -577,7 +576,7 @@
                 showToast('✅ Initial data loaded to cloud');
             }
             
-            // Set up REAL-TIME listener
+            // Set up REAL-TIME listener - only listens, doesn't modify
             unsubscribeListener = classesCollection.onSnapshot((snapshot) => {
                 const newData = [];
                 snapshot.forEach(doc => {
@@ -587,7 +586,6 @@
                 refreshAllViews();
                 scheduleNotificationsForCurrentUser();
                 updateSyncStatus('connected', 'LIVE SYNC ACTIVE');
-                // Show toast only when data changes from other devices
                 if (isInitialized) {
                     showToast('🔄 Real-time update received from another device');
                 }
@@ -605,35 +603,100 @@
         }
     }
     
-    async function saveToFirebase(updatedData, showSuccessMsg = true) {
+    // UPDATE a single document by ID
+    async function updateClass(docId, updatedData) {
         if (!db) {
             showToast('⚠️ Firebase not connected', true);
             return false;
         }
         
-        updateSyncStatus('syncing', 'Saving...');
+        updateSyncStatus('syncing', 'Updating...');
         
         try {
-            // Clear existing data
+            await classesCollection.doc(docId).update(updatedData);
+            updateSyncStatus('connected', 'LIVE SYNC ACTIVE');
+            showToast('✅ Class updated - Synced to ALL devices!');
+            return true;
+        } catch(e) {
+            console.error('Update error:', e);
+            updateSyncStatus('error', 'Update failed');
+            showToast('❌ Failed to update', true);
+            return false;
+        }
+    }
+    
+    // DELETE a single document by ID
+    async function deleteClass(docId) {
+        if (!db) {
+            showToast('⚠️ Firebase not connected', true);
+            return false;
+        }
+        
+        updateSyncStatus('syncing', 'Deleting...');
+        
+        try {
+            await classesCollection.doc(docId).delete();
+            updateSyncStatus('connected', 'LIVE SYNC ACTIVE');
+            showToast('✅ Class deleted - Synced to ALL devices!');
+            return true;
+        } catch(e) {
+            console.error('Delete error:', e);
+            updateSyncStatus('error', 'Delete failed');
+            showToast('❌ Failed to delete', true);
+            return false;
+        }
+    }
+    
+    // ADD a new document
+    async function addClass(newClass) {
+        if (!db) {
+            showToast('⚠️ Firebase not connected', true);
+            return false;
+        }
+        
+        updateSyncStatus('syncing', 'Adding...');
+        
+        try {
+            await classesCollection.add(newClass);
+            updateSyncStatus('connected', 'LIVE SYNC ACTIVE');
+            showToast('✅ New class added - Synced to ALL devices!');
+            return true;
+        } catch(e) {
+            console.error('Add error:', e);
+            updateSyncStatus('error', 'Add failed');
+            showToast('❌ Failed to add class', true);
+            return false;
+        }
+    }
+    
+    // RESET all data (clear and re-add all)
+    async function resetAllData() {
+        if (!db) {
+            showToast('⚠️ Firebase not connected', true);
+            return false;
+        }
+        
+        updateSyncStatus('syncing', 'Resetting all data...');
+        
+        try {
+            // Delete all existing documents
             const snapshot = await classesCollection.get();
             const batch = db.batch();
             snapshot.docs.forEach(doc => batch.delete(doc.ref));
             await batch.commit();
             
-            // Add new data
-            for (let item of updatedData) {
+            // Add all original data
+            for (let item of originalMasterData) {
                 await classesCollection.add(item);
             }
             
-            if (showSuccessMsg) {
-                updateSyncStatus('connected', 'LIVE SYNC ACTIVE');
-                showToast('✅ Saved to cloud - All devices updated!');
-            }
+            updateSyncStatus('connected', 'LIVE SYNC ACTIVE');
+            showToast('✅ All data reset - Synced to ALL devices!');
             return true;
         } catch(e) {
-            console.error('Save error:', e);
-            updateSyncStatus('error', 'Save failed - retrying...');
-            showToast('❌ Failed to save. Retrying...', true);
+            console.error('Reset error:', e);
+            updateSyncStatus('error', 'Reset failed');
+            showToast('❌ Failed to reset data', true);
             return false;
         }
     }
@@ -828,7 +891,7 @@
         document.getElementById('teacherLoginCard').style.display = 'block';
     }
     
-    // Admin functions
+    // ==================== ADMIN FUNCTIONS (INDIVIDUAL UPDATES) ====================
     function renderAdminTable() {
         const tbody = document.getElementById('adminTableBody');
         tbody.innerHTML = '';
@@ -844,19 +907,20 @@
             row.insertCell(7).innerHTML = c.duration || '100 min';
             const actionCell = row.insertCell(8);
             actionCell.innerHTML = `
-                <button class="edit-btn" onclick="editClass(${idx})">✏️ Edit</button>
-                <button class="delete-btn" onclick="deleteClass(${idx})">🗑️ Delete</button>
+                <button class="edit-btn" onclick="editClass('${c.id}', ${idx})">✏️ Edit</button>
+                <button class="delete-btn" onclick="deleteClassById('${c.id}')">🗑️ Delete</button>
             `;
         });
     }
     
-    window.editClass = function(idx) {
+    // Edit individual class by ID
+    window.editClass = function(docId, idx) {
         const c = classData[idx];
         const modal = document.createElement('div');
         modal.className = 'modal-overlay';
         modal.innerHTML = `
             <div class="edit-modal">
-                <h3>✏️ Edit Class (Syncs to ALL devices)</h3>
+                <h3>✏️ Edit Class (Updates only this item)</h3>
                 <input type="text" id="editBatch" value="${c.batch}" placeholder="Batch">
                 <select id="editDay">
                     <option ${c.day==='MON'?'selected':''}>MON</option>
@@ -885,7 +949,7 @@
         document.body.appendChild(modal);
         
         document.getElementById('saveEditBtn').onclick = async () => {
-            classData[idx] = {
+            const updatedClass = {
                 batch: document.getElementById('editBatch').value.toUpperCase(),
                 day: document.getElementById('editDay').value,
                 time: document.getElementById('editTime').value,
@@ -897,29 +961,20 @@
                 credit: parseInt(document.getElementById('editCredit').value) || 3,
                 duration: document.getElementById('editDuration').value || '100 min'
             };
-            await saveToFirebase(classData);
-            renderAdminTable();
-            if (currentStudentBatch) renderStudentView(currentStudentBatch);
-            if (currentTeacher) loadTeacherClasses();
-            scheduleNotificationsForCurrentUser();
-            showToast('✅ Class updated - Synced to ALL devices!');
+            await updateClass(docId, updatedClass);
             modal.remove();
         };
         document.getElementById('cancelEditBtn').onclick = () => modal.remove();
     };
     
-    window.deleteClass = async function(idx) {
+    // Delete individual class by ID
+    window.deleteClassById = async function(docId) {
         if (confirm('Delete this class? This will permanently delete from ALL devices.')) {
-            classData.splice(idx, 1);
-            await saveToFirebase(classData);
-            renderAdminTable();
-            if (currentStudentBatch) renderStudentView(currentStudentBatch);
-            if (currentTeacher) loadTeacherClasses();
-            scheduleNotificationsForCurrentUser();
-            showToast('✅ Class deleted permanently - Synced to ALL devices');
+            await deleteClass(docId);
         }
     };
     
+    // Add new class
     async function addNewClass() {
         const time = document.getElementById('newTime').value;
         const newClass = {
@@ -938,13 +993,7 @@
             showToast('Batch and Code are required', true);
             return;
         }
-        classData.push(newClass);
-        await saveToFirebase(classData);
-        renderAdminTable();
-        if (currentStudentBatch) renderStudentView(currentStudentBatch);
-        if (currentTeacher) loadTeacherClasses();
-        scheduleNotificationsForCurrentUser();
-        showToast('✅ New class added - Synced to ALL devices!');
+        await addClass(newClass);
         
         document.getElementById('newBatch').value = '';
         document.getElementById('newCode').value = '';
@@ -954,15 +1003,10 @@
         document.getElementById('newDuration').value = '100 min';
     }
     
+    // Reset all data
     async function resetToDefault() {
         if (confirm('⚠️ WARNING: This will reset ALL data to original! All your edits and deletions will be lost. This will sync to ALL devices. Are you sure?')) {
-            classData = JSON.parse(JSON.stringify(originalMasterData));
-            await saveToFirebase(classData);
-            renderAdminTable();
-            if (currentStudentBatch) renderStudentView(currentStudentBatch);
-            if (currentTeacher) loadTeacherClasses();
-            scheduleNotificationsForCurrentUser();
-            showToast('✅ Reset to default - Synced to ALL devices');
+            await resetAllData();
         }
     }
     
