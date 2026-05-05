@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>WUB EEE | Live Cloud Sync</title>
+    <title>WUB EEE | Official Routine | Live Cloud Sync</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Firebase SDK -->
@@ -12,13 +12,13 @@
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
         body{background:#eef2ff;padding:12px;}
-        .container{max-width:800px;margin:0 auto;}
+        .container{max-width:900px;margin:0 auto;}
         .header{background:linear-gradient(135deg,#0f2b3d,#1b4a6e);color:white;padding:18px;border-radius:24px;margin-bottom:18px;text-align:center;}
         .header h1{font-size:1.3rem;}
-        .header p{font-size:0.7rem;opacity:0.9;}
+        .header p{font-size:0.7rem;}
         
         .mode-selector{display:flex;gap:10px;margin-bottom:18px;}
-        .mode-btn{flex:1;background:white;color:#1f6392;border:2px solid #1f6392;padding:12px;border-radius:50px;font-weight:600;cursor:pointer;text-align:center;}
+        .mode-btn{flex:1;background:white;color:#1f6392;border:2px solid #1f6392;padding:12px;border-radius:50px;font-weight:600;cursor:pointer;text-align:center;transition:0.2s;}
         .mode-btn.active{background:#1f6392;color:white;}
         .mode-btn.teacher.active{background:#10b981;border-color:#10b981;color:white;}
         .mode-btn.admin.active{background:#dc2626;border-color:#dc2626;color:white;}
@@ -29,7 +29,7 @@
         .card{background:white;border-radius:24px;padding:20px;margin-bottom:18px;box-shadow:0 2px 10px rgba(0,0,0,0.08);}
         .login-card{text-align:center;}
         
-        input,select{padding:12px 16px;margin:8px 0;border-radius:40px;border:1px solid #cbd5e1;width:100%;max-width:280px;outline:none;font-size:0.9rem;}
+        input,select{padding:12px 16px;margin:8px 0;border-radius:40px;border:1px solid #cbd5e1;width:100%;max-width:280px;outline:none;}
         button{background:#1f6392;color:white;border:none;padding:12px 24px;border-radius:40px;font-weight:600;cursor:pointer;margin:5px;transition:0.2s;}
         button:hover{opacity:0.9;transform:scale(0.98);}
         .btn-danger{background:#dc2626;}
@@ -50,7 +50,7 @@
         .time-badge{font-weight:700;font-size:0.7rem;background:#e2e8f0;padding:4px 10px;border-radius:30px;}
         .duration-chip{background:#e2e8f0;padding:2px 8px;border-radius:20px;font-size:0.6rem;margin-left:5px;}
         .course-code{font-weight:800;font-size:0.8rem;color:#1f6392;}
-        .title{font-size:0.75rem;color:#334155;}
+        .title{font-size:0.75rem;color:#334155;font-weight:500;}
         .teacher{font-size:0.7rem;color:#5588b1;}
         .room{background:#e6f7ec;padding:4px 12px;border-radius:30px;font-size:0.7rem;font-weight:600;}
         
@@ -90,7 +90,8 @@
         .info-banner{background:#e0f2fe;padding:10px;border-radius:12px;margin-bottom:15px;font-size:0.7rem;text-align:center;border-left:4px solid #1f6392;}
         .live-badge{display:inline-block;background:#10b981;color:white;padding:2px 8px;border-radius:20px;font-size:0.6rem;margin-left:8px;animation:pulse 1.5s infinite;}
         
-        .scrollable-table{overflow-x:auto;max-height:400px;overflow-y:auto;}
+        .scrollable-table{overflow-x:auto;max-height:450px;overflow-y:auto;}
+        .batch-badge{background:#1f6392;color:white;padding:2px 8px;border-radius:12px;font-size:0.6rem;}
         
         @media (max-width:600px){
             .admin-form input,.admin-form select{width:calc(50% - 4px);}
@@ -103,7 +104,7 @@
 <div class="container">
     <div class="header">
         <h1><i class="fas fa-microchip"></i> WUB - EEE</h1>
-        <p><i class="fas fa-cloud-upload-alt"></i> <span id="cloudStatusText">Live Cloud Sync</span> | রিয়েল-টাইম আপডেট | সব ডিভাইসে একই ডাটা</p>
+        <p><i class="fas fa-cloud-upload-alt"></i> <span id="cloudStatusText">Firebase Live Sync</span> | রিয়েল-টাইম আপডেট | সব ডিভাইসে একই ডাটা</p>
     </div>
     
     <div class="mode-selector">
@@ -182,12 +183,12 @@
         <div id="adminDashboard" style="display:none;">
             <div class="card">
                 <div class="batch-header">
-                    <h3><i class="fas fa-user-shield"></i> এডমিন প্যানেল <span class="live-badge"><i class="fas fa-circle"></i> LIVE SYNC</span></h3>
+                    <h3><i class="fas fa-user-shield"></i> এডমিন প্যানেল <span class="live-badge"><i class="fas fa-fire"></i> FIREBASE LIVE</span></h3>
                     <button id="adminLogoutBtn" class="btn-danger">লগআউট</button>
                 </div>
                 
                 <div class="info-banner" style="background:#10b98110; border-left-color:#10b981;">
-                    <i class="fas fa-cloud-upload-alt"></i> <strong>Cloud Sync সক্রিয়!</strong> আপনার প্রতিটি পরিবর্তন সাথে সাথে সব ডিভাইসে আপডেট হবে।
+                    <i class="fas fa-cloud-upload-alt"></i> <strong>Firebase Cloud Sync সক্রিয়!</strong> আপনার প্রতিটি পরিবর্তন সাথে সাথে সব ডিভাইসে আপডেট হবে।
                 </div>
                 
                 <h4><i class="fas fa-plus-circle"></i> নতুন ক্লাস যোগ করুন</h4>
@@ -205,11 +206,11 @@
                     <button id="addClassBtn" class="btn-success"><i class="fas fa-plus"></i> যোগ করুন</button>
                 </div>
                 
-                <h4 style="margin-top:20px;"><i class="fas fa-table"></i> সব ক্লাস (লাইভ ডাটা)</h4>
+                <h4 style="margin-top:20px;"><i class="fas fa-table"></i> সব ক্লাস (লাইভ ডাটা - মোট <span id="totalClassCount">0</span>টি)</h4>
                 <div class="scrollable-table">
                     <table class="data-table">
                         <thead>
-                            <tr><th>ব্যাচ</th><th>দিন</th><th>সময়</th><th>কোড</th><th>কোর্স</th><th>শিক্ষক</th><th>রুম</th><th>সময়কাল</th><th>অ্যাকশন</th></tr>
+                            <tr><th>ব্যাচ</th><th>দিন</th><th>সময়</th><th>কোড</th><th>কোর্স</th><th>শিক্ষক</th><th>রুম</th><th>ধরণ</th><th>ক্রেডিট</th><th>অ্যাকশন</th></tr>
                         </thead>
                         <tbody id="adminTableBody"></tbody>
                     </table>
@@ -219,23 +220,24 @@
         </div>
     </div>
 </div>
-<div class="sync-status" id="syncStatus"><i class="fas fa-cloud-upload-alt"></i> <span id="syncText">Connecting...</span></div>
+<div class="sync-status" id="syncStatus"><i class="fas fa-cloud-upload-alt"></i> <span id="syncText">Connecting to Firebase...</span></div>
 
 <script>
     // ==================== FIREBASE CONFIGURATION ====================
     const firebaseConfig = {
-        apiKey: "AIzaSyCifCntx1TnJ_nWqNUWrzysSn3WOg27MD68",
+        apiKey: "AIzaSyCiFCmtx1TnJ_nWqWUWrzySn3WOq27MD68",
         authDomain: "wub-eee-routine.firebaseapp.com",
         projectId: "wub-eee-routine",
         storageBucket: "wub-eee-routine.firebasestorage.app",
         messagingSenderId: "1078324337852",
-        appId: "1:1078324337852:web:8e722ca18c332e293384b9"
+        appId: "1:1078324337852:web:8e722ca18c332e293384b9",
+        measurementId: "G-7F400V6ZND"
     };
     
     const ADMIN_EMAIL = 'sharif.uddin@eee.wub.edu.bd';
     const ADMIN_PASS = 'Sr@123580Sr@';
     
-      // ==================== COMPLETE MASTER DATA (UPDATED WITH ALL PROVIDED BATCHES) ====================
+    // ==================== COMPLETE MASTER DATA FROM YOUR PROVIDED DATA ====================
     const originalMasterData = [
         // Batch 85A
         ...(function(){ const b=[]; b.push({batch:"85A", day:"MON", time:"12:00pm-12:50pm", code:"EEE07144263", title:"Microwave Engineering", teacher:"Debprosad Das", room:"504", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"85A", day:"MON", time:"12:50pm-01:40pm", code:"EEE07144264", title:"Microwave Lab", teacher:"Debprosad Das", room:"B15", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"85A", day:"MON", time:"02:20pm-03:10pm", code:"EEE07144264", title:"Microwave Lab", teacher:"Debprosad Das", room:"B15", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"85A", day:"THU", time:"02:20pm-03:10pm", code:"EEE07144263", title:"Microwave Engineering", teacher:"Debprosad Das", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"85A", day:"THU", time:"03:10pm-04:00pm", code:"EEE07144263", title:"Microwave Engineering", teacher:"Debprosad Das", room:"507", type:"Theory", credit:3, duration:"50 min"}); return b; })(),
@@ -260,7 +262,9 @@
         // Batch 95A
         ...(function(){ const b=[]; b.push({batch:"95A", day:"MON", time:"08:40am-09:30am", code:"ENG02311101", title:"English Language", teacher:"Sumona Sharmin", room:"314", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"95A", day:"MON", time:"10:20am-11:10am", code:"EEE07131204", title:"Electrical Circuit II Lab", teacher:"Farhana Latif", room:"B19", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"95A", day:"MON", time:"11:10am-12:00pm", code:"EEE07131204", title:"Electrical Circuit II Lab", teacher:"Farhana Latif", room:"B19", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"95A", day:"MON", time:"12:00pm-12:50pm", code:"EEE07131203", title:"Electrical Circuit II", teacher:"Farhana Latif", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"95A", day:"MON", time:"12:50pm-01:40pm", code:"EEE07131203", title:"Electrical Circuit II", teacher:"Farhana Latif", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"95A", day:"SAT", time:"12:00pm-12:50pm", code:"CHM05311101", title:"Chemistry", teacher:"Ibrahim Khalil", room:"407", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"95A", day:"THU", time:"09:30am-10:20am", code:"CHM05311101", title:"Chemistry", teacher:"Ibrahim Khalil", room:"401", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"95A", day:"THU", time:"12:00pm-12:50pm", code:"BAN", title:"Bengali Language and Literature", teacher:"Sadia Sultana", room:"507", type:"Theory", credit:2, duration:"50 min"}); b.push({batch:"95A", day:"THU", time:"12:50pm-01:40pm", code:"BAN", title:"Bengali Language and Literature", teacher:"Sadia Sultana", room:"507", type:"Theory", credit:2, duration:"50 min"}); b.push({batch:"95A", day:"TUE", time:"08:40am-09:30am", code:"CHM05311101", title:"Chemistry", teacher:"Ibrahim Khalil", room:"406", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"95A", day:"TUE", time:"12:00pm-12:50pm", code:"CHM-LAB", title:"Chemistry Lab", teacher:"Ibrahim Khalil", room:"Science Lab", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"95A", day:"TUE", time:"12:50pm-01:40pm", code:"CHM-LAB", title:"Chemistry Lab", teacher:"Ibrahim Khalil", room:"Science Lab", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"95A", day:"WED", time:"09:30am-10:20am", code:"ENG02311101", title:"English Language", teacher:"Sumona Sharmin", room:"314", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"95A", day:"WED", time:"10:20am-11:10am", code:"EEE07131203", title:"Electrical Circuit II", teacher:"Farhana Latif", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"95A", day:"WED", time:"12:00pm-12:50pm", code:"ACC", title:"Accounting", teacher:"Helaluddin Ahmed", room:"507", type:"Theory", credit:2, duration:"50 min"}); b.push({batch:"95A", day:"WED", time:"12:50pm-01:40pm", code:"ACC", title:"Accounting", teacher:"Helaluddin Ahmed", room:"507", type:"Theory", credit:2, duration:"50 min"}); b.push({batch:"95A", day:"WED", time:"02:20pm-03:10pm", code:"PHY-II", title:"Physics II", teacher:"Mithun Khan", room:"507", type:"Theory", credit:2, duration:"50 min"}); b.push({batch:"95A", day:"WED", time:"03:10pm-04:00pm", code:"PHY-II", title:"Physics II", teacher:"Mithun Khan", room:"507", type:"Theory", credit:2, duration:"50 min"}); return b; })(),
         // Batch 96A
-        ...(function(){ const b=[]; b.push({batch:"96A", day:"MON", time:"09:30am-10:20am", code:"ENG02311101", title:"Functional English", teacher:"Sumona Sharmin", room:"506", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"96A", day:"MON", time:"10:20am-11:10am", code:"EEE07131101", title:"Electrical Circuit I", teacher:"Dr. Md. Mohsin", room:"506", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"96A", day:"MON", time:"11:10am-12:00pm", code:"EEE07131101", title:"Electrical Circuit I", teacher:"Dr. Md. Mohsin", room:"506", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"96A", day:"THU", time:"12:00pm-12:50pm", code:"BAN", title:"Bengali Language and Literature", teacher:"Sadia Sultana", room:"507", type:"Theory", credit:2, duration:"50 min"}); b.push({batch:"96A", day:"THU", time:"12:50pm-01:40pm", code:"BAN", title:"Bengali Language and Literature", teacher:"Sadia Sultana", room:"507", type:"Theory", credit:2, duration:"50 min"}); b.push({batch:"96A", day:"THU", time:"02:20pm-04:00pm", code:"MAT-DIC", title:"Differential and Integral Calculus", teacher:"Md Toriqul Islam", room:"404", type:"Theory", credit:3, duration:"100 min"}); b.push({batch:"96A", day:"TUE", time:"09:30am-10:20am", code:"EEE07131101", title:"Electrical Circuit I", teacher:"Dr. Md. Mohsin", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"96A", day:"TUE", time:"10:20am-11:10am", code:"EEE07131102", title:"Electrical Circuit I Lab", teacher:"Dr. Md. Mohsin", room:"B19", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"96A", day:"TUE", time:"11:10am-12:00pm", code:"EEE07131102", title:"Electrical Circuit I Lab", teacher:"Dr. Md. Mohsin", room:"B19", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"96A", day:"WED", time:"09:30am-10:20am", code:"ENG02311101", title:"Functional English", teacher:"Sumona Sharmin", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"96A", day:"WED", time:"10:20am-11:10am", code:"ENG02311101", title:"Functional English", teacher:"Sumona Sharmin", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"96A", day:"WED", time:"12:00pm-12:50pm", code:"ACC", title:"Accounting", teacher:"Helaluddin Ahmed", room:"507", type:"Theory", credit:2, duration:"50 min"}); b.push({batch:"96A", day:"WED", time:"12:50pm-01:40pm", code:"ACC", title:"Accounting", teacher:"Helaluddin Ahmed", room:"507", type:"Theory", credit:2, duration:"50 min"}); b.push({batch:"96A", day:"WED", time:"03:10pm-04:00pm", code:"MAT-DIC", title:"Differential and Integral Calculus", teacher:"Md Toriqul Islam", room:"B14", type:"Theory", credit:3, duration:"50 min"}); return b; })()
+        ...(function(){ const b=[]; b.push({batch:"96A", day:"MON", time:"09:30am-10:20am", code:"ENG02311101", title:"Functional English", teacher:"Sumona Sharmin", room:"506", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"96A", day:"MON", time:"10:20am-11:10am", code:"EEE07131101", title:"Electrical Circuit I", teacher:"Dr. Md. Mohsin", room:"506", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"96A", day:"MON", time:"11:10am-12:00pm", code:"EEE07131101", title:"Electrical Circuit I", teacher:"Dr. Md. Mohsin", room:"506", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"96A", day:"THU", time:"12:00pm-12:50pm", code:"BAN", title:"Bengali Language and Literature", teacher:"Sadia Sultana", room:"507", type:"Theory", credit:2, duration:"50 min"}); b.push({batch:"96A", day:"THU", time:"12:50pm-01:40pm", code:"BAN", title:"Bengali Language and Literature", teacher:"Sadia Sultana", room:"507", type:"Theory", credit:2, duration:"50 min"}); b.push({batch:"96A", day:"THU", time:"02:20pm-04:00pm", code:"MAT-DIC", title:"Differential and Integral Calculus", teacher:"Md Toriqul Islam", room:"404", type:"Theory", credit:3, duration:"100 min"}); b.push({batch:"96A", day:"TUE", time:"09:30am-10:20am", code:"EEE07131101", title:"Electrical Circuit I", teacher:"Dr. Md. Mohsin", room:"507", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"96A", day:"TUE", time:"10:20am-11:10am", code:"EEE07131102", title:"Electrical Circuit I Lab", teacher:"Dr. Md. Mohsin", room:"B19", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"96A", day:"TUE", time:"11:10am-12:00pm", code:"EEE07131102", title:"Electrical Circuit I Lab", teacher:"Dr. Md. Mohsin", room:"B19", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"96A", day:"WED", time:"09:30am-10:20am", code:"ENG02311101", title:"Functional English", teacher:"Sumona Sharmin", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"96A", day:"WED", time:"10:20am-11:10am", code:"ENG02311101", title:"Functional English", teacher:"Sumona Sharmin", room:"B14", type:"Theory", credit:3, duration:"50 min"}); b.push({batch:"96A", day:"WED", time:"12:00pm-12:50pm", code:"ACC", title:"Accounting", teacher:"Helaluddin Ahmed", room:"507", type:"Theory", credit:2, duration:"50 min"}); b.push({batch:"96A", day:"WED", time:"12:50pm-01:40pm", code:"ACC", title:"Accounting", teacher:"Helaluddin Ahmed", room:"507", type:"Theory", credit:2, duration:"50 min"}); b.push({batch:"96A", day:"WED", time:"03:10pm-04:00pm", code:"MAT-DIC", title:"Differential and Integral Calculus", teacher:"Md Toriqul Islam", room:"B14", type:"Theory", credit:3, duration:"50 min"}); return b; })(),
+        // Other special batches
+        ...(function(){ const b=[]; b.push({batch:"70C", day:"THU", time:"03:10pm-04:00pm", code:"CSE_EEE07131212", title:"AIK Lab", teacher:"Md. Sharif Uddin Shajib", room:"B16", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"PHYLab", day:"THU", time:"08:40am-09:30am", code:"PHY-II-LAB", title:"Physics II Lab", teacher:"Mithun Khan", room:"Science Lab", type:"Lab", credit:1, duration:"50 min"}); b.push({batch:"PHYLab", day:"THU", time:"09:30am-10:20am", code:"PHY-II-LAB", title:"Physics II Lab", teacher:"Mithun Khan", room:"Science Lab", type:"Lab", credit:1, duration:"50 min"}); return b; })()
     ];
     
     // ==================== GLOBAL VARIABLES ====================
@@ -269,7 +273,6 @@
     let currentStudentBatch = null;
     let currentTeacher = null;
     let adminLoggedIn = false;
-    let isOnline = true;
     
     // ==================== HELPER FUNCTIONS ====================
     function showToast(msg, isError = false) {
@@ -293,7 +296,7 @@
         } else if (status === 'online') {
             el.className = 'sync-status';
             textEl.innerHTML = msg;
-            cloudText.innerHTML = '☁️ Live Cloud Sync';
+            cloudText.innerHTML = '🔥 Firebase Live Sync';
             el.style.background = '#10b981';
         } else {
             el.className = 'sync-status offline';
@@ -306,63 +309,58 @@
     // ==================== FIREBASE INITIALIZATION ====================
     async function initFirebase() {
         try {
-            updateSyncStatus('syncing', 'Connecting to cloud...');
+            updateSyncStatus('syncing', 'Connecting to Firebase...');
+            
             firebase.initializeApp(firebaseConfig);
             db = firebase.firestore();
-            classesCollection = db.collection('wub_live_classes');
+            classesCollection = db.collection('wub_official_routine');
             
-            // Check if data exists, if not seed it
+            // Enable offline persistence
+            await db.enablePersistence({ synchronizeTabs: true }).catch(err => console.log('Persistence error:', err));
+            
+            // Check if data exists
             const snapshot = await classesCollection.get();
             if (snapshot.empty) {
-                updateSyncStatus('syncing', 'Loading initial data...');
+                updateSyncStatus('syncing', 'Loading official routine...');
                 for (let item of originalMasterData) {
                     await classesCollection.add(item);
                 }
-                showToast('✅ Initial data loaded to cloud');
+                showToast('✅ Official routine loaded to Firebase Cloud');
             }
             
-            // Real-time listener - THIS IS THE KEY FOR LIVE SYNC
+            // REAL-TIME LISTENER
             unsubscribeListener = classesCollection.onSnapshot((snapshot) => {
                 const newData = [];
                 snapshot.forEach(doc => {
                     newData.push({ id: doc.id, ...doc.data() });
                 });
                 
-                // Sort by batch and time
                 classData = newData;
-                
-                // Save to localStorage as backup
-                localStorage.setItem('wub_live_cache', JSON.stringify(classData));
-                
-                // Refresh all views
+                localStorage.setItem('wub_official_backup', JSON.stringify(classData));
                 refreshAllViews();
                 updateSyncStatus('online', `Live (${classData.length} classes)`);
                 
-                // Show notification only if it's an external update
-                if (adminLoggedIn === false) {
+                if (!adminLoggedIn && (currentStudentBatch || currentTeacher)) {
                     showToast('🔄 রুটিন আপডেট হয়েছে!');
+                }
+                
+                if (adminLoggedIn) {
+                    document.getElementById('totalClassCount').innerText = classData.length;
                 }
                 
             }, (error) => {
                 console.error('Firestore error:', error);
-                isOnline = false;
                 updateSyncStatus('offline', 'Offline Mode');
-                
-                // Use cached data
-                const cached = localStorage.getItem('wub_live_cache');
-                if (cached) {
-                    classData = JSON.parse(cached);
-                    refreshAllViews();
-                } else {
-                    classData = JSON.parse(JSON.stringify(originalMasterData));
-                    refreshAllViews();
-                }
+                const cached = localStorage.getItem('wub_official_backup');
+                if (cached) classData = JSON.parse(cached);
+                else classData = JSON.parse(JSON.stringify(originalMasterData));
+                refreshAllViews();
             });
             
         } catch(e) {
             console.error('Firebase init error:', e);
             updateSyncStatus('offline', 'Connection Failed');
-            const cached = localStorage.getItem('wub_live_cache');
+            const cached = localStorage.getItem('wub_official_backup');
             if (cached) classData = JSON.parse(cached);
             else classData = JSON.parse(JSON.stringify(originalMasterData));
             refreshAllViews();
@@ -372,15 +370,14 @@
     // ==================== SAVE TO FIREBASE ====================
     async function saveToFirebase(updatedData) {
         if (!db) {
-            localStorage.setItem('wub_live_cache', JSON.stringify(updatedData));
+            localStorage.setItem('wub_official_backup', JSON.stringify(updatedData));
             refreshAllViews();
-            showToast('✅ Saved locally');
+            showToast('✅ Saved locally (offline)');
             return;
         }
         
-        updateSyncStatus('syncing', 'Saving...');
+        updateSyncStatus('syncing', 'Saving to cloud...');
         try {
-            // Complete replace - delete all and add new
             const snapshot = await classesCollection.get();
             const batch = db.batch();
             snapshot.docs.forEach(doc => batch.delete(doc.ref));
@@ -393,7 +390,7 @@
             showToast('✅ পরিবর্তন সংরক্ষিত হয়েছে - সব ডিভাইসে আপডেট হবে');
         } catch(e) {
             console.error('Save error:', e);
-            localStorage.setItem('wub_live_cache', JSON.stringify(updatedData));
+            localStorage.setItem('wub_official_backup', JSON.stringify(updatedData));
             updateSyncStatus('offline', 'Saved locally');
             showToast('⚠️ ইন্টারনেট সংযোগ নেই, পরে সিঙ্ক হবে', true);
         }
@@ -435,7 +432,7 @@
         
         document.getElementById('studentCreditCard').innerHTML = `
             <strong><i class="fas fa-star"></i> মোট ক্রেডিট: ${totalCr}</strong>
-            <div class="credit-grid">${uniqueCourses.map(([code, info]) => `<div class="credit-item"><span>${info.title.substring(0,25)}</span><span style="background:#1f6392;color:white;padding:2px 8px;border-radius:20px;">${info.credit} Cr</span></div>`).join('')}</div>
+            <div class="credit-grid">${uniqueCourses.map(([code, info]) => `<div class="credit-item"><span>${info.title.substring(0,30)}</span><span style="background:#1f6392;color:white;padding:2px 8px;border-radius:20px;">${info.credit} Cr</span></div>`).join('')}</div>
         `;
         
         const tabsDiv = document.getElementById('studentDayTabs');
@@ -443,7 +440,8 @@
         activeDays.forEach(day => {
             const tab = document.createElement('div');
             tab.className = 'day-tab';
-            tab.innerText = day === 'MON' ? 'সোমবার' : day === 'TUE' ? 'মঙ্গলবার' : day === 'WED' ? 'বুধবার' : day === 'THU' ? 'বৃহস্পতিবার' : 'শনিবার';
+            const dayNames = {MON:'সোমবার', TUE:'মঙ্গলবার', WED:'বুধবার', THU:'বৃহস্পতিবার', SAT:'শনিবার'};
+            tab.innerText = dayNames[day] || day;
             tab.setAttribute('data-day', day);
             if (day === activeDays[0]) tab.classList.add('active');
             tab.onclick = () => {
@@ -499,7 +497,7 @@
     
     function studentLogin() {
         const batch = document.getElementById('studentBatchInput').value.trim().toUpperCase();
-        if (!batch.match(/^[8-9][0-9]A$/)) { showToast('সঠিক ব্যাচ লিখুন (85A-96A)', true); return; }
+        if (!batch.match(/^[8-9][0-9]A$|^70C$|^PHYLab$/)) { showToast('সঠিক ব্যাচ লিখুন (85A-96A, 70C, PHYLab)', true); return; }
         currentStudentBatch = batch;
         document.getElementById('studentDashboard').style.display = 'block';
         document.getElementById('studentLoginCard').style.display = 'none';
@@ -541,11 +539,12 @@
         const container = document.getElementById('teacherClassList');
         if (classes.length === 0) { container.innerHTML = '<div class="class-item">📭 কোনো ক্লাস পাওয়া যায়নি</div>'; return; }
         classes.sort((a,b) => a.day.localeCompare(b.day) || a.time.localeCompare(b.time));
+        const dayNames = {MON:'সোমবার', TUE:'মঙ্গলবার', WED:'বুধবার', THU:'বৃহস্পতিবার', SAT:'শনিবার'};
         container.innerHTML = classes.map(c => `
             <div class="class-item ${c.type === 'Lab' ? 'lab' : ''}">
                 <div class="time-badge">${c.time} <span class="duration-chip">${c.duration || '50 min'}</span></div>
                 <div style="flex:2"><div class="course-code">${c.code}</div><div class="title">${c.title} (${c.credit} Cr)</div><div><strong>ব্যাচ:</strong> ${c.batch} | <strong>রুম:</strong> ${c.room}</div></div>
-                <div class="room"><i class="fas fa-calendar-day"></i> ${c.day === 'MON' ? 'সোমবার' : c.day === 'TUE' ? 'মঙ্গলবার' : c.day === 'WED' ? 'বুধবার' : c.day === 'THU' ? 'বৃহস্পতিবার' : 'শনিবার'}</div>
+                <div class="room"><i class="fas fa-calendar-day"></i> ${dayNames[c.day] || c.day}</div>
             </div>
         `).join('');
     }
@@ -575,14 +574,16 @@
             row.insertCell(0).innerHTML = `<strong>${c.batch}</strong>`;
             row.insertCell(1).innerHTML = c.day;
             row.insertCell(2).innerHTML = c.time;
-            row.insertCell(3).innerHTML = `<code>${c.code}</code>`;
-            row.insertCell(4).innerHTML = c.title.substring(0,25);
+            row.insertCell(3).innerHTML = `<code style="font-size:0.65rem;">${c.code}</code>`;
+            row.insertCell(4).innerHTML = c.title.substring(0,28);
             row.insertCell(5).innerHTML = c.teacher.substring(0,18);
             row.insertCell(6).innerHTML = c.room;
-            row.insertCell(7).innerHTML = c.duration || '50 min';
-            const actionCell = row.insertCell(8);
-            actionCell.innerHTML = `<button class="edit-btn" onclick="editClass(${idx})"><i class="fas fa-edit"></i> Edit</button><button class="delete-btn" onclick="deleteClassPermanent(${idx})"><i class="fas fa-trash"></i> Del</button>`;
+            row.insertCell(7).innerHTML = `<span class="${c.type === 'Lab' ? 'badge-lab' : 'badge-theory'}">${c.type}</span>`;
+            row.insertCell(8).innerHTML = c.credit;
+            const actionCell = row.insertCell(9);
+            actionCell.innerHTML = `<button class="edit-btn" onclick="editClass(${idx})"><i class="fas fa-edit"></i></button><button class="delete-btn" onclick="deleteClassPermanent(${idx})"><i class="fas fa-trash"></i></button>`;
         });
+        document.getElementById('totalClassCount').innerHTML = classData.length;
     }
     
     window.editClass = function(idx) {
@@ -592,13 +593,13 @@
         modal.innerHTML = `<div class="edit-modal"><h3><i class="fas fa-edit"></i> ক্লাস এডিট করুন</h3>
             <input type="text" id="editBatch" value="${c.batch}" placeholder="Batch">
             <select id="editDay"><option ${c.day==='MON'?'selected':''}>MON</option><option ${c.day==='TUE'?'selected':''}>TUE</option><option ${c.day==='WED'?'selected':''}>WED</option><option ${c.day==='THU'?'selected':''}>THU</option><option ${c.day==='SAT'?'selected':''}>SAT</option></select>
-            <input type="text" id="editTime" value="${c.time}" placeholder="Time (e.g., 09:30am-11:10am)">
-            <input type="text" id="editCode" value="${c.code}" placeholder="Course Code">
-            <input type="text" id="editTitle" value="${c.title}" placeholder="Course Title">
-            <input type="text" id="editTeacher" value="${c.teacher}" placeholder="Teacher Name">
+            <input type="text" id="editTime" value="${c.time}" placeholder="Time">
+            <input type="text" id="editCode" value="${c.code}" placeholder="Code">
+            <input type="text" id="editTitle" value="${c.title}" placeholder="Title">
+            <input type="text" id="editTeacher" value="${c.teacher}" placeholder="Teacher">
             <input type="text" id="editRoom" value="${c.room}" placeholder="Room">
             <select id="editType"><option ${c.type==='Theory'?'selected':''}>Theory</option><option ${c.type==='Lab'?'selected':''}>Lab</option></select>
-            <input type="number" id="editCredit" value="${c.credit}" placeholder="Credit Hours">
+            <input type="number" id="editCredit" value="${c.credit}" placeholder="Credit">
             <input type="text" id="editDuration" value="${c.duration || '50 min'}" placeholder="Duration">
             <div style="text-align:center; margin-top:15px;"><button class="btn-success" id="saveEditBtn"><i class="fas fa-save"></i> সংরক্ষণ করুন</button><button class="btn-danger" id="cancelEditBtn"><i class="fas fa-times"></i> বাতিল</button></div>
         </div>`;
