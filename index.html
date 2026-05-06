@@ -216,7 +216,7 @@
                     <button id="addClassBtn" class="btn-success">➕ Add</button>
                 </div>
                 
-                <h4 style="margin-top:20px;">📋 All Classes (Edit/Delete permanently)</h4>
+                <h4 style="margin-top:20px;">📋 All Classes</h4>
                 <div style="overflow-x:auto;">
                     <table class="data-table">
                         <thead>
@@ -225,7 +225,7 @@
                         <tbody id="adminTableBody"></tbody>
                     </table>
                 </div>
-                <button id="resetDataBtn" class="btn-warning" style="width:100%; margin-top:15px;">⟳ Reset to Default Data</button>
+                <button id="resetDataBtn" class="btn-warning" style="width:100%; margin-top:15px;">⟳ Restore Last Saved Data</button>
             </div>
         </div>
     </div>
@@ -248,8 +248,8 @@
     const ADMIN_EMAIL = 'sharif.uddin@eee.wub.edu.bd';
     const ADMIN_PASS = 'Sr@123580Sr@';
     
-    // Flag to track if initial data has been seeded
-    let isDataSeeded = false;
+    // Variable to store the last backup (user's edited data)
+    let lastBackupData = null;
     
     // Function to calculate duration based on time
     function calculateDuration(timeStr) {
@@ -283,8 +283,8 @@
         return durationMinutes + " min";
     }
     
-    // ==================== COMPLETE MASTER DATA ====================
-    const originalMasterData = [
+    // ==================== COMPLETE MASTER DATA (Factory Default) ====================
+    const factoryDefaultData = [
         // ==================== BATCH 85A ====================
         {batch:"85A", day:"MON", time:"12:00pm-12:50pm", code:"EEE07144263", title:"Microwave Engineering", teacher:"Debprosad Das", room:"504", type:"Theory", credit:3, duration: calculateDuration("12:00pm-12:50pm")},
         {batch:"85A", day:"MON", time:"12:50pm-03:10pm", code:"EEE07144264", title:"Microwave Lab", teacher:"Debprosad Das", room:"B15", type:"Lab", credit:1, duration: calculateDuration("12:50pm-03:10pm")},
@@ -476,6 +476,118 @@
         }
     }
     
+    // Save current data as backup (user's last edited data)
+    function saveBackup(data) {
+        lastBackupData = JSON.parse(JSON.stringify(data));
+        localStorage.setItem('wub_last_backup', JSON.stringify(lastBackupData));
+        console.log('💾 Backup saved:', lastBackupData.length, 'classes');
+    }
+    
+    // Load backup from localStorage
+    function loadBackup() {
+        const saved = localStorage.getItem('wub_last_backup');
+        if (saved && saved !== 'undefined') {
+            try {
+                lastBackupData = JSON.parse(saved);
+                console.log('📦 Backup loaded from storage:', lastBackupData.length, 'classes');
+                return true;
+            } catch(e) {
+                console.error('Backup load error:', e);
+                return false;
+            }
+        }
+        return false;
+    }
+    
+    // Create initial backup from factory data (only once)
+    function createInitialBackup() {
+        if (!loadBackup()) {
+            lastBackupData = JSON.parse(JSON.stringify(factoryDefaultData));
+            localStorage.setItem('wub_last_backup', JSON.stringify(lastBackupData));
+            console.log('📦 Initial backup created');
+        }
+    }
+    
+    // Restore from last backup (user's last edited data)
+    async function restoreFromBackup() {
+        if (!db) {
+            showToast('⚠️ Firebase not connected', true);
+            return false;
+        }
+        
+        if (!lastBackupData || lastBackupData.length === 0) {
+            showToast('⚠️ No backup data found', true);
+            return false;
+        }
+        
+        if (!confirm('⚠️ Restore last saved data? This will replace current data with your last edited version. Changes made after last backup will be lost. This will sync to ALL devices.')) {
+            return false;
+        }
+        
+        updateSyncStatus('syncing', 'Restoring last backup...');
+        
+        try {
+            // Delete all existing documents
+            const snapshot = await classesCollection.get();
+            const batch = db.batch();
+            snapshot.docs.forEach(doc => batch.delete(doc.ref));
+            await batch.commit();
+            
+            // Add all backup data
+            for (let item of lastBackupData) {
+                await classesCollection.add(item);
+            }
+            
+            updateSyncStatus('connected', 'LIVE SYNC ACTIVE');
+            showToast('✅ Last saved data restored!');
+            return true;
+        } catch(e) {
+            console.error('Restore error:', e);
+            updateSyncStatus('error', 'Restore failed');
+            showToast('❌ Failed to restore data', true);
+            return false;
+        }
+    }
+    
+    // Reset to factory default (original data from code)
+    async function resetToFactoryDefault() {
+        if (!db) {
+            showToast('⚠️ Firebase not connected', true);
+            return false;
+        }
+        
+        if (!confirm('⚠️ WARNING: This will reset ALL data to FACTORY DEFAULT! All your edits and deletions will be lost FOREVER. This will sync to ALL devices. Are you sure?')) {
+            return false;
+        }
+        
+        updateSyncStatus('syncing', 'Resetting to factory default...');
+        
+        try {
+            // Delete all existing documents
+            const snapshot = await classesCollection.get();
+            const batch = db.batch();
+            snapshot.docs.forEach(doc => batch.delete(doc.ref));
+            await batch.commit();
+            
+            // Add all factory default data
+            for (let item of factoryDefaultData) {
+                await classesCollection.add(item);
+            }
+            
+            // Update backup with factory default
+            saveBackup(factoryDefaultData);
+            
+            updateSyncStatus('connected', 'LIVE SYNC ACTIVE');
+            showToast('✅ Factory default data restored!');
+            return true;
+        } catch(e) {
+            console.error('Reset error:', e);
+            updateSyncStatus('error', 'Reset failed');
+            showToast('❌ Failed to reset data', true);
+            return false;
+        }
+    }
+    
     // Notification functions
     function requestNotificationPermission() {
         if (Notification.permission === "granted") {
@@ -596,14 +708,19 @@
             
             updateSyncStatus('syncing', 'Connecting to cloud...');
             
+            // Create initial backup
+            createInitialBackup();
+            
             // Check if data exists - ONLY seed if empty
             const snapshot = await classesCollection.get();
             if (snapshot.empty) {
                 updateSyncStatus('syncing', 'Loading initial data (first time only)...');
-                for (let item of originalMasterData) {
+                for (let item of factoryDefaultData) {
                     await classesCollection.add(item);
                 }
-                showToast('✅ Initial data loaded to cloud (first time only)');
+                showToast('✅ Initial data loaded to cloud');
+                // Save initial data as backup
+                saveBackup(factoryDefaultData);
             }
             
             // Set up REAL-TIME listener
@@ -613,6 +730,11 @@
                     newData.push({ id: doc.id, ...doc.data() });
                 });
                 classData = newData;
+                
+                // Auto-save backup when data changes (from any device)
+                if (initialLoadDone) {
+                    saveBackup(classData);
+                }
                 
                 // Refresh all UI
                 refreshAllViews();
@@ -699,42 +821,6 @@
             console.error('Add error:', e);
             updateSyncStatus('error', 'Add failed');
             showToast('❌ Failed to add class', true);
-            return false;
-        }
-    }
-    
-    // RESET all data - only when user clicks reset button
-    async function resetAllData() {
-        if (!db) {
-            showToast('⚠️ Firebase not connected', true);
-            return false;
-        }
-        
-        if (!confirm('⚠️ WARNING: This will reset ALL data to original! All your edits and deletions will be lost. This will sync to ALL devices. Are you sure?')) {
-            return false;
-        }
-        
-        updateSyncStatus('syncing', 'Resetting all data...');
-        
-        try {
-            // Delete all existing documents
-            const snapshot = await classesCollection.get();
-            const batch = db.batch();
-            snapshot.docs.forEach(doc => batch.delete(doc.ref));
-            await batch.commit();
-            
-            // Add all original data
-            for (let item of originalMasterData) {
-                await classesCollection.add(item);
-            }
-            
-            updateSyncStatus('connected', 'LIVE SYNC ACTIVE');
-            showToast('✅ All data reset to original!');
-            return true;
-        } catch(e) {
-            console.error('Reset error:', e);
-            updateSyncStatus('error', 'Reset failed');
-            showToast('❌ Failed to reset data', true);
             return false;
         }
     }
@@ -1076,11 +1162,6 @@
         document.getElementById('newDuration').value = '100 min';
     }
     
-    // Reset all data - only on user request
-    async function resetToDefault() {
-        await resetAllData();
-    }
-    
     function adminLogin() {
         const email = document.getElementById('adminEmail').value;
         const pass = document.getElementById('adminPass').value;
@@ -1134,7 +1215,7 @@
         if (adminLoginBtn) adminLoginBtn.onclick = adminLogin;
         if (adminLogoutBtn) adminLogoutBtn.onclick = adminLogout;
         if (addClassBtn) addClassBtn.onclick = addNewClass;
-        if (resetDataBtn) resetDataBtn.onclick = resetToDefault;
+        if (resetDataBtn) resetDataBtn.onclick = restoreFromBackup;  // ← Now restores LAST EDITED DATA
         
         // Mode selector
         document.querySelectorAll('.mode-btn').forEach(btn => {
