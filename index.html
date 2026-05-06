@@ -557,7 +557,7 @@
         else if (currentTeacher) scheduleTeacherNotifications(currentTeacher);
     }
     
-    // ==================== FIREBASE FUNCTIONS (INDIVIDUAL UPDATES) ====================
+    // ==================== FIREBASE FUNCTIONS ====================
     async function initFirebase() {
         try {
             firebase.initializeApp(firebaseConfig);
@@ -576,18 +576,21 @@
                 showToast('✅ Initial data loaded to cloud');
             }
             
-            // Set up REAL-TIME listener - only listens, doesn't modify
+            // Set up REAL-TIME listener
             unsubscribeListener = classesCollection.onSnapshot((snapshot) => {
                 const newData = [];
                 snapshot.forEach(doc => {
                     newData.push({ id: doc.id, ...doc.data() });
                 });
                 classData = newData;
+                
+                // Refresh all UI components
                 refreshAllViews();
                 scheduleNotificationsForCurrentUser();
                 updateSyncStatus('connected', 'LIVE SYNC ACTIVE');
+                
                 if (isInitialized) {
-                    showToast('🔄 Real-time update received from another device');
+                    showToast('🔄 Real-time update received');
                 }
                 isInitialized = true;
             }, (error) => {
@@ -599,7 +602,7 @@
         } catch(e) {
             console.error('Firebase init error:', e);
             updateSyncStatus('error', 'Firebase error - check console');
-            showToast('⚠️ Firebase connection failed. Check console for details.', true);
+            showToast('⚠️ Firebase connection failed.', true);
         }
     }
     
@@ -626,7 +629,7 @@
     }
     
     // DELETE a single document by ID
-    async function deleteClass(docId) {
+    async function deleteClassById(docId) {
         if (!db) {
             showToast('⚠️ Firebase not connected', true);
             return false;
@@ -669,10 +672,14 @@
         }
     }
     
-    // RESET all data (clear and re-add all)
+    // RESET all data
     async function resetAllData() {
         if (!db) {
             showToast('⚠️ Firebase not connected', true);
+            return false;
+        }
+        
+        if (!confirm('⚠️ WARNING: This will reset ALL data to original! All your edits and deletions will be lost. This will sync to ALL devices. Are you sure?')) {
             return false;
         }
         
@@ -702,9 +709,41 @@
     }
     
     function refreshAllViews() {
-        if (adminLoggedIn) renderAdminTable();
-        if (currentStudentBatch) renderStudentView(currentStudentBatch);
-        if (currentTeacher) loadTeacherClasses();
+        // Admin table refresh
+        if (adminLoggedIn) {
+            const tbody = document.getElementById('adminTableBody');
+            if (tbody) {
+                tbody.innerHTML = '';
+                classData.forEach((c, idx) => {
+                    const row = tbody.insertRow();
+                    row.insertCell(0).innerHTML = c.batch;
+                    row.insertCell(1).innerHTML = c.day;
+                    row.insertCell(2).innerHTML = c.time;
+                    row.insertCell(3).innerHTML = c.code;
+                    row.insertCell(4).innerHTML = c.title.substring(0,20);
+                    row.insertCell(5).innerHTML = c.teacher.substring(0,15);
+                    row.insertCell(6).innerHTML = c.room;
+                    row.insertCell(7).innerHTML = c.duration || '100 min';
+                    const actionCell = row.insertCell(8);
+                    actionCell.innerHTML = `
+                        <button class="edit-btn" onclick="editClass('${c.id}', ${idx})">✏️ Edit</button>
+                        <button class="delete-btn" onclick="deleteClass('${c.id}')">🗑️ Delete</button>
+                    `;
+                });
+            }
+        }
+        
+        // Student view refresh
+        if (currentStudentBatch) {
+            renderStudentView(currentStudentBatch);
+        }
+        
+        // Teacher view refresh
+        if (currentTeacher) {
+            loadTeacherClasses();
+        }
+        
+        // Teacher dropdown refresh
         updateTeacherSelect();
     }
     
@@ -735,34 +774,44 @@
         const totalCr = getTotalCredits(batch);
         const uniqueCourses = [...new Map(classData.filter(c => c.batch === batch).map(c => [c.code, {title: c.title, credit: c.credit}]))];
         
-        document.getElementById('studentCreditCard').innerHTML = `
-            <strong><i class="fas fa-star"></i> Total Credits: ${totalCr}</strong>
-            <div class="credit-grid">
-                ${uniqueCourses.map(([code, info]) => `<div class="credit-item"><span>${info.title.substring(0,25)}</span><span class="credit-badge">${info.credit} Cr</span></div>`).join('')}
-            </div>
-        `;
+        const creditCard = document.getElementById('studentCreditCard');
+        if (creditCard) {
+            creditCard.innerHTML = `
+                <strong><i class="fas fa-star"></i> Total Credits: ${totalCr}</strong>
+                <div class="credit-grid">
+                    ${uniqueCourses.map(([code, info]) => `<div class="credit-item"><span>${info.title.substring(0,25)}</span><span class="credit-badge">${info.credit} Cr</span></div>`).join('')}
+                </div>
+            `;
+        }
         
         const tabsDiv = document.getElementById('studentDayTabs');
-        tabsDiv.innerHTML = '';
-        activeDays.forEach(day => {
-            const tab = document.createElement('div');
-            tab.className = 'day-tab';
-            tab.innerText = day;
-            if (day === activeDays[0]) tab.classList.add('active');
-            tab.onclick = () => {
-                document.querySelectorAll('#studentDayTabs .day-tab').forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                renderClassesList(batch, day);
-            };
-            tabsDiv.appendChild(tab);
-        });
+        if (tabsDiv) {
+            tabsDiv.innerHTML = '';
+            activeDays.forEach(day => {
+                const tab = document.createElement('div');
+                tab.className = 'day-tab';
+                tab.innerText = day;
+                if (day === activeDays[0]) tab.classList.add('active');
+                tab.onclick = () => {
+                    document.querySelectorAll('#studentDayTabs .day-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    renderClassesList(batch, day);
+                };
+                tabsDiv.appendChild(tab);
+            });
+        }
+        
         if (activeDays.length) renderClassesList(batch, activeDays[0]);
-        document.getElementById('studentBatchShow').innerHTML = batch;
+        
+        const batchShow = document.getElementById('studentBatchShow');
+        if (batchShow) batchShow.innerHTML = batch;
     }
     
     function renderClassesList(batch, day) {
         const classes = getClassesByBatchAndDay(batch, day);
         const container = document.getElementById('studentClassList');
+        if (!container) return;
+        
         if (classes.length === 0) {
             container.innerHTML = '<div class="class-item">📭 No classes on this day</div>';
             return;
@@ -823,19 +872,22 @@
         currentStudentBatch = null;
         document.getElementById('studentDashboard').style.display = 'none';
         document.getElementById('studentLoginCard').style.display = 'block';
+        clearAllNotifications();
     }
     
     // Teacher functions
     function updateTeacherSelect() {
         const teachers = getAllTeachers();
         const select = document.getElementById('teacherSelect');
-        select.innerHTML = '<option value="">-- Select Teacher --</option>';
-        teachers.forEach(t => {
-            const option = document.createElement('option');
-            option.value = t;
-            option.textContent = t;
-            select.appendChild(option);
-        });
+        if (select) {
+            select.innerHTML = '<option value="">-- Select Teacher --</option>';
+            teachers.forEach(t => {
+                const option = document.createElement('option');
+                option.value = t;
+                option.textContent = t;
+                select.appendChild(option);
+            });
+        }
     }
     
     function getTeacherClasses(teacher) {
@@ -845,16 +897,23 @@
     function loadTeacherClasses() {
         if (!currentTeacher) return;
         let classes = getTeacherClasses(currentTeacher);
-        const batchFilter = document.getElementById('teacherBatchFilter').value;
-        const dayFilter = document.getElementById('teacherDayFilter').value;
+        const batchFilter = document.getElementById('teacherBatchFilter') ? document.getElementById('teacherBatchFilter').value : '';
+        const dayFilter = document.getElementById('teacherDayFilter') ? document.getElementById('teacherDayFilter').value : '';
+        
         if (batchFilter) classes = classes.filter(c => c.batch === batchFilter);
         if (dayFilter) classes = classes.filter(c => c.day === dayFilter);
         
-        document.getElementById('teacherClassCount').innerHTML = classes.length;
-        document.getElementById('teacherBatchCount').innerHTML = [...new Set(classes.map(c => c.batch))].length;
-        document.getElementById('teacherNameShow').innerHTML = currentTeacher;
+        const classCountElem = document.getElementById('teacherClassCount');
+        const batchCountElem = document.getElementById('teacherBatchCount');
+        const nameShowElem = document.getElementById('teacherNameShow');
+        
+        if (classCountElem) classCountElem.innerHTML = classes.length;
+        if (batchCountElem) batchCountElem.innerHTML = [...new Set(classes.map(c => c.batch))].length;
+        if (nameShowElem) nameShowElem.innerHTML = currentTeacher;
         
         const container = document.getElementById('teacherClassList');
+        if (!container) return;
+        
         if (classes.length === 0) {
             container.innerHTML = '<div class="class-item">📭 No classes found</div>';
             return;
@@ -889,30 +948,10 @@
         currentTeacher = null;
         document.getElementById('teacherDashboard').style.display = 'none';
         document.getElementById('teacherLoginCard').style.display = 'block';
+        clearAllNotifications();
     }
     
-    // ==================== ADMIN FUNCTIONS (INDIVIDUAL UPDATES) ====================
-    function renderAdminTable() {
-        const tbody = document.getElementById('adminTableBody');
-        tbody.innerHTML = '';
-        classData.forEach((c, idx) => {
-            const row = tbody.insertRow();
-            row.insertCell(0).innerHTML = c.batch;
-            row.insertCell(1).innerHTML = c.day;
-            row.insertCell(2).innerHTML = c.time;
-            row.insertCell(3).innerHTML = c.code;
-            row.insertCell(4).innerHTML = c.title.substring(0,20);
-            row.insertCell(5).innerHTML = c.teacher.substring(0,15);
-            row.insertCell(6).innerHTML = c.room;
-            row.insertCell(7).innerHTML = c.duration || '100 min';
-            const actionCell = row.insertCell(8);
-            actionCell.innerHTML = `
-                <button class="edit-btn" onclick="editClass('${c.id}', ${idx})">✏️ Edit</button>
-                <button class="delete-btn" onclick="deleteClassById('${c.id}')">🗑️ Delete</button>
-            `;
-        });
-    }
-    
+    // ==================== ADMIN FUNCTIONS ====================
     // Edit individual class by ID
     window.editClass = function(docId, idx) {
         const c = classData[idx];
@@ -968,9 +1007,9 @@
     };
     
     // Delete individual class by ID
-    window.deleteClassById = async function(docId) {
+    window.deleteClass = async function(docId) {
         if (confirm('Delete this class? This will permanently delete from ALL devices.')) {
-            await deleteClass(docId);
+            await deleteClassById(docId);
         }
     };
     
@@ -1005,9 +1044,7 @@
     
     // Reset all data
     async function resetToDefault() {
-        if (confirm('⚠️ WARNING: This will reset ALL data to original! All your edits and deletions will be lost. This will sync to ALL devices. Are you sure?')) {
-            await resetAllData();
-        }
+        await resetAllData();
     }
     
     function adminLogin() {
@@ -1017,7 +1054,6 @@
             adminLoggedIn = true;
             document.getElementById('adminDashboard').style.display = 'block';
             document.getElementById('adminLoginCard').style.display = 'none';
-            renderAdminTable();
             showToast('👑 Admin login successful');
         } else {
             showToast('Invalid email or password', true);
@@ -1028,25 +1064,44 @@
         adminLoggedIn = false;
         document.getElementById('adminDashboard').style.display = 'none';
         document.getElementById('adminLoginCard').style.display = 'block';
+        clearAllNotifications();
     }
     
     // Initialize
     function init() {
-        document.getElementById('studentLoginBtn').onclick = studentLogin;
-        document.getElementById('studentLogoutBtn').onclick = studentLogout;
-        document.getElementById('studentCalendarBtn').onclick = addAllToCalendar;
+        // Student panel events
+        const studentLoginBtn = document.getElementById('studentLoginBtn');
+        const studentLogoutBtn = document.getElementById('studentLogoutBtn');
+        const studentCalendarBtn = document.getElementById('studentCalendarBtn');
+        if (studentLoginBtn) studentLoginBtn.onclick = studentLogin;
+        if (studentLogoutBtn) studentLogoutBtn.onclick = studentLogout;
+        if (studentCalendarBtn) studentCalendarBtn.onclick = addAllToCalendar;
         
-        document.getElementById('teacherLoginBtn').onclick = teacherLogin;
-        document.getElementById('teacherLogoutBtn').onclick = teacherLogout;
-        document.getElementById('teacherRefreshBtn').onclick = loadTeacherClasses;
-        document.getElementById('teacherBatchFilter').oninput = loadTeacherClasses;
-        document.getElementById('teacherDayFilter').onchange = loadTeacherClasses;
+        // Teacher panel events
+        const teacherLoginBtn = document.getElementById('teacherLoginBtn');
+        const teacherLogoutBtn = document.getElementById('teacherLogoutBtn');
+        const teacherRefreshBtn = document.getElementById('teacherRefreshBtn');
+        const teacherBatchFilter = document.getElementById('teacherBatchFilter');
+        const teacherDayFilter = document.getElementById('teacherDayFilter');
         
-        document.getElementById('adminLoginBtn').onclick = adminLogin;
-        document.getElementById('adminLogoutBtn').onclick = adminLogout;
-        document.getElementById('addClassBtn').onclick = addNewClass;
-        document.getElementById('resetDataBtn').onclick = resetToDefault;
+        if (teacherLoginBtn) teacherLoginBtn.onclick = teacherLogin;
+        if (teacherLogoutBtn) teacherLogoutBtn.onclick = teacherLogout;
+        if (teacherRefreshBtn) teacherRefreshBtn.onclick = loadTeacherClasses;
+        if (teacherBatchFilter) teacherBatchFilter.oninput = loadTeacherClasses;
+        if (teacherDayFilter) teacherDayFilter.onchange = loadTeacherClasses;
         
+        // Admin panel events
+        const adminLoginBtn = document.getElementById('adminLoginBtn');
+        const adminLogoutBtn = document.getElementById('adminLogoutBtn');
+        const addClassBtn = document.getElementById('addClassBtn');
+        const resetDataBtn = document.getElementById('resetDataBtn');
+        
+        if (adminLoginBtn) adminLoginBtn.onclick = adminLogin;
+        if (adminLogoutBtn) adminLogoutBtn.onclick = adminLogout;
+        if (addClassBtn) addClassBtn.onclick = addNewClass;
+        if (resetDataBtn) resetDataBtn.onclick = resetToDefault;
+        
+        // Mode selector
         document.querySelectorAll('.mode-btn').forEach(btn => {
             btn.onclick = () => {
                 document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
