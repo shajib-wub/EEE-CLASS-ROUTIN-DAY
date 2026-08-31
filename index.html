@@ -225,7 +225,8 @@
                         <tbody id="adminTableBody"></tbody>
                     </table>
                 </div>
-                <button id="resetDataBtn" class="btn-warning" style="width:100%; margin-top:15px;">⟳ Restore Last Saved Data</button>
+                <!-- Changed button to reset to factory default (new semester) -->
+                <button id="resetDataBtn" class="btn-warning" style="width:100%; margin-top:15px;">⟳ Reset to New Semester (Factory Default)</button>
             </div>
         </div>
     </div>
@@ -284,7 +285,6 @@
     }
     
     // ==================== NEW SEMESTER DATA (FALL 2026) ====================
-    // This replaces the old factory default data
     const newSemesterData = [
         // ==================== BATCH 97A ====================
         {batch:"97A", day:"MON", time:"09:30am-10:20am", code:"ENG02323101", title:"Functional English", teacher:"Sumona Sharmin", room:"503", type:"Theory", credit:3, duration: calculateDuration("09:30am-10:20am")},
@@ -296,7 +296,7 @@
         {batch:"97A", day:"THU", time:"11:10am-12:00pm", code:"MAT05411101", title:"Elementary Mathematics", teacher:"Saddam Hossain", room:"503", type:"Theory", credit:3, duration: calculateDuration("11:10am-12:00pm")},
         {batch:"97A", day:"THU", time:"02:20pm-04:00pm", code:"ENG02323101", title:"Functional English", teacher:"Sumona Sharmin", room:"503", type:"Theory", credit:3, duration: calculateDuration("02:20pm-04:00pm")},
 
-        // ==================== BATCH 96A (UPDATED) ====================
+        // ==================== BATCH 96A ====================
         {batch:"96A", day:"MON", time:"10:20am-12:00pm", code:"LANG", title:"Language", teacher:"TBA", room:"Language Lab", type:"Theory", credit:3, duration: calculateDuration("10:20am-12:00pm")},
         {batch:"96A", day:"MON", time:"12:00pm-01:40pm", code:"EEE07131203", title:"Electrical Circuit II", teacher:"Farhana Latif", room:"B14", type:"Theory", credit:3, duration: calculateDuration("12:00pm-01:40pm")},
         {batch:"96A", day:"TUE", time:"10:20am-12:00pm", code:"PHY05331101", title:"Physics I", teacher:"Farjana Yeasmin", room:"B14", type:"Theory", credit:3, duration: calculateDuration("10:20am-12:00pm")},
@@ -308,7 +308,7 @@
         {batch:"96A", day:"THU", time:"12:00pm-12:50pm", code:"EEE07131203", title:"Electrical Circuit II", teacher:"Farhana Latif", room:"503", type:"Theory", credit:3, duration: calculateDuration("12:00pm-12:50pm")},
         {batch:"96A", day:"THU", time:"02:20pm-03:10pm", code:"CHM05311201", title:"Chemistry", teacher:"TBA", room:"B14", type:"Theory", credit:3, duration: calculateDuration("02:20pm-03:10pm")},
 
-        // ==================== BATCH 95A (UPDATED) ====================
+        // ==================== BATCH 95A ====================
         {batch:"95A", day:"TUE", time:"08:40am-10:20am", code:"EEE07222211", title:"Engineering Materials", teacher:"Md. Abdu Rabbir Rasul", room:"B14", type:"Theory", credit:3, duration: calculateDuration("08:40am-10:20am")},
         {batch:"95A", day:"TUE", time:"12:00pm-01:40pm", code:"MAT05411101", title:"Elementary Mathematics", teacher:"Saddam Hossain", room:"503", type:"Theory", credit:3, duration: calculateDuration("12:00pm-01:40pm")},
         {batch:"95A", day:"TUE", time:"02:20pm-04:00pm", code:"EEE07131205", title:"Electronics I", teacher:"Bashir Ahammed", room:"501", type:"Theory", credit:3, duration: calculateDuration("02:20pm-04:00pm")},
@@ -320,7 +320,7 @@
         {batch:"95A", day:"SAT", time:"12:50pm-01:40pm", code:"CSE06111102", title:"Fundamental of Computing Lab", teacher:"Musfique-us-Salehin Arnob", room:"Language Lab", type:"Lab", credit:1, duration: calculateDuration("12:50pm-01:40pm")},
         {batch:"95A", day:"SAT", time:"02:20pm-04:00pm", code:"EEE07131206", title:"Electronics I Lab", teacher:"Bashir Ahammed", room:"B17", type:"Lab", credit:1, duration: calculateDuration("02:20pm-04:00pm")},
 
-        // ==================== BATCH 94A (UPDATED) ====================
+        // ==================== BATCH 94A ====================
         {batch:"94A", day:"MON", time:"08:40am-10:20am", code:"CSE06111204", title:"Intro to Programming Lab", teacher:"Musfique-us-Salehin Arnob", room:"Language Lab", type:"Lab", credit:1, duration: calculateDuration("08:40am-10:20am")},
         {batch:"94A", day:"MON", time:"10:20am-12:00pm", code:"EEE07132215", title:"Electrical Machine II", teacher:"Md. Istianatur Rahman", room:"503", type:"Theory", credit:3, duration: calculateDuration("10:20am-12:00pm")},
         {batch:"94A", day:"MON", time:"02:20pm-04:00pm", code:"CSE06111203", title:"Intro to Programming", teacher:"Musfique-us-Salehin Arnob", room:"503", type:"Theory", credit:3, duration: calculateDuration("02:20pm-04:00pm")},
@@ -333,7 +333,7 @@
         {batch:"94A", day:"SAT", time:"12:50pm-01:40pm", code:"EEE07131205", title:"Electronics I", teacher:"Bashir Ahammed", room:"501", type:"Theory", credit:3, duration: calculateDuration("12:50pm-01:40pm")},
         {batch:"94A", day:"SAT", time:"02:20pm-04:00pm", code:"EEE07131206", title:"Electronics I Lab", teacher:"Bashir Ahammed", room:"B17", type:"Lab", credit:1, duration: calculateDuration("02:20pm-04:00pm")},
 
-        // ==================== BATCH 93A (UPDATED) ====================
+        // ==================== BATCH 93A ====================
         {batch:"93A", day:"MON", time:"08:40am-09:30am", code:"EEE07142217", title:"Digital Electronics", teacher:"Nayeem Hasan Mallick", room:"B14", type:"Theory", credit:3, duration: calculateDuration("08:40am-09:30am")},
         {batch:"93A", day:"MON", time:"10:20am-12:00pm", code:"EEE07132215", title:"Electrical Machine II", teacher:"Md. Istianatur Rahman", room:"503", type:"Theory", credit:3, duration: calculateDuration("10:20am-12:00pm")},
         {batch:"93A", day:"MON", time:"12:00pm-12:50pm", code:"MAT-MVA", title:"Matrix & Vector Analysis", teacher:"Suman Kar", room:"503", type:"Theory", credit:3, duration: calculateDuration("12:00pm-12:50pm")},
@@ -345,7 +345,7 @@
         {batch:"93A", day:"SAT", time:"12:00pm-12:50pm", code:"EEE07132215", title:"Electrical Machine II", teacher:"Md. Istianatur Rahman", room:"B14", type:"Theory", credit:3, duration: calculateDuration("12:00pm-12:50pm")},
         {batch:"93A", day:"SAT", time:"02:20pm-04:00pm", code:"EEE07142217", title:"Digital Electronics", teacher:"Nayeem Hasan Mallick", room:"503", type:"Theory", credit:3, duration: calculateDuration("02:20pm-04:00pm")},
 
-        // ==================== BATCH 92A (UPDATED) ====================
+        // ==================== BATCH 92A ====================
         {batch:"92A", day:"MON", time:"08:40am-09:30am", code:"EEE07134137", title:"Power System II", teacher:"Dr. Md. Mohsin", room:"503", type:"Theory", credit:3, duration: calculateDuration("08:40am-09:30am")},
         {batch:"92A", day:"MON", time:"09:30am-10:20am", code:"EEE07143227", title:"Microprocessor & Interfacing", teacher:"Nayeem Hasan Mallick", room:"B14", type:"Theory", credit:3, duration: calculateDuration("09:30am-10:20am")},
         {batch:"92A", day:"MON", time:"12:50pm-01:40pm", code:"MAT-NA", title:"Numerical Analysis", teacher:"Suman Kar", room:"503", type:"Theory", credit:3, duration: calculateDuration("12:50pm-01:40pm")},
@@ -354,7 +354,7 @@
         {batch:"92A", day:"SAT", time:"08:40am-10:20am", code:"EEE07143228", title:"Microprocessor & Interfacing Lab", teacher:"Nayeem Hasan Mallick", room:"B17", type:"Lab", credit:1, duration: calculateDuration("08:40am-10:20am")},
         {batch:"92A", day:"SAT", time:"10:20am-12:00pm", code:"EEE07143227", title:"Microprocessor & Interfacing", teacher:"Nayeem Hasan Mallick", room:"B14", type:"Theory", credit:3, duration: calculateDuration("10:20am-12:00pm")},
 
-        // ==================== BATCH 91A (UPDATED) ====================
+        // ==================== BATCH 91A ====================
         {batch:"91A", day:"MON", time:"08:40am-09:30am", code:"EEE07134137", title:"Power System II", teacher:"Dr. Md. Mohsin", room:"503", type:"Theory", credit:3, duration: calculateDuration("08:40am-09:30am")},
         {batch:"91A", day:"MON", time:"09:30am-10:20am", code:"EEE07143227", title:"Microprocessor & Interfacing", teacher:"Nayeem Hasan Mallick", room:"B14", type:"Theory", credit:3, duration: calculateDuration("09:30am-10:20am")},
         {batch:"91A", day:"WED", time:"08:40am-09:30am", code:"EEE07143126", title:"Communication Lab", teacher:"Md. Sharif Uddin Shajib", room:"B15", type:"Lab", credit:1, duration: calculateDuration("08:40am-09:30am")},
@@ -362,7 +362,7 @@
         {batch:"91A", day:"SAT", time:"08:40am-10:20am", code:"EEE07143228", title:"Microprocessor & Interfacing Lab", teacher:"Nayeem Hasan Mallick", room:"B17", type:"Lab", credit:1, duration: calculateDuration("08:40am-10:20am")},
         {batch:"91A", day:"SAT", time:"10:20am-12:00pm", code:"EEE07143227", title:"Microprocessor & Interfacing", teacher:"Nayeem Hasan Mallick", room:"B14", type:"Theory", credit:3, duration: calculateDuration("10:20am-12:00pm")},
 
-        // ==================== BATCH 90A (UPDATED) ====================
+        // ==================== BATCH 90A ====================
         {batch:"90A", day:"TUE", time:"08:40am-10:20am", code:"EEE07183232", title:"Power Electronics Lab", teacher:"Md. Istianatur Rahman", room:"B17", type:"Lab", credit:1, duration: calculateDuration("08:40am-10:20am")},
         {batch:"90A", day:"TUE", time:"12:00pm-01:40pm", code:"EEE07183231", title:"Power Electronics", teacher:"Md. Istianatur Rahman", room:"B14", type:"Theory", credit:3, duration: calculateDuration("12:00pm-01:40pm")},
         {batch:"90A", day:"TUE", time:"02:20pm-03:10pm", code:"MAT-CVG", title:"Complex Variable & Coordinate Geometry", teacher:"Saddam Hossain", room:"503", type:"Theory", credit:3, duration: calculateDuration("02:20pm-03:10pm")},
@@ -372,21 +372,21 @@
         {batch:"90A", day:"SAT", time:"09:30am-10:20am", code:"EEE07183231", title:"Power Electronics", teacher:"Md. Istianatur Rahman", room:"503", type:"Theory", credit:3, duration: calculateDuration("09:30am-10:20am")},
         {batch:"90A", day:"SAT", time:"12:00pm-01:40pm", code:"EEE07143125", title:"Communication", teacher:"Md. Sharif Uddin Shajib", room:"503", type:"Theory", credit:3, duration: calculateDuration("12:00pm-01:40pm")},
 
-        // ==================== BATCH 89A (UPDATED) ====================
+        // ==================== BATCH 89A ====================
         {batch:"89A", day:"TUE", time:"10:20am-11:10am", code:"EEE07134139", title:"Electromagnetics", teacher:"Dr. M. Quamruzzaman", room:"501", type:"Theory", credit:3, duration: calculateDuration("10:20am-11:10am")},
         {batch:"89A", day:"WED", time:"08:40am-09:30am", code:"EEE07143126", title:"Communication Lab", teacher:"Md. Sharif Uddin Shajib", room:"B15", type:"Lab", credit:1, duration: calculateDuration("08:40am-09:30am")},
         {batch:"89A", day:"WED", time:"12:00pm-12:50pm", code:"EEE07143125", title:"Communication", teacher:"Md. Sharif Uddin Shajib", room:"503", type:"Theory", credit:3, duration: calculateDuration("12:00pm-12:50pm")},
         {batch:"89A", day:"SAT", time:"10:20am-12:00pm", code:"EEE07134139", title:"Electromagnetics", teacher:"Dr. M. Quamruzzaman", room:"501", type:"Theory", credit:3, duration: calculateDuration("10:20am-12:00pm")},
         {batch:"89A", day:"SAT", time:"12:00pm-01:40pm", code:"EEE07143125", title:"Communication", teacher:"Md. Sharif Uddin Shajib", room:"503", type:"Theory", credit:3, duration: calculateDuration("12:00pm-01:40pm")},
 
-        // ==================== BATCH 88A (UPDATED) ====================
+        // ==================== BATCH 88A ====================
         {batch:"88A", day:"TUE", time:"10:20am-11:10am", code:"EEE07134139", title:"Electromagnetics", teacher:"Dr. M. Quamruzzaman", room:"501", type:"Theory", credit:3, duration: calculateDuration("10:20am-11:10am")},
         {batch:"88A", day:"THU", time:"08:40am-09:30am", code:"EEE07144249", title:"VLSI I", teacher:"Debprosad Das", room:"B14", type:"Theory", credit:3, duration: calculateDuration("08:40am-09:30am")},
         {batch:"88A", day:"THU", time:"09:30am-11:10am", code:"EEE07144249", title:"VLSI I Lab", teacher:"Debprosad Das", room:"B14", type:"Lab", credit:1, duration: calculateDuration("09:30am-11:10am")},
         {batch:"88A", day:"SAT", time:"10:20am-12:00pm", code:"EEE07134139", title:"Electromagnetics", teacher:"Dr. M. Quamruzzaman", room:"501", type:"Theory", credit:3, duration: calculateDuration("10:20am-12:00pm")},
         {batch:"88A", day:"SAT", time:"02:20pm-04:00pm", code:"EEE07144249", title:"VLSI I", teacher:"Debprosad Das", room:"501", type:"Theory", credit:3, duration: calculateDuration("02:20pm-04:00pm")},
 
-        // ==================== BATCH 87A (UPDATED) ====================
+        // ==================== BATCH 87A ====================
         {batch:"87A", day:"WED", time:"10:20am-12:00pm", code:"EEE07134253", title:"Power Plants Engineering", teacher:"Dr. Md. Riyad Tanshen", room:"B14", type:"Theory", credit:3, duration: calculateDuration("10:20am-12:00pm")},
         {batch:"87A", day:"THU", time:"08:40am-09:30am", code:"EEE07144249", title:"VLSI I", teacher:"Debprosad Das", room:"B14", type:"Theory", credit:3, duration: calculateDuration("08:40am-09:30am")},
         {batch:"87A", day:"THU", time:"09:30am-11:10am", code:"EEE07144249", title:"VLSI I Lab", teacher:"Debprosad Das", room:"B14", type:"Lab", credit:1, duration: calculateDuration("09:30am-11:10am")},
@@ -402,7 +402,6 @@
     ];
 
     // ==================== FACTORY DEFAULT DATA ====================
-    // Combine new semester data with special batches
     const factoryDefaultData = [...newSemesterData, ...specialBatches];
 
     // Global variables
@@ -521,7 +520,7 @@
             return false;
         }
         
-        if (!confirm('⚠️ WARNING: This will reset ALL data to FACTORY DEFAULT! All your edits and deletions will be lost FOREVER. This will sync to ALL devices. Are you sure?')) {
+        if (!confirm('⚠️ WARNING: This will reset ALL data to FACTORY DEFAULT (New Semester)! All your edits and deletions will be lost FOREVER. This will sync to ALL devices. Are you sure?')) {
             return false;
         }
         
@@ -543,7 +542,7 @@
             saveBackup(factoryDefaultData);
             
             updateSyncStatus('connected', 'LIVE SYNC ACTIVE');
-            showToast('✅ Factory default data restored!');
+            showToast('✅ New Semester data loaded!');
             return true;
         } catch(e) {
             console.error('Reset error:', e);
@@ -1180,7 +1179,8 @@
         if (adminLoginBtn) adminLoginBtn.onclick = adminLogin;
         if (adminLogoutBtn) adminLogoutBtn.onclick = adminLogout;
         if (addClassBtn) addClassBtn.onclick = addNewClass;
-        if (resetDataBtn) resetDataBtn.onclick = restoreFromBackup;
+        // Reset button now calls resetToFactoryDefault (new semester)
+        if (resetDataBtn) resetDataBtn.onclick = resetToFactoryDefault;
         
         // Mode selector
         document.querySelectorAll('.mode-btn').forEach(btn => {
